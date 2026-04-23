@@ -1,0 +1,70 @@
+<app-header
+  (openLogin)="abrirLogin()"
+  (openCart)="abrirCart()"
+></app-header>
+
+<main>
+  <div class="catalogo">
+    <section class="categorias">
+      <h3 class="titulo-categoria">Categoria</h3>
+
+      <button
+        class="filtro-item"
+        *ngFor="let categoria of categorias"
+        [class.active]="categoriaSelecionada === categoria"
+        (click)="selecionarCategoria(categoria)"
+      >
+        {{ categoria }}
+      </button>
+
+      <h3 class="titulo-categoria tamanho-titulo">Tamanho</h3>
+
+      <button
+        class="filtro-item"
+        *ngFor="let tamanho of tamanhos"
+        [class.active]="tamanhoSelecionado === tamanho"
+        (click)="selecionarTamanho(tamanho)"
+      >
+        {{ tamanho }}
+      </button>
+
+      <h3 class="titulo-categoria preco-titulo">Faixa de Preço</h3>
+
+      <button
+        class="filtro-item"
+        *ngFor="let preco of faixasPreco"
+        [class.active]="precoSelecionado === preco"
+        (click)="selecionarPreco(preco)"
+      >
+        {{ preco }}
+      </button>
+
+      <button class="btn-limpar" (click)="limparFiltros()">
+        Limpar filtros
+      </button>
+    </section>
+
+    <section class="produtos">
+      <h2 class="titulo">Produtos em destaque</h2>
+
+      <div class="grid-produtos">
+        <div class="produto-card" *ngFor="let produto of produtos">
+          <img [src]="produto.imagem" [alt]="produto.nome" />
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="dots">
+    <span class="dot active"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+  </div>
+</main>
+
+<app-footer></app-footer>
+
+<app-modals
+  [modalAberto]="modalAberto"
+  (closeModal)="fecharModal()"
+></app-modals>

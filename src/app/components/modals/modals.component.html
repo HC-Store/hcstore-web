@@ -1,0 +1,196 @@
+<div
+  class="global-modal-overlay"
+  *ngIf="modalAberto"
+  [class.active]="!!modalAberto"
+  (click)="fechar()"
+></div>
+
+<!-- LOGIN -->
+<div
+  class="global-modal login-modal"
+  [class.active]="modalAberto === 'login'"
+  *ngIf="modalAberto === 'login'"
+>
+  <button class="global-modal-close" (click)="fechar()">&times;</button>
+
+  <div class="modal-card">
+    <h1>Bem-vindo(a) de volta!</h1>
+    <p class="modal-subtitle">Insira sua credenciais para acessar sua conta.</p>
+
+    <form class="modal-form" (ngSubmit)="submitLogin()">
+      <div class="input-group">
+        <input
+          type="email"
+          name="loginEmail"
+          [(ngModel)]="loginData.email"
+          placeholder="ENDEREÇO DE E-MAIL"
+        />
+      </div>
+
+      <div class="input-group">
+        <input
+          type="password"
+          name="loginSenha"
+          [(ngModel)]="loginData.senha"
+          placeholder="SENHA"
+        />
+      </div>
+
+      <div class="forgot-wrap">
+        <a href="#">Esqueceu sua senha?</a>
+      </div>
+
+      <button type="submit" class="btn-primary">Entrar</button>
+    </form>
+
+    <div class="modal-bottom-text">
+      <p>Não tem uma conta?</p>
+      <button class="switch-modal-btn" type="button" (click)="abrirRegister()">
+        Cadastre-se agora
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- CRIAR CONTA -->
+<div
+  class="global-modal register-modal"
+  [class.active]="modalAberto === 'register'"
+  *ngIf="modalAberto === 'register'"
+>
+  <button class="global-modal-close" (click)="fechar()">&times;</button>
+
+  <div class="modal-card register-card">
+    <h1>Junte-se a nós.</h1>
+    <p class="modal-subtitle">Crie uma conta para receber ofertas exclusivas</p>
+
+    <form class="modal-form" (ngSubmit)="submitRegister()">
+      <div class="row two-columns">
+        <input type="text" name="nome" [(ngModel)]="registerData.nome" placeholder="Nome" />
+        <input type="text" name="sobrenome" [(ngModel)]="registerData.sobrenome" placeholder="Sobrenome" />
+      </div>
+
+      <div class="modal-label">Data de nascimento</div>
+
+      <div class="row three-columns">
+        <input type="text" name="dia" [(ngModel)]="registerData.dia" placeholder="Dia" maxlength="2" />
+        <input type="text" name="mes" [(ngModel)]="registerData.mes" placeholder="Mês" maxlength="2" />
+        <input type="text" name="ano" [(ngModel)]="registerData.ano" placeholder="Ano" maxlength="4" />
+      </div>
+
+      <div class="row sexo-cpf">
+        <div class="sexo-box">
+          <div class="modal-label">Sexo</div>
+
+          <div class="radio-group">
+            <label>
+              <input type="radio" name="sexo" value="Masculino" [(ngModel)]="registerData.sexo" />
+              Masculino
+            </label>
+
+            <label>
+              <input type="radio" name="sexo" value="Feminino" [(ngModel)]="registerData.sexo" />
+              Feminino
+            </label>
+          </div>
+        </div>
+
+        <div class="cpf-box">
+          <div class="modal-label">CPF</div>
+          <input type="text" name="cpf" [(ngModel)]="registerData.cpf" placeholder="00000000000" maxlength="11" />
+        </div>
+      </div>
+
+      <input type="text" name="telefone" [(ngModel)]="registerData.telefone" placeholder="Telefone: (xx) 0 0000 - 0000" />
+      <input type="email" name="registerEmail" [(ngModel)]="registerData.email" placeholder="ENDEREÇO DE E-MAIL" />
+      <input type="password" name="registerSenha" [(ngModel)]="registerData.senha" placeholder="SENHA" />
+
+      <button type="submit" class="btn-primary">Criar Conta</button>
+    </form>
+
+    <div class="modal-bottom-text">
+      <p>Já tem uma conta?</p>
+      <button class="switch-modal-btn" type="button" (click)="abrirLogin()">
+        Entrar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- CARRINHO -->
+<div
+  class="global-modal cart-modal"
+  [class.active]="modalAberto === 'cart'"
+  *ngIf="modalAberto === 'cart'"
+>
+  <button class="global-modal-close cart-close" (click)="fechar()">&times;</button>
+
+  <div class="cart-modal-box">
+    <div class="cart-content">
+      <div class="cart-items">
+        <ng-container *ngIf="cart.length > 0; else carrinhoVazio">
+          <article class="cart-item" *ngFor="let item of cart; let i = index">
+            <img
+              [src]="item.image || 'https://placehold.co/170x140/1a1a1a/ffffff?text=PRODUTO'"
+              [alt]="item.name"
+            />
+
+            <div class="item-info">
+              <div class="item-header">
+                <div>
+                  <h2>{{ item.name }}</h2>
+                  <p class="category">{{ item.category || 'Produto' }}</p>
+                </div>
+
+                <button class="remove-btn" (click)="removerItem(i)">x</button>
+              </div>
+
+              <div class="item-controls">
+                <span class="size">Tamanho: {{ item.size || 'Único' }}</span>
+
+                <div class="qty-box">
+                  <button class="qty-btn" (click)="diminuirQuantidade(i)">-</button>
+                  <span class="qty">{{ item.qty }}</span>
+                  <button class="qty-btn" (click)="aumentarQuantidade(i)">+</button>
+                </div>
+              </div>
+
+              <p class="item-price">{{ formatPrice(item.price * item.qty) }}</p>
+            </div>
+          </article>
+        </ng-container>
+
+        <ng-template #carrinhoVazio>
+          <p class="empty-cart">Seu carrinho está vazio.</p>
+        </ng-template>
+      </div>
+
+      <aside class="summary">
+        <h3>Resumo</h3>
+
+        <div *ngFor="let item of cart" class="summary-line">
+          <span>{{ item.name }}</span>
+          <span>{{ formatPrice(item.price * item.qty) }}</span>
+        </div>
+
+        <div class="summary-line">
+          <span>Frete</span>
+          <span class="free-shipping">GRÁTIS</span>
+        </div>
+
+        <div class="summary-total">
+          <span>Total</span>
+          <span>{{ formatPrice(totalCart) }}</span>
+        </div>
+
+        <button
+          class="checkout-btn"
+          routerLink="/checkout"
+          (click)="irParaCheckout()"
+        >
+          Finalizar Compra
+        </button>
+      </aside>
+    </div>
+  </div>
+</div>

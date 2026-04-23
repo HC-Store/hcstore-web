@@ -1,0 +1,57 @@
+<header>
+  <a routerLink="/home" class="brand-link" (click)="fecharMenu()">
+    <h1><span class="hg">HC</span> STORE</h1>
+  </a>
+
+  <nav class="navbar-conteiner">
+    <a routerLink="/colecoes">Coleções</a>
+    <a routerLink="/product-list">Explorar</a>
+    <a routerLink="/outlet">Outlet</a>
+  </nav>
+
+  <div class="right">
+    <div class="search-box">
+      <input type="text" placeholder="" />
+    </div>
+
+    <nav class="icons">
+      <a href="#" class="cart-trigger" (click)="abrirCart($event)">
+        <img src="assets/image/carrinho.svg.svg" alt="Carrinho" />
+      </a>
+
+      <a href="#" class="login-trigger" (click)="abrirLogin($event)">
+        <img src="assets/image/login.svg.svg" alt="Login" />
+      </a>
+    </nav>
+  </div>
+
+  <button class="hamburger" aria-label="Abrir menu" (click)="toggleMenu()">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+</header>
+
+<div
+  class="overlay-menu"
+  [class.active]="menuMobileOpen"
+  (click)="fecharMenu()"
+></div>
+
+<div class="menu-mobile" [class.active]="menuMobileOpen">
+  <div class="menu-top">
+    <h1><span class="hg">HC</span> STORE</h1>
+    <div class="linha"></div>
+  </div>
+
+  <div class="search-mobile">
+    <input type="text" placeholder="" />
+  </div>
+
+  <a routerLink="/colecoes" (click)="fecharMenu()">Coleções</a>
+  <a routerLink="/product-list" (click)="fecharMenu()">Explorar</a>
+  <a routerLink="/outlet" (click)="fecharMenu()">Outlet</a>
+
+  <a href="#" (click)="abrirCart($event)">Carrinho</a>
+  <a href="#" (click)="abrirLogin($event)">Login</a>
+</div>

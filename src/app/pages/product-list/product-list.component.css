@@ -1,0 +1,163 @@
+:host {
+  display: block;
+  overflow-x: hidden;
+}
+
+main {
+  padding: 30px 20px 50px;
+}
+
+.catalogo {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+}
+
+.categorias {
+  width: 320px;
+  min-width: 320px;
+  background: black;
+  color: white;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.titulo-categoria {
+  font-size: 30px;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.tamanho-titulo,
+.preco-titulo {
+  margin-top: 30px;
+}
+
+.filtro-item {
+  background: transparent;
+  border: none;
+  color: white;
+  text-align: left;
+  cursor: pointer;
+  font-size: 15px;
+  padding: 4px 0;
+  transition: 0.3s;
+}
+
+.filtro-item:hover {
+  color: #1eff00;
+}
+
+.filtro-item.active {
+  color: #1eff00;
+  font-weight: 700;
+}
+
+.btn-limpar {
+  margin-top: 25px;
+  height: 45px;
+  border: 1px solid #1eff00;
+  background: transparent;
+  color: #1eff00;
+  cursor: pointer;
+  font-weight: 700;
+  transition: 0.3s;
+}
+
+.btn-limpar:hover {
+  background: #1eff00;
+  color: black;
+}
+
+.produtos {
+  flex: 1;
+}
+
+.titulo {
+  margin-bottom: 25px;
+  font-size: 28px;
+}
+
+.grid-produtos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+}
+
+.produto-card img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+}
+
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 25px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background: #555;
+  border-radius: 50%;
+}
+
+.dot.active {
+  background: #1eff00;
+  transform: scale(1.2);
+}
+
+@media (max-width: 1024px) {
+  .catalogo {
+    flex-direction: column;
+  }
+
+  .categorias {
+    width: 100%;
+    min-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  main {
+    padding: 20px 10px 40px;
+  }
+
+  .catalogo {
+    gap: 20px;
+  }
+
+  .categorias {
+    padding: 20px;
+    gap: 8px;
+  }
+
+  .titulo-categoria {
+    font-size: 24px;
+  }
+
+  .filtro-item {
+    font-size: 14px;
+  }
+
+  .btn-limpar {
+    height: 42px;
+    font-size: 14px;
+  }
+
+  .titulo {
+    text-align: center;
+    font-size: 22px;
+  }
+
+  .grid-produtos {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}

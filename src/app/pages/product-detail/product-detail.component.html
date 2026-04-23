@@ -1,0 +1,156 @@
+<app-header
+  (openLogin)="abrirLogin()"
+  (openCart)="abrirCart()"
+></app-header>
+
+<main class="page">
+  <a routerLink="/lista-produto" class="back-link">← Voltar à loja</a>
+
+  <section class="product-layout">
+    <div class="gallery-column">
+      <div class="main-image">
+        <img
+          id="mainProductImage"
+          [src]="mainImage"
+          [alt]="productName"
+        />
+      </div>
+
+      <div class="thumbs">
+        <button
+          class="thumb"
+          [class.active]="mainImage === thumbnails[0]"
+          (click)="trocarImagem(thumbnails[0])"
+        >
+          <img [src]="thumbnails[0]" alt="Miniatura 1" />
+        </button>
+
+        <button
+          class="thumb"
+          [class.active]="mainImage === thumbnails[1]"
+          (click)="trocarImagem(thumbnails[1])"
+        >
+          <img [src]="thumbnails[1]" alt="Miniatura 2" />
+        </button>
+      </div>
+    </div>
+
+    <div class="info-column">
+      <p class="category">CAMISETAS</p>
+
+      <h1 class="product-title">
+        ESSENTIALS "OFF-GRID"<br />
+        OVERSIZED TEE
+      </h1>
+
+      <p class="price">R$ 189,90</p>
+
+      <div class="size-section">
+        <p class="section-title">GUIA DE MEDIDAS</p>
+
+        <div class="sizes">
+          <button
+            class="size-btn"
+            [class.active]="selectedSize === 'M'"
+            (click)="selecionarTamanho('M')"
+          >
+            M
+          </button>
+
+          <button
+            class="size-btn"
+            [class.active]="selectedSize === 'G'"
+            (click)="selecionarTamanho('G')"
+          >
+            G
+          </button>
+
+          <button
+            class="size-btn"
+            [class.active]="selectedSize === 'GG'"
+            (click)="selecionarTamanho('GG')"
+          >
+            GG
+          </button>
+
+          <button
+            class="size-btn"
+            [class.active]="selectedSize === 'XG'"
+            (click)="selecionarTamanho('XG')"
+          >
+            XG
+          </button>
+        </div>
+      </div>
+
+      <button class="add-cart-btn" (click)="adicionarAoCarrinho()">
+        ADICIONAR AO CARRINHO →
+      </button>
+
+      <div class="divider"></div>
+
+      <div class="accordion">
+        <div class="accordion-item">
+          <button
+            class="accordion-trigger"
+            [class.active]="accordionOpen.material"
+            (click)="toggleAccordion('material')"
+          >
+            <span>COMPOSIÇÃO DO MATERIAL</span>
+            <span class="arrow" [class.open]="accordionOpen.material">›</span>
+          </button>
+
+          <div class="accordion-content" *ngIf="accordionOpen.material">
+            <p>Tecido: 100% Algodão Premium de alta gramatura (220 GSM).</p>
+            <p>Fio: 30.1 Penteado (toque macio e resistente).</p>
+            <p>Modelagem: Oversized com caimento estruturado e gola canelada de 3cm.</p>
+            <p>Acabamento: Peça pré-encolhida e amaciada em lavanderia para evitar distorções.</p>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <button
+            class="accordion-trigger"
+            [class.active]="accordionOpen.lavagem"
+            (click)="toggleAccordion('lavagem')"
+          >
+            <span>INSTRUÇÕES DE LAVAGEM</span>
+            <span class="arrow" [class.open]="accordionOpen.lavagem">›</span>
+          </button>
+
+          <div class="accordion-content" *ngIf="accordionOpen.lavagem">
+            <p>Lavar à máquina com água fria (máximo 30°C).</p>
+            <p>Não utilizar alvejante ou cloro.</p>
+            <p>Secar à sombra, evitando secadora para maior durabilidade.</p>
+            <p>Passar do avesso com ferro em temperatura média.</p>
+            <p>Não lavar a seco.</p>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <button
+            class="accordion-trigger"
+            [class.active]="accordionOpen.envio"
+            (click)="toggleAccordion('envio')"
+          >
+            <span>ENVIO E DEVOLUÇÕES</span>
+            <span class="arrow" [class.open]="accordionOpen.envio">›</span>
+          </button>
+
+          <div class="accordion-content" *ngIf="accordionOpen.envio">
+            <p>Frete Grátis: Disponível para todo o Brasil em compras acima de R$ 350.</p>
+            <p>Prazo de Postagem: Seu pedido será enviado em até 2 dias úteis.</p>
+            <p>Trocas: Primeira troca grátis em até 7 dias após o recebimento.</p>
+            <p>Segurança: Pagamento processado com criptografia de ponta a ponta.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<app-footer></app-footer>
+<app-modals
+  [modalAberto]="modalAberto"
+  (closeModal)="fecharModal()"
+></app-modals>

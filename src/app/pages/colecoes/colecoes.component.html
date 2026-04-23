@@ -1,0 +1,67 @@
+<app-header
+  (openLogin)="abrirLogin()"
+  (openCart)="abrirCart()"
+></app-header>
+
+<main class="page">
+  <section class="launch-section">
+    <div class="launch-top">
+      <p class="launch-label">Próximo lançamento</p>
+      <h1 class="launch-title">DROP 01:</h1>
+      <h2 class="launch-subtitle">OFF-GRID</h2>
+
+      <div class="countdown">
+        <div class="time-box">
+          <span class="time-value">{{ meses }}</span>
+          <span class="time-label">Meses</span>
+        </div>
+
+        <div class="time-box">
+          <span class="time-value">{{ dias }}</span>
+          <span class="time-label">Dias</span>
+        </div>
+
+        <div class="time-box">
+          <span class="time-value">{{ horas }}</span>
+          <span class="time-label">Horas</span>
+        </div>
+
+        <div class="time-box">
+          <span class="time-value">{{ minutos }}</span>
+          <span class="time-label">Min</span>
+        </div>
+
+        <div class="time-box">
+          <span class="time-value">{{ segundos }}</span>
+          <span class="time-label">Secs</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="launch-bottom">
+      <div class="product-card">
+        <img src="assets/image/coleçao.png" alt="Produto do drop" />
+      </div>
+
+      <div class="product-info">
+        <h3>O Conceito</h3>
+        <p>
+          O OFF-GRID é um mergulho na textura brutalista da cidade. Criamos uma
+          fusão entre a estética utilitária das ruas e o acabamento premium.
+        </p>
+
+        <a routerLink="/product-list" class="cta-button">
+          CONFERIR
+          <span>→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<app-footer></app-footer>
+
+<app-modals
+  [modalAberto]="modalAberto"
+  (closeModal)="fecharModal()"
+></app-modals>

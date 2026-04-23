@@ -1,0 +1,203 @@
+<app-header
+  (openLogin)="abrirLogin()"
+  (openCart)="abrirCart()"
+></app-header>
+
+<main>
+  <section class="checkout">
+    <div class="square">
+      <div class="contact">
+        <h1>Contato</h1>
+        <p>Usaremos essa forma de contato para manter você informado sobre o pedido.</p>
+        <br />
+      </div>
+
+      <br />
+
+      <div class="contact-conteiner">
+        <label for="email">E-mail*</label>
+        <br />
+        <input
+          id="email"
+          type="email"
+          [(ngModel)]="formData.email"
+          name="email"
+          required
+        />
+        <br /><br />
+
+        <label for="telefone">Telefone*</label>
+        <br />
+        <input
+          id="telefone"
+          type="tel"
+          [(ngModel)]="formData.telefone"
+          name="telefone"
+          required
+        />
+      </div>
+
+      <br />
+
+      <div class="shipping-address">
+        <h1>Endereço de envio</h1>
+
+        <div class="name-conteiner">
+          <label for="nome"></label>
+          <br />
+          <input
+            type="text"
+            id="nome"
+            name="nome"
+            placeholder="Nome"
+            [(ngModel)]="formData.nome"
+            required
+          />
+
+          <label for="sobrenome"></label>
+          <br />
+          <input
+            type="text"
+            id="sobrenome"
+            name="sobrenome"
+            placeholder="Sobrenome"
+            [(ngModel)]="formData.sobrenome"
+            required
+          />
+          <br />
+        </div>
+
+        <div class="cep-conteiner">
+          <label for="cep"></label>
+          <br />
+          <input
+            type="text"
+            id="cep"
+            name="cep"
+            placeholder="CEP"
+            [(ngModel)]="formData.cep"
+            required
+            (keyup.enter)="buscarCep()"
+          />
+
+          <button type="button" (click)="buscarCep()">BUSCAR CEP</button>
+        </div>
+
+        <br />
+
+        <div class="address">
+          <label for="endereco">Endereço</label>
+          <br />
+          <input
+            type="text"
+            id="endereco"
+            name="endereco"
+            [(ngModel)]="formData.endereco"
+            required
+          />
+
+          <br /><br />
+
+          <label for="bairro">Bairro</label>
+          <br />
+          <input
+            type="text"
+            id="bairro"
+            name="bairro"
+            [(ngModel)]="formData.bairro"
+            required
+          />
+
+          <br /><br />
+
+          <label for="cidade">Cidade</label>
+          <br />
+          <input
+            type="text"
+            id="cidade"
+            name="cidade"
+            [(ngModel)]="formData.cidade"
+            required
+          />
+
+          <br /><br />
+
+          <label for="estado">Estado</label>
+          <br />
+          <input
+            type="text"
+            id="estado"
+            name="estado"
+            [(ngModel)]="formData.estado"
+            required
+          />
+
+          <br /><br />
+
+          <label for="casa-apartamento">Casa ou apartamento</label>
+          <br />
+          <input
+            type="text"
+            id="casa-apartamento"
+            name="casaApartamento"
+            [(ngModel)]="formData.casaApartamento"
+            required
+          />
+
+          <br /><br />
+
+          <label for="numero-bloco">Número ou bloco</label>
+          <br />
+          <input
+            type="text"
+            id="numero-bloco"
+            name="numeroBloco"
+            [(ngModel)]="formData.numeroBloco"
+            required
+          />
+        </div>
+
+        <br />
+      </div>
+    </div>
+
+    <div class="linha-vertical"></div>
+
+    <div class="resume">
+      <h1>Resumo</h1>
+
+      <div class="item" *ngFor="let item of checkoutData">
+        <span>{{ item.name }}</span>
+        <span class="price">{{ formatPrice(item.price * item.qty) }}</span>
+      </div>
+
+      <div class="subtotal">
+        <span>Subtotal</span>
+        <span class="price">{{ formatPrice(subtotal) }}</span>
+      </div>
+
+      <div class="frete">
+        <span>Frete</span>
+        <span class="gratis">GRÁTIS</span>
+      </div>
+
+      <hr />
+
+      <div class="total">
+        <span>TOTAL</span>
+        <span>{{ formatPrice(total) }}</span>
+      </div>
+
+      <button class="finish" type="button" (click)="finalizarCompra()">
+        Finalizar Compra
+      </button>
+    </div>
+  </section>
+</main>
+
+<app-footer></app-footer>
+
+<app-modals
+  [modalAberto]="modalAberto"
+  (closeModal)="fecharModal()"
+></app-modals>

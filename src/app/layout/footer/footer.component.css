@@ -1,0 +1,117 @@
+:host {
+  display: block;
+}
+
+footer {
+  width: 100%;
+  background-color: black;
+  color: #1eff00;
+  padding: 48px 24px;
+}
+
+.footer-grid {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1fr 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+footer h1 {
+  font-size: 3rem;
+  margin-bottom: 18px;
+}
+
+.hg {
+  color: white;
+}
+
+footer p {
+  font-size: 1rem;
+  color: gray;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.icons-media {
+  display: flex;
+  gap: 10px;
+}
+
+.icons-media a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icons-media img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.support,
+.enterprise,
+.coupon,
+.e-mail-box {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.support h2,
+.enterprise h2,
+.coupon h2,
+.coupon h3 {
+  color: white;
+}
+
+.support a,
+.enterprise a {
+  color: white;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.support a:hover,
+.enterprise a:hover {
+  color: #1eff00;
+}
+
+.e-mail-box input {
+  width: 100%;
+  max-width: 260px;
+  height: 38px;
+  background-color: #333;
+  color: white;
+  padding: 0 12px;
+  border: none;
+  outline: none;
+}
+
+.e-mail-box input::placeholder {
+  color: white;
+}
+
+@media (max-width: 900px) {
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  footer {
+    padding: 36px 16px;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  footer h1 {
+    font-size: 2rem;
+  }
+}
