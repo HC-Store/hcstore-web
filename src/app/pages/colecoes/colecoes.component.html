@@ -3,60 +3,61 @@
   (openCart)="abrirCart()"
 ></app-header>
 
-<main class="page">
-  <section class="launch-section">
-    <div class="launch-top">
-      <p class="launch-label">Próximo lançamento</p>
-      <h1 class="launch-title">DROP 01:</h1>
-      <h2 class="launch-subtitle">OFF-GRID</h2>
+<main class="colecoes-page">
 
-      <div class="countdown">
-        <div class="time-box">
-          <span class="time-value">{{ meses }}</span>
-          <span class="time-label">Meses</span>
-        </div>
+  <section class="launch-top">
+    <p class="launch-label">Próximo lançamento</p>
 
-        <div class="time-box">
-          <span class="time-value">{{ dias }}</span>
-          <span class="time-label">Dias</span>
-        </div>
+    <h1 class="launch-title">DROP 01:</h1>
+    <h2 class="launch-subtitle">OFF-GRID</h2>
 
-        <div class="time-box">
-          <span class="time-value">{{ horas }}</span>
-          <span class="time-label">Horas</span>
-        </div>
-
-        <div class="time-box">
-          <span class="time-value">{{ minutos }}</span>
-          <span class="time-label">Min</span>
-        </div>
-
-        <div class="time-box">
-          <span class="time-value">{{ segundos }}</span>
-          <span class="time-label">Secs</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="launch-bottom">
-      <div class="product-card">
-        <img src="assets/image/coleçao.png" alt="Produto do drop" />
+    <div class="countdown">
+      <div class="time-box">
+        <strong>{{ meses }}</strong>
+        <span>Meses</span>
       </div>
 
-      <div class="product-info">
-        <h3>O Conceito</h3>
-        <p>
-          O OFF-GRID é um mergulho na textura brutalista da cidade. Criamos uma
-          fusão entre a estética utilitária das ruas e o acabamento premium.
-        </p>
+      <div class="time-box">
+        <strong>{{ dias }}</strong>
+        <span>Dias</span>
+      </div>
 
-        <a routerLink="/product-list" class="cta-button">
-          CONFERIR
-          <span>→</span>
-        </a>
+      <div class="time-box">
+        <strong>{{ horas }}</strong>
+        <span>Horas</span>
+      </div>
+
+      <div class="time-box">
+        <strong>{{ minutos }}</strong>
+        <span>Min</span>
+      </div>
+
+      <div class="time-box">
+        <strong>{{ segundos }}</strong>
+        <span>Secs</span>
       </div>
     </div>
   </section>
+
+  <section class="launch-bottom">
+    <div class="product-image">
+      <img src="assets/img/banner-colecoes.png" alt="Produto do drop">
+    </div>
+
+    <div class="product-info">
+      <h3>O Conceito</h3>
+
+      <p>
+        O OFF-GRID é um mergulho na textura brutalista da cidade. Criamos uma
+        fusão entre a estética utilitária das ruas e o acabamento premium.
+      </p>
+
+      <a routerLink="/product-list" class="cta-button">
+        CONFERIR <span>→</span>
+      </a>
+    </div>
+  </section>
+
 </main>
 
 <app-footer></app-footer>

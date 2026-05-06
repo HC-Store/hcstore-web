@@ -34,10 +34,11 @@ export class ColecoesComponent implements OnInit, OnDestroy {
 
   launchDate = new Date();
 
-  constructor() {
-    this.launchDate.setDate(this.launchDate.getDate() + 4);
-    this.launchDate.setHours(12, 45, 9, 0);
-  }
+constructor() {
+  this.launchDate = new Date();
+  this.launchDate.setMonth(this.launchDate.getMonth() + 1);
+  this.launchDate.setHours(12, 45, 9, 0);
+}
 
   ngOnInit(): void {
     this.updateCountdown();

@@ -1,0 +1,74 @@
+<div class="screen active" id="screen-produtos">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Todos os Produtos</div>
+    </div>
+    
+  </div>
+
+  <div class="products-grid">
+    <div class="product-card" *ngFor="let produto of produtos; let i = index">
+      <div class="product-img">
+        <span style="font-size:44px">{{ produto.icon }}</span>
+        <div class="product-actions">
+          <button class="btn-edit-btn-sm" (click)="editarProduto(i)">✏️</button>
+          <button class="btn-red-btn-sm" (click)="removerProduto(i)">🗑️</button>
+        </div>
+      </div>
+      <div class="product-body">
+        <div class="product-name">{{ produto.name }}</div>
+        <div class="product-cat">{{ produto.cat }}</div>
+        <div class="product-price">{{ produto.price }}</div>
+
+        
+<div class="size-grid">
+  <span *ngFor="let size of produto.sizes" class="size-tag">
+    {{ size }}
+  </span>
+</div>
+
+        <div class="product-desc">{{ produto.desc }}</div>
+
+        <div class="stat-row">
+          <span class="stat-label">Vendas</span>
+          <span class="stat-arrow">↑</span>
+          <div class="stat-bar">
+            <div class="stat-fill" [style.width.%]="(produto.vendas/1500)*100"></div>
+          </div>
+          <span class="stat-val">{{ produto.vendas }}</span>
+        </div>
+
+        <div class="stat-row">
+          <span class="stat-label">Prod. restantes</span>
+          <span class="stat-arrow down">—</span>
+          <div class="stat-bar">
+            <div class="stat-fill orange" [style.width.%]="(produto.estoque/1500)*100"></div>
+          </div>
+          <span class="stat-val">{{ produto.estoque }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" *ngIf="showModal">
+
+  <div class="modal-box">
+
+    <h3>{{ editIndex !== null ? 'Editar Produto' : 'Novo Produto' }}</h3>
+
+    <input [(ngModel)]="form.name" placeholder="Nome" />
+    <input [(ngModel)]="form.cat" placeholder="Categoria" />
+    <input [(ngModel)]="form.price" placeholder="Preço" />
+    <input [(ngModel)]="form.sizes" placeholder="Tamanhos (ex: P,M,G)" />
+
+    <textarea [(ngModel)]="form.desc" placeholder="Descrição"></textarea>
+
+    <div class="modal-actions">
+      <button (click)="salvarProduto()">Salvar</button>
+      <button (click)="showModal=false" style="background-color: #ccc;">Cancelar</button>
+    </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,54 @@
+<div class="screen active" id="screen-pedidos">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Lista de Pedidos</div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <div class="date-badge">📅 Maio 16, 2026 — Julho 16, 2026</div>
+      <select class="status-select" [(ngModel)]="statusSelecionado">
+        <option value="">Alterar status</option>
+        <option value="Entregue">Entregue</option>
+        <option value="Cancelado">Cancelado</option>
+        <option value="Pendente">Pendente</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Compras Recentes</div>
+      <span class="card-dots">⋮</span>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th><input type="checkbox" class="chk"></th>
+            <th>Produto</th>
+            <th>ID Pedido</th>
+            <th>Data</th>
+            <th>Método de Pagamento</th>
+            <th>Nome Cliente</th>
+            <th>Status</th>
+            <th>Preço</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let pedido of pedidos">
+            <td><input type="checkbox" class="chk"></td>
+            <td>{{ pedido.produto }}</td>
+            <td>{{ pedido.id }}</td>
+            <td>{{ pedido.data }}</td>
+            <td>{{ pedido.pagamento }}</td>
+            <td>{{ pedido.cliente }}</td>
+            <td>{{ pedido.status }}</td>
+            <td>R$ {{ pedido.preco }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="pagination">
+      <!-- botões de paginação -->
+    </div>
+  </div>
+</div>

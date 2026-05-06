@@ -1,0 +1,72 @@
+.sidebar {
+  width: 260px;
+  min-width: 260px;
+  height: 100vh;
+  background: #000;
+  color: #fff;
+
+  display: flex;
+  flex-direction: column;
+  padding: 40px 25px;
+  box-sizing: border-box;
+}
+
+/* LOGO */
+.logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+
+  font-size: 28px;
+  font-weight: bold;
+
+  margin-bottom: 60px;
+  text-align: center;
+}
+
+.hc {
+  color: white;
+}
+
+.store {
+  color: #25df14;
+  margin-left: 5px;
+}
+
+/* MENU */
+nav {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+/* LINKS */
+nav a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: white;
+  text-decoration: none;
+
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1px;
+
+  padding: 12px 15px;
+  border-radius: 10px;
+
+  transition: all 0.2s ease;
+}
+
+/* HOVER */
+nav a:hover {
+  background: #1a1a1a;
+}
+
+/* ATIVO */
+nav a.active {
+  background: #25df14;
+  color: black;
+}

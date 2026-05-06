@@ -7,6 +7,13 @@ import { ProductDetailComponent } from './pages/product-detail/product-detail.co
 import { CheckoutComponent } from './pages/checkout/checkout.component';
 // import { PagamentoComponent } from './pages/pagamento/pagamento.component';
 
+import { AdminLayoutComponent } from './pages/admin/admin-layout/admin-layout.component';
+import { DashboardComponent } from './pages/admin/dashboard/dashboard.component';
+import { ProductsComponent } from './pages/admin/products/products.component';
+import { OrdersComponent } from './pages/admin/orders/orders.component';
+import { UsersComponent } from './pages/admin/users/users.component';
+import { AddProductComponent } from './pages/admin/add-product/add-product.component';
+
 export const routes: Routes = [
   {
     path: '',
@@ -38,15 +45,49 @@ export const routes: Routes = [
     path: 'checkout',
     component: CheckoutComponent
   },
-
-  // Quando criar a página de pagamento
+   // Quando criar a página de pagamento
   // {
   //   path: 'pagamento',
   //   component: PagamentoComponent
   // },
 
   {
+    path: 'admin',
+    component: AdminLayoutComponent,
+    children: [
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
+      },
+      {
+        path: 'dashboard',
+        component: DashboardComponent
+      },
+      {
+        path: 'produtos',
+        component: ProductsComponent
+      },
+      {
+        path: 'pedidos',
+        component: OrdersComponent
+      },
+      {
+        path: 'usuarios',
+        component: UsersComponent
+      },
+      {
+        path: 'adicionar-produto',
+        component: AddProductComponent
+      }
+    ]
+  },
+
+  {
     path: '**',
     redirectTo: 'home'
   }
 ];
+
+
+

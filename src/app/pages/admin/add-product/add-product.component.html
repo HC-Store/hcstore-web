@@ -1,0 +1,85 @@
+<div class="page">
+
+  <h2>Adicionar Produto</h2>
+
+  <div class="container">
+
+    <!-- ESQUERDA (FORM) -->
+    <div class="form-card">
+
+      <label>Nome do Produto</label>
+      <input placeholder="Digite o nome aqui" />
+
+      <label>Descrição</label>
+      <textarea placeholder="Digite a descrição aqui"></textarea>
+
+      <label>Categoria</label>
+      <input placeholder="Ex: Tênis, camisa, shorts" />
+
+      <label>Marca</label>
+      <input placeholder="Ex: Nike, Adidas" />
+
+      <label>Tamanho - clique para selecionar</label>
+      <div class="sizes">
+        <span *ngFor="let s of sizes" (click)="toggleSize(s)" [class.active]="selectedSizes.includes(s)">
+          {{ s }}
+        </span>
+      </div>
+
+      <label>Número de Estoque</label>
+      <input placeholder="Fox-3983" />
+
+      <label>Quantidade no Estoque</label>
+      <input placeholder="1258" />
+
+      <label>Preço</label>
+      <input placeholder="R$450,00" />
+
+      <button class="btn">ADICIONAR</button>
+
+    </div>
+
+    <!-- DIREITA -->
+<div class="gallery-card">
+
+  <div class="gallery-header">
+    <span>Galeria de Produtos</span>
+    <small>{{ images.length }}/5 imagens</small>
+  </div>
+
+  <div class="gallery-grid">
+
+    <!-- IMAGENS -->
+    <div class="image-box"
+         *ngFor="let img of images; let i = index"
+         [class.main]="i === 0">
+
+      <img [src]="img" />
+
+      <button class="remove" (click)="removeImage(i)">✕</button>
+
+      <span *ngIf="i === 0" class="badge">Principal</span>
+
+    </div>
+
+    <!-- BOTÃO DE UPLOAD -->
+    <div class="upload-box"
+         *ngIf="images.length < 5"
+         (click)="fileInput.click()"
+         (dragover)="onDragOver($event)"
+         (drop)="onDrop($event)">
+
+      <input type="file"
+             #fileInput
+             hidden
+             multiple
+             accept="image/png, image/jpeg"
+             (change)="onMultipleSelected($event)" />
+
+      <span>+</span>
+
+    </div>
+
+  </div>
+
+</div>
