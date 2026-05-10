@@ -39,8 +39,13 @@
       <div class="forgot-wrap">
         <a href="#">Esqueceu sua senha?</a>
       </div>
+      <p class="sucesso-msg" *ngIf="sucessoLogin">{{ sucessoLogin }}</p>
 
-      <button type="submit" class="btn-primary">Entrar</button>
+      <p class="erro-msg" *ngIf="erroLogin">{{ erroLogin }}</p>
+      <button type="submit" class="btn-primary" [disabled]="carregando">
+         {{ carregando ? 'Entrando...' : 'Entrar' }}
+      </button>
+
     </form>
 
     <div class="modal-bottom-text">
@@ -105,7 +110,12 @@
       <input type="email" name="registerEmail" [(ngModel)]="registerData.email" placeholder="ENDEREÇO DE E-MAIL" />
       <input type="password" name="registerSenha" [(ngModel)]="registerData.senha" placeholder="SENHA" />
 
-      <button type="submit" class="btn-primary">Criar Conta</button>
+      <p class="sucesso-msg" *ngIf="sucessoRegister">{{ sucessoRegister }}</p>
+      <p class="erro-msg" *ngIf="erroRegister">{{ erroRegister }}</p>
+        <button type="submit" class="btn-primary" [disabled]="carregando">
+          {{ carregando ? 'Criando conta...' : 'Criar Conta' }}
+        </button>
+
     </form>
 
     <div class="modal-bottom-text">
@@ -128,36 +138,26 @@
   <div class="cart-modal-box">
     <div class="cart-content">
       <div class="cart-items">
-        <ng-container *ngIf="cart.length > 0; else carrinhoVazio">
-          <article class="cart-item" *ngFor="let item of cart; let i = index">
-            <img
-              [src]="item.image || 'https://placehold.co/170x140/1a1a1a/ffffff?text=PRODUTO'"
-              [alt]="item.name"
-            />
-
-            <div class="item-info">
-              <div class="item-header">
-                <div>
-                  <h2>{{ item.name }}</h2>
-                  <p class="category">{{ item.category || 'Produto' }}</p>
-                </div>
-
-                <button class="remove-btn" (click)="removerItem(i)">x</button>
-              </div>
-
-              <div class="item-controls">
-                <span class="size">Tamanho: {{ item.size || 'Único' }}</span>
-
-                <div class="qty-box">
-                  <button class="qty-btn" (click)="diminuirQuantidade(i)">-</button>
-                  <span class="qty">{{ item.qty }}</span>
-                  <button class="qty-btn" (click)="aumentarQuantidade(i)">+</button>
-                </div>
-              </div>
-
-              <p class="item-price">{{ formatPrice(item.price * item.qty) }}</p>
-            </div>
-          </article>
+        <ng-container *ngIf="itensCarrinho.length > 0; else carrinhoVazio">
+      <article class="cart-item" *ngFor="let item of itensCarrinho">
+  <img
+    [src]="item.produto?.imagem || 'https://placehold.co/170x140/1a1a1a/ffffff?text=PRODUTO'"
+    [alt]="item.produto?.nome"
+  />
+  <div class="item-info">
+    <div class="item-header">
+      <div>
+        <h2>{{ item.produto?.nome }}</h2>
+        <p class="category">{{ item.produto?.categoria || 'Produto' }}</p>
+      </div>
+      <button class="remove-btn" (click)="removerItem(item.id)">x</button>
+    </div>
+    <div class="item-controls">
+      <span class="size">Qtd: {{ item.quantidade }}</span>
+    </div>
+    <p class="item-price">{{ formatPrice(item.produto?.preco * item.quantidade) }}</p>
+  </div>
+</article>
         </ng-container>
 
         <ng-template #carrinhoVazio>
@@ -168,10 +168,10 @@
       <aside class="summary">
         <h3>Resumo</h3>
 
-        <div *ngFor="let item of cart" class="summary-line">
-          <span>{{ item.name }}</span>
-          <span>{{ formatPrice(item.price * item.qty) }}</span>
-        </div>
+      <div *ngFor="let item of itensCarrinho" class="summary-line">
+        <span>{{ item.produto?.nome }}</span>
+        <span>{{ formatPrice(item.produto?.preco * item.quantidade) }}</span>
+      </div>
 
         <div class="summary-line">
           <span>Frete</span>

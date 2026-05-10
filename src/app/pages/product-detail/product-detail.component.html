@@ -2,7 +2,13 @@
   (openLogin)="abrirLogin()"
   (openCart)="abrirCart()"
 ></app-header>
+<div *ngIf="carregando" style="color: white; padding: 40px; text-align:center;">
+  Carregando produto...
+</div>
 
+<div *ngIf="erro" style="color: #e74c3c; padding: 40px; text-align:center;">
+  {{ erro }}
+</div>
 <main class="page">
   <a routerLink="/lista-produto" class="back-link">← Voltar à loja</a>
 
@@ -12,7 +18,7 @@
         <img
           id="mainProductImage"
           [src]="mainImage"
-          [alt]="productName"
+          [alt]="produto?.nome"
         />
       </div>
 
@@ -36,14 +42,13 @@
     </div>
 
     <div class="info-column">
-      <p class="category">CAMISETAS</p>
+      <p class="category">{{ produto?.categoria || 'PRODUTO' }}</p>
 
       <h1 class="product-title">
-        ESSENTIALS "OFF-GRID"<br />
-        OVERSIZED TEE
+        {{ produto?.nome }}
       </h1>
 
-      <p class="price">R$ 189,90</p>
+      <p class="price">{{ produto?.preco | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</p>
 
       <div class="size-section">
         <p class="section-title">GUIA DE MEDIDAS</p>
@@ -86,6 +91,9 @@
       <button class="add-cart-btn" (click)="adicionarAoCarrinho()">
         ADICIONAR AO CARRINHO →
       </button>
+      <p *ngIf="sucesso" style="color: #39ff14; font-weight: 600; margin-top: 8px;">
+        ✓ {{ sucesso }}
+      </p>
 
       <div class="divider"></div>
 

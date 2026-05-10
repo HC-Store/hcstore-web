@@ -1,54 +1,56 @@
 <div class="screen active" id="screen-pedidos">
   <div class="page-header">
-    <div>
-      <div class="page-title">Lista de Pedidos</div>
-    </div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-      <div class="date-badge">📅 Maio 16, 2026 — Julho 16, 2026</div>
-      <select class="status-select" [(ngModel)]="statusSelecionado">
-        <option value="">Alterar status</option>
-        <option value="Entregue">Entregue</option>
-        <option value="Cancelado">Cancelado</option>
-        <option value="Pendente">Pendente</option>
-      </select>
-    </div>
+    <div class="page-title">Lista de Pedidos</div>
   </div>
+
+  <p *ngIf="carregando" style="color:white; padding:20px;">Carregando...</p>
+  <p *ngIf="erro" style="color:#e74c3c; padding:20px;">{{ erro }}</p>
+  <p *ngIf="sucesso" style="color:#39ff14; padding:20px; font-weight:600;">✓ {{ sucesso }}</p>
 
   <div class="card">
     <div class="card-header">
-      <div class="card-title">Compras Recentes</div>
-      <span class="card-dots">⋮</span>
+      <div class="card-title">Pedidos</div>
     </div>
+
     <div class="tbl-wrap">
       <table>
         <thead>
           <tr>
-            <th><input type="checkbox" class="chk"></th>
-            <th>Produto</th>
             <th>ID Pedido</th>
+            <th>Cliente</th>
             <th>Data</th>
-            <th>Método de Pagamento</th>
-            <th>Nome Cliente</th>
+            <th>Total</th>
             <th>Status</th>
-            <th>Preço</th>
+            <th>Alterar Status</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let pedido of pedidos">
-            <td><input type="checkbox" class="chk"></td>
-            <td>{{ pedido.produto }}</td>
-            <td>{{ pedido.id }}</td>
-            <td>{{ pedido.data }}</td>
-            <td>{{ pedido.pagamento }}</td>
-            <td>{{ pedido.cliente }}</td>
-            <td>{{ pedido.status }}</td>
-            <td>R$ {{ pedido.preco }}</td>
+            <td>#{{ pedido.id }}</td>
+            <td>{{ pedido.usuario?.nome }} {{ pedido.usuario?.sobrenome }}</td>
+            <td>{{ pedido.createdAt | date:'dd/MM/yyyy' }}</td>
+            <td>R$ {{ pedido.total }}</td>
+            <td>
+              <span class="status"
+                [class.delivered]="pedido.status === 'ENTREGUE'"
+                [class.canceled]="pedido.status === 'CANCELADO'"
+                [class.pending]="pedido.status === 'PENDENTE'">
+                {{ pedido.status }}
+              </span>
+            </td>
+            <td>
+              <select (change)="atualizarStatus(pedido, $any($event.target).value)">
+                <option value="">Alterar</option>
+                <option value="PENDENTE">Pendente</option>
+                <option value="PAGO">Pago</option>
+                <option value="ENVIADO">Enviado</option>
+                <option value="ENTREGUE">Entregue</option>
+                <option value="CANCELADO">Cancelado</option>
+              </select>
+            </td>
           </tr>
         </tbody>
       </table>
-    </div>
-    <div class="pagination">
-      <!-- botões de paginação -->
     </div>
   </div>
 </div>

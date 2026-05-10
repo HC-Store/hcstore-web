@@ -417,3 +417,15 @@
     height: 220px;
   }
 }
+
+.erro-msg {
+  color: #e74c3c;
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+}
+.sucesso-msg {
+  color: #39ff14;
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+  font-weight: 600;
+}

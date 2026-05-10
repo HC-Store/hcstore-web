@@ -2,133 +2,78 @@
 
   <div class="header">
     <h2>Usuários</h2>
-    <button class="btn" (click)="openForm()">Novo Usuário</button>
   </div>
 
-  <div class="table-card">
+  <p *ngIf="carregando" style="color:white; padding:20px;">Carregando...</p>
+  <p *ngIf="erro" style="color:#e74c3c; padding:20px;">{{ erro }}</p>
 
+  <div class="table-card">
     <table>
       <thead>
         <tr>
-          <th>ID Pedido</th>
-          <th>Data</th>
-          <th>Método</th>
-          <th>Cliente</th>
-          <th>Status</th>
-          <th>Preço</th>
+          <th>ID</th>
+          <th>Nome</th>
+          <th>E-mail</th>
+          <th>Telefone</th>
+          <th>CPF</th>
+          <th>Cadastro</th>
           <th>Ações</th>
         </tr>
       </thead>
 
       <tbody>
-        <tr *ngFor="let user of users; let i = index">
-
-          <td>#{{ user.id }}</td>
-          <td>{{ user.date }}</td>
-          <td>{{ user.method }}</td>
+        <tr *ngFor="let usuario of usuarios">
+          <td>#{{ usuario.id }}</td>
 
           <td class="user">
-           <div class="avatar">
-  {{ user.name.charAt(0) }}
-</div>
-            {{ user.name }}
+            <div class="avatar">{{ usuario.nome.charAt(0) }}</div>
+            {{ usuario.nome }} {{ usuario.sobrenome }}
           </td>
 
-          <td>
-  <span class="status"
-      [class.delivered]="user.status === 'entregue'"
-      [class.canceled]="user.status === 'cancelado'">
-
-  <span class="dot"></span>
-  {{ user.status }}
-
-</span>
-          </td>
-
-          <td>${{ user.price }}</td>
+          <td>{{ usuario.email }}</td>
+          <td>{{ usuario.telefone }}</td>
+          <td>{{ usuario.cpf }}</td>
+          <td>{{ usuario.createdAt | date:'dd/MM/yyyy' }}</td>
 
           <td class="actions">
-            <button class="edit" (click)="editUser(i)">Editar</button>
-            <button class="delete" (click)="deleteUser(i)">Excluir</button>
+            <button class="edit" (click)="editUser(usuario)">Editar</button>
+            <button class="delete" (click)="deleteUser(usuario.id)">Excluir</button>
           </td>
-
         </tr>
       </tbody>
     </table>
-
   </div>
 
   <!-- MODAL -->
- <div class="modal" *ngIf="showForm">
+  <div class="modal" *ngIf="showForm">
+    <div class="modal-content">
+      <h3 class="title">Editar Usuário</h3>
 
-  <div class="modal-content">
+      <div class="form-group">
+        <label>Nome</label>
+        <input [(ngModel)]="form.nome" placeholder="Nome" />
+      </div>
 
-    <h3 class="title">
-      {{ editingIndex !== null ? 'Editar Usuário' : 'Novo Usuário' }}
-    </h3>
+      <div class="form-group">
+        <label>Sobrenome</label>
+        <input [(ngModel)]="form.sobrenome" placeholder="Sobrenome" />
+      </div>
 
-    <div class="form-group">
-      <label>Nome</label>
-      <input [(ngModel)]="form.name" placeholder="Digite o nome" />
+      <div class="form-group">
+        <label>E-mail</label>
+        <input [(ngModel)]="form.email" placeholder="E-mail" />
+      </div>
+
+      <div class="form-group">
+        <label>Telefone</label>
+        <input [(ngModel)]="form.telefone" placeholder="Telefone" />
+      </div>
+
+      <div class="modal-actions">
+        <button class="save" (click)="saveUser()">Salvar</button>
+        <button class="cancel" (click)="closeForm()">Cancelar</button>
+      </div>
     </div>
-
-    <div class="form-group">
-      <label>Método</label>
-      <input [(ngModel)]="form.method" placeholder="Pix, PayPal..." />
-    </div>
-
-    <div class="form-group">
-      <label>Status</label>
-      <input [(ngModel)]="form.status" placeholder="entregue ou cancelado" />
-    </div>
-
-    <div class="form-group">
-      <label>Preço</label>
-      <input [(ngModel)]="form.price" placeholder="R$ 0,00" />
-    </div>
-
-    <div class="modal-actions">
-      <button class="save" (click)="saveUser()">Salvar</button>
-      <button class="cancel" (click)="closeForm()">Cancelar</button>
-    </div>
-
   </div>
-
-</div><div class="modal" *ngIf="showForm">
-
-  <div class="modal-content">
-
-    <h3 class="title">
-      {{ editingIndex !== null ? 'Editar Usuário' : 'Novo Usuário' }}
-    </h3>
-
-    <div class="form-group">
-      <label>Nome</label>
-      <input [(ngModel)]="form.name" placeholder="Digite o nome" />
-    </div>
-
-    <div class="form-group">
-      <label>Método</label>
-      <input [(ngModel)]="form.method" placeholder="Pix, PayPal..." />
-    </div>
-
-    <div class="form-group">
-      <label>Status</label>
-      <input [(ngModel)]="form.status" placeholder="entregue ou cancelado" />
-    </div>
-
-    <div class="form-group">
-      <label>Preço</label>
-      <input [(ngModel)]="form.price" placeholder="R$ 0,00" />
-    </div>
-
-    <div class="modal-actions">
-      <button class="save" (click)="saveUser()">Salvar</button>
-      <button class="cancel" (click)="closeForm()">Cancelar</button>
-    </div>
-
-  </div>
-
-</div>
 
 </div>

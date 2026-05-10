@@ -1,17 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 import { HeaderComponent } from '../../layout/header/header.component';
 import { FooterComponent } from '../../layout/footer/footer.component';
 import { ModalsComponent } from '../../components/modals/modals.component';
+import { ProdutosService, Produto } from '../../services/produtos.service';
 
 type ModalTipo = 'login' | 'register' | 'cart' | null;
-
-interface Produto {
-  nome: string;
-  imagem: string;
-}
 
 @Component({
   selector: 'app-product-list',
@@ -26,14 +22,14 @@ interface Produto {
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.css']
 })
-export class ProductListComponent {
+export class ProductListComponent implements OnInit {
   modalAberto: ModalTipo = null;
 
   categoriaSelecionada = '';
   tamanhoSelecionado = '';
   precoSelecionado = '';
 
-  categorias: string[] = [
+  categorias = [
     'Todos os Produtos',
     'Casual',
     'Streetwear',
@@ -47,9 +43,9 @@ export class ProductListComponent {
     'Acessórios'
   ];
 
-  tamanhos: string[] = ['M', 'G', 'GG', 'XG'];
+  tamanhos = ['M', 'G', 'GG', 'XG'];
 
-  faixasPreco: string[] = [
+  faixasPreco = [
     'R$0 - R$250',
     'R$250 - R$500',
     'R$500 - R$750',
@@ -57,6 +53,24 @@ export class ProductListComponent {
   ];
 
   produtos: Produto[] = [];
+
+  constructor(private produtosService: ProdutosService) {}
+
+  ngOnInit(): void {
+    this.carregarProdutos();
+  }
+
+  carregarProdutos(): void {
+    this.produtosService.listar().subscribe({
+      next: (res) => {
+        this.produtos = res;
+        console.log('Produtos carregados:', res);
+      },
+      error: (err) => {
+        console.error('Erro ao carregar produtos:', err);
+      }
+    });
+  }
 
   abrirLogin(): void {
     this.modalAberto = 'login';

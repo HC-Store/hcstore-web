@@ -163,35 +163,38 @@
 
     <div class="linha-vertical"></div>
 
-    <div class="resume">
-      <h1>Resumo</h1>
+<div class="resume">
+  <h1>Resumo</h1>
 
-      <div class="item" *ngFor="let item of checkoutData">
-        <span>{{ item.name }}</span>
-        <span class="price">{{ formatPrice(item.price * item.qty) }}</span>
-      </div>
+  <p class="erro-msg" *ngIf="erro" style="color:#e74c3c; font-size:0.85rem; margin-bottom:8px;">{{ erro }}</p>
+  <p class="sucesso-msg" *ngIf="sucesso" style="color:#39ff14; font-weight:600; margin-bottom:8px;">✓ {{ sucesso }}</p>
 
-      <div class="subtotal">
-        <span>Subtotal</span>
-        <span class="price">{{ formatPrice(subtotal) }}</span>
-      </div>
+  <div class="item" *ngFor="let item of itensCarrinho">
+    <span>{{ item.produto?.nome }}</span>
+    <span class="price">{{ formatPrice(item.produto?.preco * item.quantidade) }}</span>
+  </div>
 
-      <div class="frete">
-        <span>Frete</span>
-        <span class="gratis">GRÁTIS</span>
-      </div>
+  <div class="subtotal">
+    <span>Subtotal</span>
+    <span class="price">{{ formatPrice(subtotal) }}</span>
+  </div>
 
-      <hr />
+  <div class="frete">
+    <span>Frete</span>
+    <span class="gratis">GRÁTIS</span>
+  </div>
 
-      <div class="total">
-        <span>TOTAL</span>
-        <span>{{ formatPrice(total) }}</span>
-      </div>
+  <hr />
 
-      <button class="finish" type="button" (click)="finalizarCompra()">
-        Finalizar Compra
-      </button>
-    </div>
+  <div class="total">
+    <span>TOTAL</span>
+    <span>{{ formatPrice(total) }}</span>
+  </div>
+
+  <button class="finish" type="button" (click)="finalizarCompra()" [disabled]="carregando">
+    {{ carregando ? 'PROCESSANDO...' : 'Finalizar Compra' }}
+  </button>
+  </div>
   </section>
 </main>
 

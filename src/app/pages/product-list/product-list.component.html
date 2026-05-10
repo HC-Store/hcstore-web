@@ -5,7 +5,10 @@
 
 <main>
   <div class="catalogo">
+
+    <!-- FILTROS -->
     <section class="categorias">
+
       <h3 class="titulo-categoria">Categoria</h3>
 
       <button
@@ -17,7 +20,9 @@
         {{ categoria }}
       </button>
 
-      <h3 class="titulo-categoria tamanho-titulo">Tamanho</h3>
+      <h3 class="titulo-categoria tamanho-titulo">
+        Tamanho
+      </h3>
 
       <button
         class="filtro-item"
@@ -28,7 +33,9 @@
         {{ tamanho }}
       </button>
 
-      <h3 class="titulo-categoria preco-titulo">Faixa de Preço</h3>
+      <h3 class="titulo-categoria preco-titulo">
+        Faixa de Preço
+      </h3>
 
       <button
         class="filtro-item"
@@ -39,27 +46,74 @@
         {{ preco }}
       </button>
 
-      <button class="btn-limpar" (click)="limparFiltros()">
+      <button
+        class="btn-limpar"
+        (click)="limparFiltros()"
+      >
         Limpar filtros
       </button>
+
     </section>
 
+    <!-- PRODUTOS -->
     <section class="produtos">
-      <h2 class="titulo">Produtos em destaque</h2>
+
+      <h2 class="titulo">
+        Produtos em destaque
+      </h2>
 
       <div class="grid-produtos">
-        <div class="produto-card" *ngFor="let produto of produtos">
-          <img [src]="produto.imagem" [alt]="produto.nome" />
+
+        <div
+          class="produto-card"
+          *ngFor="let produto of produtos"
+        >
+
+          <!-- IMAGEM -->
+          <img
+             [src]="produto.imagens?.[0]?.url || produto.imagem || 'assets/img/sem-imagem.png'"
+             [alt]="produto.nome"
+          />
+
+          <!-- INFO -->
+          <div class="produto-info">
+
+            <h3>
+              {{ produto.nome }}
+            </h3>
+
+            <p
+              class="preco"
+              *ngIf="produto.preco"
+            >
+              {{ produto.preco | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+            </p>
+
+            <!-- BOTÃO -->
+            <a
+              [routerLink]="['/product-detail', produto.id]"
+              class="btn-produto"
+            >
+              Ver produto
+            </a>
+
+          </div>
+
         </div>
+
       </div>
+
     </section>
+
   </div>
 
+  <!-- DOTS -->
   <div class="dots">
     <span class="dot active"></span>
     <span class="dot"></span>
     <span class="dot"></span>
   </div>
+
 </main>
 
 <app-footer></app-footer>

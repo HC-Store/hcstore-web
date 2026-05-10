@@ -1,1 +1,126 @@
-<p>payment works!</p>
+<app-header
+  (openLogin)="abrirLogin()"
+  (openCart)="abrirCart()"
+></app-header>
+
+<main>
+  <section>
+
+    <!-- PAGAMENTO CONFIRMADO -->
+    <div *ngIf="sucesso" style="
+      position: fixed; inset: 0; background: rgba(0,0,0,0.9);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      z-index: 9999; color: white; text-align: center;">
+      <h1 style="font-size: 3rem; color: #1EFF00;">✓ Pagamento Confirmado!</h1>
+      <p style="font-size: 1.2rem; margin-top: 16px; color: #ccc;">Redirecionando para a página inicial...</p>
+    </div>
+
+    <div class="square">
+      <a routerLink="/checkout" class="back-link">
+        <h3>← Voltar</h3>
+      </a>
+
+      <h1>Pagamento</h1>
+
+      <p *ngIf="erro" style="color: #e74c3c; margin: 0 40px; font-weight: 600;">{{ erro }}</p>
+
+      <!-- MÉTODOS (visual apenas por enquanto) -->
+      <div class="square-conteiner">
+        <div class="square1"></div>
+        <div class="square1"></div>
+        <div class="square1"></div>
+      </div>
+
+      <!-- NÚMERO DO CARTÃO -->
+      <div class="card">
+        <label>Número do cartão</label>
+        <input
+          type="text"
+          maxlength="19"
+          placeholder="0000 0000 0000 0000"
+          [value]="cardData.numero"
+          (input)="formatarNumero($event)"
+        />
+      </div>
+
+      <!-- VALIDADE E CVV -->
+      <div class="validity">
+        <div class="box">
+          <label>Data de validade</label>
+          <input
+            type="text"
+            maxlength="5"
+            placeholder="MM/AA"
+            [value]="cardData.validade"
+            (input)="formatarValidade($event)"
+          />
+        </div>
+        <div class="box">
+          <label>CVV</label>
+          <input
+            type="text"
+            maxlength="4"
+            placeholder="123"
+            [value]="cardData.cvv"
+            (input)="formatarCvv($event)"
+          />
+        </div>
+      </div>
+
+      <!-- NOME -->
+      <div class="name">
+        <label>Nome do titular</label>
+        <input
+          type="text"
+          placeholder="Nome como está no cartão"
+          [value]="cardData.nome"
+          (input)="formatarNome($event)"
+        />
+      </div>
+
+      <button (click)="concluirCompra()" [disabled]="carregando">
+        {{ carregando ? 'PROCESSANDO...' : 'Concluir compra' }}
+      </button>
+    </div>
+
+    <!-- RESUMO -->
+    <div class="square2">
+      <hr>
+
+      <div *ngFor="let item of itensCarrinho" class="tennis">
+        <div>
+          <h3>
+            {{ item.produto?.nome || item.name }}
+            <br><br>
+            <span>{{ formatPrice((item.produto?.preco || item.price) * (item.quantidade || item.qty || 1)) }}</span>
+          </h3>
+        </div>
+      </div>
+
+      <div class="subtotal">
+        <span>Subtotal</span>
+        <span class="price">{{ formatPrice(subtotal) }}</span>
+      </div>
+
+      <div class="freight">
+        <span>Frete</span>
+        <span class="free">GRÁTIS</span>
+      </div>
+
+      <hr class="linha2">
+
+      <div class="total">
+        <span>Total</span>
+        <span>{{ formatPrice(subtotal) }}</span>
+      </div>
+    </div>
+
+  </section>
+</main>
+
+<app-footer></app-footer>
+<app-modals
+  [modalAberto]="modalAberto"
+  (closeModal)="fecharModal()"
+></app-modals>

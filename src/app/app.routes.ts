@@ -5,7 +5,7 @@ import { ColecoesComponent } from './pages/colecoes/colecoes.component';
 import { ProductListComponent } from './pages/product-list/product-list.component';
 import { ProductDetailComponent } from './pages/product-detail/product-detail.component';
 import { CheckoutComponent } from './pages/checkout/checkout.component';
-// import { PagamentoComponent } from './pages/pagamento/pagamento.component';
+import { PagamentoComponent } from './pages/pagamento/pagamento.component';
 
 import { AdminLayoutComponent } from './pages/admin/admin-layout/admin-layout.component';
 import { DashboardComponent } from './pages/admin/dashboard/dashboard.component';
@@ -13,6 +13,8 @@ import { ProductsComponent } from './pages/admin/products/products.component';
 import { OrdersComponent } from './pages/admin/orders/orders.component';
 import { UsersComponent } from './pages/admin/users/users.component';
 import { AddProductComponent } from './pages/admin/add-product/add-product.component';
+
+import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -37,7 +39,7 @@ export const routes: Routes = [
   },
 
   {
-    path: 'product-detail',
+    path: 'product-detail/:id',
     component: ProductDetailComponent
   },
 
@@ -45,43 +47,46 @@ export const routes: Routes = [
     path: 'checkout',
     component: CheckoutComponent
   },
-   // Quando criar a página de pagamento
-  // {
-  //   path: 'pagamento',
-  //   component: PagamentoComponent
-  // },
+   //Quando criar a página de pagamento
+   {
+    path: 'pagamento',
+    component: PagamentoComponent
+   },
 
-  {
-    path: 'admin',
-    component: AdminLayoutComponent,
-    children: [
-      {
-        path: '',
-        redirectTo: 'dashboard',
-        pathMatch: 'full'
-      },
-      {
-        path: 'dashboard',
-        component: DashboardComponent
-      },
-      {
-        path: 'produtos',
-        component: ProductsComponent
-      },
-      {
-        path: 'pedidos',
-        component: OrdersComponent
-      },
-      {
-        path: 'usuarios',
-        component: UsersComponent
-      },
-      {
-        path: 'adicionar-produto',
-        component: AddProductComponent
-      }
-    ]
-  },
+   {
+  path: 'admin',
+  component: AdminLayoutComponent,
+  canActivate: [AuthGuard],
+  children: [
+    {
+      path: '',
+      redirectTo: 'dashboard',
+      pathMatch: 'full'
+    },
+    {
+      path: 'dashboard',
+      component: DashboardComponent
+    },
+    {
+      path: 'produtos',
+      component: ProductsComponent
+    },
+    {
+      path: 'pedidos',
+      component: OrdersComponent
+    },
+    {
+      path: 'usuarios',
+      component: UsersComponent
+    },
+    {
+      path: 'adicionar-produto',
+      component: AddProductComponent
+    }
+  ]
+},
+
+  
 
   {
     path: '**',

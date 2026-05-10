@@ -1,5 +1,4 @@
 <div class="page">
-
   <h2>Adicionar Produto</h2>
 
   <div class="container">
@@ -7,17 +6,23 @@
     <!-- ESQUERDA (FORM) -->
     <div class="form-card">
 
+      <p class="sucesso-msg" *ngIf="sucesso">✓ {{ sucesso }}</p>
+      <p class="erro-msg" *ngIf="erro">{{ erro }}</p>
+
       <label>Nome do Produto</label>
-      <input placeholder="Digite o nome aqui" />
+      <input [(ngModel)]="produto.nome" placeholder="Digite o nome aqui" />
 
       <label>Descrição</label>
-      <textarea placeholder="Digite a descrição aqui"></textarea>
+      <textarea [(ngModel)]="produto.descricao" placeholder="Digite a descrição aqui"></textarea>
 
       <label>Categoria</label>
-      <input placeholder="Ex: Tênis, camisa, shorts" />
+      <select [(ngModel)]="produto.categoriaId">
+        <option [value]="null" disabled>Selecione uma categoria</option>
+        <option *ngFor="let cat of categorias" [value]="cat.id">{{ cat.nome }}</option>
+      </select>
 
       <label>Marca</label>
-      <input placeholder="Ex: Nike, Adidas" />
+      <input [(ngModel)]="produto.marca" placeholder="Ex: Nike, Adidas" />
 
       <label>Tamanho - clique para selecionar</label>
       <div class="sizes">
@@ -26,60 +31,24 @@
         </span>
       </div>
 
-      <label>Número de Estoque</label>
-      <input placeholder="Fox-3983" />
-
       <label>Quantidade no Estoque</label>
-      <input placeholder="1258" />
+      <input type="number" [(ngModel)]="produto.estoque" placeholder="Ex: 100" />
 
       <label>Preço</label>
-      <input placeholder="R$450,00" />
+      <input type="number" [(ngModel)]="produto.preco" placeholder="Ex: 189.90" />
 
-      <button class="btn">ADICIONAR</button>
+      <label>URL da Imagem</label>
+      <input [(ngModel)]="produto.imagem" placeholder="https://res.cloudinary.com/sua-imagem.jpg" />
 
-    </div>
+      <div class="image-preview" *ngIf="produto.imagem">
+        <img [src]="produto.imagem" alt="Preview" style="max-width: 100%; max-height: 200px; margin-top: 8px; border-radius: 8px;" />
+      </div>
 
-    <!-- DIREITA -->
-<div class="gallery-card">
-
-  <div class="gallery-header">
-    <span>Galeria de Produtos</span>
-    <small>{{ images.length }}/5 imagens</small>
-  </div>
-
-  <div class="gallery-grid">
-
-    <!-- IMAGENS -->
-    <div class="image-box"
-         *ngFor="let img of images; let i = index"
-         [class.main]="i === 0">
-
-      <img [src]="img" />
-
-      <button class="remove" (click)="removeImage(i)">✕</button>
-
-      <span *ngIf="i === 0" class="badge">Principal</span>
-
-    </div>
-
-    <!-- BOTÃO DE UPLOAD -->
-    <div class="upload-box"
-         *ngIf="images.length < 5"
-         (click)="fileInput.click()"
-         (dragover)="onDragOver($event)"
-         (drop)="onDrop($event)">
-
-      <input type="file"
-             #fileInput
-             hidden
-             multiple
-             accept="image/png, image/jpeg"
-             (change)="onMultipleSelected($event)" />
-
-      <span>+</span>
+      <button class="btn" (click)="salvar()" [disabled]="carregando">
+        {{ carregando ? 'SALVANDO...' : 'ADICIONAR' }}
+      </button>
 
     </div>
 
   </div>
-
 </div>

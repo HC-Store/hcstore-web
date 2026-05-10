@@ -1,91 +1,79 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 
 import { HeaderComponent } from '../../layout/header/header.component';
 import { FooterComponent } from '../../layout/footer/footer.component';
 import { ModalsComponent } from '../../components/modals/modals.component';
-
-interface ProdutoCarrinho {
-  name: string;
-  price: number;
-  size: string;
-  qty: number;
-  category: string;
-  image: string;
-}
+import { ApiService } from '../../services/api.service';
+import { CarrinhoService } from '../../services/carrinho.service';
+import { AuthService } from '../../services/auth.service';
 
 type ModalTipo = 'login' | 'register' | 'cart' | null;
 
 @Component({
   selector: 'app-product-detail',
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterModule,
-    HeaderComponent,
-    FooterComponent,
-    ModalsComponent
-  ],
+  imports: [CommonModule, RouterModule, HeaderComponent, FooterComponent, ModalsComponent],
   templateUrl: './product-detail.component.html',
   styleUrls: ['./product-detail.component.css']
 })
-export class ProductDetailComponent {
-  productName = 'ESSENTIALS "OFF-GRID" OVERSIZED TEE';
-  productPrice = 189.9;
-  productCategory = 'Camisetas';
+export class ProductDetailComponent implements OnInit {
 
-  thumbnails: string[] = [
-    'assets/image/miniatura1.png',
-    'assets/image/miniatura2.png'
-  ];
+  produto: any = null;
+  carregando = true;
+  erro = '';
 
-  mainImage: string = this.thumbnails[0];
+  mainImage: string = '';
+  thumbnails: string[] = [];
   selectedSize: string = '';
-
   modalAberto: ModalTipo = null;
+  sucesso = '';
 
-  accordionOpen = {
-    material: false,
-    lavagem: false,
-    envio: true
-  };
+  accordionOpen = { material: false, lavagem: false, envio: true };
 
-  trocarImagem(image: string): void {
-    this.mainImage = image;
+  tamanhos: string[] = ['M', 'G', 'GG', 'XG'];
+
+  constructor(
+    private route: ActivatedRoute,
+    private api: ApiService,
+    private carrinho: CarrinhoService,
+    private auth: AuthService
+  ) {}
+
+  ngOnInit(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.api.getProdutos().subscribe({
+        next: (produtos: any[]) => {
+          this.produto = produtos.find(p => p.id === Number(id));
+          if (this.produto) {
+            this.mainImage = this.produto.imagens?.[0]?.url || this.produto.imagem || 'assets/img/sem-imagem.png';
+            this.thumbnails = [this.mainImage];
+          }
+          this.carregando = false;
+        },
+        error: () => {
+          this.erro = 'Erro ao carregar produto.';
+          this.carregando = false;
+        }
+      });
+    }
   }
 
-  selecionarTamanho(size: string): void {
-    this.selectedSize = size;
-  }
+  trocarImagem(image: string): void { this.mainImage = image; }
+  selecionarTamanho(size: string): void { this.selectedSize = size; }
 
   toggleAccordion(section: 'material' | 'lavagem' | 'envio'): void {
-    const currentState = this.accordionOpen[section];
-
-    this.accordionOpen = {
-      material: false,
-      lavagem: false,
-      envio: false
-    };
-
-    this.accordionOpen[section] = !currentState;
+    const current = this.accordionOpen[section];
+    this.accordionOpen = { material: false, lavagem: false, envio: false };
+    this.accordionOpen[section] = !current;
   }
 
-  abrirLogin(): void {
-    this.modalAberto = 'login';
-  }
-
-  abrirRegister(): void {
-    this.modalAberto = 'register';
-  }
-
-  abrirCart(): void {
-    this.modalAberto = 'cart';
-  }
-
-  fecharModal(): void {
-    this.modalAberto = null;
-  }
+  abrirLogin(): void { this.modalAberto = 'login'; }
+  abrirRegister(): void { this.modalAberto = 'register'; }
+  abrirCart(): void { this.modalAberto = 'cart'; }
+  fecharModal(): void { this.modalAberto = null; }
 
   adicionarAoCarrinho(): void {
     if (!this.selectedSize) {
@@ -93,19 +81,13 @@ export class ProductDetailComponent {
       return;
     }
 
-    const product: ProdutoCarrinho = {
-      name: this.productName,
-      price: this.productPrice,
-      size: this.selectedSize,
-      qty: 1,
-      category: this.productCategory,
-      image: this.mainImage
-    };
+    if (!this.auth.isLoggedIn()) {
+      this.modalAberto = 'login';
+      return;
+    }
 
-    const cart: ProdutoCarrinho[] = JSON.parse(localStorage.getItem('cart') || '[]');
-    cart.push(product);
-    localStorage.setItem('cart', JSON.stringify(cart));
-
-    alert('Produto adicionado ao carrinho!');
+    this.carrinho.adicionarItem(this.produto.id, 1);
+    this.sucesso = 'Produto adicionado ao carrinho!';
+    setTimeout(() => { this.sucesso = ''; }, 2000);
   }
 }

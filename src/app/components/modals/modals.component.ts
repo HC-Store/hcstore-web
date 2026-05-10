@@ -1,144 +1,119 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-
-interface CartItem {
-  name: string;
-  price: number;
-  size?: string;
-  qty: number;
-  category?: string;
-  image?: string;
-}
+import { AuthService } from '../../services/auth.service';
+import { CarrinhoService } from '../../services/carrinho.service';
 
 type ModalTipo = 'login' | 'register' | 'cart' | null;
 
 @Component({
   selector: 'app-modals',
   standalone: true,
-  imports: [CommonModule,FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './modals.component.html',
   styleUrls: ['./modals.component.css']
 })
-export class ModalsComponent {
+export class ModalsComponent implements OnInit {
   @Input() modalAberto: ModalTipo = null;
   @Output() closeModal = new EventEmitter<void>();
 
-  loginData = {
-    email: '',
-    senha: ''
-  };
+  carregando = false;
+  erroLogin = '';
+  erroRegister = '';
+  sucessoLogin = '';
+  sucessoRegister = '';
+
+  loginData = { email: '', senha: '' };
 
   registerData = {
-    nome: '',
-    sobrenome: '',
-    dia: '',
-    mes: '',
-    ano: '',
-    sexo: '',
-    cpf: '',
-    telefone: '',
-    email: '',
-    senha: ''
+    nome: '', sobrenome: '', dia: '', mes: '', ano: '',
+    sexo: '', cpf: '', telefone: '', email: '', senha: ''
   };
 
-  get cart(): CartItem[] {
-    return JSON.parse(localStorage.getItem('cart') || '[]');
+  itensCarrinho: any[] = [];
+
+  constructor(
+    private auth: AuthService,
+    public carrinho: CarrinhoService
+  ) {}
+
+  ngOnInit(): void {
+    this.carrinho.itens.subscribe(itens => {
+      this.itensCarrinho = itens;
+    });
   }
 
   get totalCart(): number {
-    return this.cart.reduce((total, item) => total + item.price * item.qty, 0);
+    return this.carrinho.total;
   }
 
   formatPrice(value: number): string {
     return 'R$' + value.toFixed(2).replace('.', ',');
   }
 
-  abrirLogin(): void {
-    this.modalAberto = 'login';
-  }
+  abrirLogin(): void { this.modalAberto = 'login'; }
+  abrirRegister(): void { this.modalAberto = 'register'; }
+  abrirCart(): void { this.modalAberto = 'cart'; }
+  fechar(): void { this.closeModal.emit(); }
 
-  abrirRegister(): void {
-    this.modalAberto = 'register';
-  }
-
-  abrirCart(): void {
-    this.modalAberto = 'cart';
-  }
-
-  fechar(): void {
-    this.closeModal.emit();
-  }
-
-  diminuirQuantidade(index: number): void {
-    const cart = this.cart;
-
-    if (cart[index].qty > 1) {
-      cart[index].qty -= 1;
-      localStorage.setItem('cart', JSON.stringify(cart));
-    }
-  }
-
-  aumentarQuantidade(index: number): void {
-    const cart = this.cart;
-    cart[index].qty += 1;
-    localStorage.setItem('cart', JSON.stringify(cart));
-  }
-
-  removerItem(index: number): void {
-    const cart = this.cart;
-    cart.splice(index, 1);
-    localStorage.setItem('cart', JSON.stringify(cart));
+  removerItem(itemId: number): void {
+    this.carrinho.removerItem(itemId);
   }
 
   irParaCheckout(): void {
-    localStorage.setItem('checkoutData', JSON.stringify(this.cart));
+    localStorage.setItem('checkoutData', JSON.stringify(this.itensCarrinho));
   }
 
   submitLogin(): void {
     const { email, senha } = this.loginData;
+    this.erroLogin = '';
+    this.sucessoLogin = '';
 
     if (!email.trim() || !senha.trim()) {
-      alert('Preencha todos os campos.');
+      this.erroLogin = 'Preencha todos os campos.';
       return;
     }
 
-    alert('Login enviado com sucesso.');
-    this.fechar();
+    this.carregando = true;
+    this.auth.login(email, senha).subscribe({
+      next: () => {
+        this.carregando = false;
+        this.sucessoLogin = 'Login realizado com sucesso!';
+        this.carrinho.carregarCarrinho();
+        setTimeout(() => { this.fechar(); }, 1500);
+      },
+      error: (err) => {
+        this.carregando = false;
+        this.erroLogin = err.error?.erro || 'E-mail ou senha incorretos.';
+      }
+    });
   }
 
   submitRegister(): void {
-    const {
-      nome,
-      sobrenome,
-      dia,
-      mes,
-      ano,
-      sexo,
-      cpf,
-      telefone,
-      email,
-      senha
-    } = this.registerData;
+    const { nome, sobrenome, dia, mes, ano, sexo, cpf, telefone, email, senha } = this.registerData;
+    this.erroRegister = '';
+    this.sucessoRegister = '';
 
-    if (
-      !nome.trim() ||
-      !sobrenome.trim() ||
-      !dia.trim() ||
-      !mes.trim() ||
-      !ano.trim() ||
-      !sexo.trim() ||
-      !cpf.trim() ||
-      !telefone.trim() ||
-      !email.trim() ||
-      !senha.trim()
-    ) {
-      alert('Preencha todos os campos.');
+    if (!nome.trim() || !sobrenome.trim() || !dia.trim() || !mes.trim() || !ano.trim() ||
+        !sexo.trim() || !cpf.trim() || !telefone.trim() || !email.trim() || !senha.trim()) {
+      this.erroRegister = 'Preencha todos os campos.';
       return;
     }
 
-    alert('Cadastro enviado com sucesso.');
-    this.fechar();
+    const dataNascimento = `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
+
+    this.carregando = true;
+    this.auth.register(nome, sobrenome, email, senha, cpf, telefone, sexo, dataNascimento).subscribe({
+      next: () => {
+        this.carregando = false;
+        this.sucessoRegister = 'Conta criada com sucesso!';
+        setTimeout(() => { this.modalAberto = 'login'; }, 1500);
+      },
+      error: (err) => {
+        this.carregando = false;
+        this.erroRegister = err.error?.erro || 'Erro ao criar conta. Tente novamente.';
+      }
+    });
   }
 }
