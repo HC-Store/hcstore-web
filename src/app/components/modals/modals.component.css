@@ -68,7 +68,7 @@
 }
 
 .modal-form input {
-  width: 100%;
+  width: 95%;
   height: 44px;
   background: #000;
   border: 1px solid #7d7d7d;
@@ -113,7 +113,7 @@
 
 .sexo-box,
 .cpf-box {
-  width: 50%;
+  width: 47.9%;
 }
 
 .radio-group {
