@@ -78,13 +78,14 @@
 /* PARTE PRETA */
 .launch-bottom {
   background: #000;
-  min-height: 500px;
+  min-height: 550px;
   padding: 40px 40px 20px;
 
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 55px;
+  margin-bottom: 50px;
 }
 
 .product-image {
