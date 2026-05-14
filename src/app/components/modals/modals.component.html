@@ -57,6 +57,139 @@
   </div>
 </div>
 
+<!-- BOAS-VINDAS APOS LOGIN -->
+<div
+  class="global-modal profile-welcome-modal"
+  [class.active]="modalAberto === 'profileWelcome'"
+  *ngIf="modalAberto === 'profileWelcome'"
+>
+  <button class="global-modal-close" (click)="fechar()">&times;</button>
+
+  <div class="profile-welcome-card">
+    <h1>Bem-vindo(a) de volta!</h1>
+    <p>Deixe suas informações sempre atualizadas</p>
+
+    <button class="profile-action-btn profile-edit-btn" type="button" (click)="abrirProfileEdit()">
+      Editar informações
+    </button>
+
+    <button class="profile-action-btn profile-exit-btn" type="button" (click)="sairPerfil()">
+      Sair
+    </button>
+  </div>
+</div>
+
+<!-- EDITAR INFORMACOES -->
+<div
+  class="global-modal profile-edit-modal"
+  [class.active]="modalAberto === 'profileEdit'"
+  *ngIf="modalAberto === 'profileEdit'"
+>
+  <button class="global-modal-close" (click)="fechar()">&times;</button>
+
+  <div class="profile-edit-card">
+    <div class="profile-edit-header">
+      <h1>Editar informações</h1>
+      <p>Atualize suas informações para receber novidades</p>
+    </div>
+
+    <form class="profile-edit-form" (ngSubmit)="salvarPerfil()">
+      <div class="profile-row-2">
+        <input type="text" name="perfilNome" [(ngModel)]="profileData.nome" placeholder="Nome" />
+        <input type="text" name="perfilSobrenome" [(ngModel)]="profileData.sobrenome" placeholder="Sobrenome" />
+      </div>
+
+      <span class="profile-field-label">Data de nascimento</span>
+      <div class="profile-row-3">
+        <input
+          type="text"
+          name="perfilDia"
+          [(ngModel)]="profileData.dia"
+          (ngModelChange)="apenasNumeros('dia', $event)"
+          placeholder="Dia"
+          class="centered"
+          maxlength="2"
+        />
+        <input
+          type="text"
+          name="perfilMes"
+          [(ngModel)]="profileData.mes"
+          (ngModelChange)="apenasNumeros('mes', $event)"
+          placeholder="Mês"
+          class="centered"
+          maxlength="2"
+        />
+        <input
+          type="text"
+          name="perfilAno"
+          [(ngModel)]="profileData.ano"
+          (ngModelChange)="apenasNumeros('ano', $event)"
+          placeholder="Ano"
+          class="centered"
+          maxlength="4"
+        />
+      </div>
+
+      <div class="profile-sexo-cpf-row">
+        <div>
+          <span class="profile-field-label">Sexo</span>
+          <div class="profile-radio-group">
+            <label class="profile-radio-label">
+              <input type="radio" name="perfilSexo" value="Masculino" [(ngModel)]="profileData.sexo" />
+              Masculino
+            </label>
+            <label class="profile-radio-label">
+              <input type="radio" name="perfilSexo" value="Feminino" [(ngModel)]="profileData.sexo" />
+              Feminino
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <span class="profile-field-label">CPF</span>
+          <input
+            type="text"
+            name="perfilCpf"
+            [ngModel]="profileData.cpf"
+            (ngModelChange)="formatarCpf($event)"
+            placeholder="000.000.000-00"
+            maxlength="14"
+          />
+        </div>
+      </div>
+
+      <div class="profile-field-group">
+        <input
+          type="tel"
+          name="perfilTelefone"
+          [ngModel]="profileData.telefone"
+          (ngModelChange)="formatarTelefone($event)"
+          placeholder="Telefone: (xx) 0 0000-0000"
+        />
+      </div>
+
+      <div class="profile-field-group">
+        <input type="email" name="perfilEmail" [(ngModel)]="profileData.email" placeholder="Endereço de e-mail" />
+      </div>
+
+      <div class="profile-field-group profile-password-field">
+        <input type="password" name="perfilSenha" [(ngModel)]="profileData.senha" placeholder="Nova senha" />
+      </div>
+
+      <button class="profile-save-btn" type="submit" [disabled]="carregando">
+        {{ carregando ? 'Salvando...' : 'Salvar' }}
+      </button>
+      <button class="profile-cancel-btn" type="button" (click)="cancelarEdicaoPerfil()">
+        Cancelar
+      </button>
+
+      <div class="profile-message" *ngIf="mensagemPerfil" [ngClass]="tipoMensagemPerfil">
+        {{ mensagemPerfil }}
+      </div>
+    </form>
+  </div>
+</div>
+
 <!-- CRIAR CONTA -->
 <div
   class="global-modal register-modal"
