@@ -1,9 +1,17 @@
 :host {
   display: block;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 footer {
   width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
   background-color: black;
   color: #1eff00;
   padding: 48px 24px;
@@ -17,6 +25,7 @@ footer {
   grid-template-columns: 1.3fr 1fr 1fr 1fr;
   gap: 32px;
   align-items: start;
+  overflow-x: hidden;
 }
 
 footer h1 {

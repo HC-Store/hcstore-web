@@ -78,8 +78,8 @@
 /* PARTE PRETA */
 .launch-bottom {
   background: #000;
-  min-height: 570px;
-  padding: 55px 40px;
+  min-height: 500px;
+  padding: 40px 40px 20px;
 
   display: flex;
   align-items: center;

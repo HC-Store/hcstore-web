@@ -139,23 +139,49 @@
     <div class="cart-content">
       <div class="cart-items">
         <ng-container *ngIf="itensCarrinho.length > 0; else carrinhoVazio">
-      <article class="cart-item" *ngFor="let item of itensCarrinho">
+   <article class="cart-item" *ngFor="let item of itensCarrinho">
   <img
     [src]="item.produto?.imagem || 'https://placehold.co/170x140/1a1a1a/ffffff?text=PRODUTO'"
     [alt]="item.produto?.nome"
   />
+
   <div class="item-info">
+
     <div class="item-header">
       <div>
         <h2>{{ item.produto?.nome }}</h2>
-        <p class="category">{{ item.produto?.categoria || 'Produto' }}</p>
+       <p class="category">
+  {{ item.produto?.categoria || 'Produto' }}
+</p>
+
+<p class="size-text">
+  Tamanho: {{ item.tamanho || 'Único' }}
+</p>
       </div>
-      <button class="remove-btn" (click)="removerItem(item.id)">x</button>
+
+      <button class="remove-btn" (click)="removerItem(item.id)">
+        x
+      </button>
     </div>
-    <div class="item-controls">
-      <span class="size">Qtd: {{ item.quantidade }}</span>
-    </div>
-    <p class="item-price">{{ formatPrice(item.produto?.preco * item.quantidade) }}</p>
+
+  <div class="qty-box">
+  <button class="qty-btn" (click)="diminuirQtd(item)">
+    -
+  </button>
+
+  <span class="qty">
+    {{ item.quantidade }}
+  </span>
+
+  <button class="qty-btn" (click)="aumentarQtd(item)">
+    +
+  </button>
+</div>
+
+    <p class="item-price">
+      {{ formatPrice(item.produto?.preco * item.quantidade) }}
+    </p>
+
   </div>
 </article>
         </ng-container>
