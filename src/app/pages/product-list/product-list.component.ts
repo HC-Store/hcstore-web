@@ -7,7 +7,13 @@ import { FooterComponent } from '../../layout/footer/footer.component';
 import { ModalsComponent } from '../../components/modals/modals.component';
 import { ProdutosService, Produto } from '../../services/produtos.service';
 
-type ModalTipo = 'login' | 'register' | 'cart' | null;
+type ModalTipo =
+  | 'login'
+  | 'register'
+  | 'cart'
+  | 'profileWelcome'
+  | 'profileEdit'
+  | null;
 
 @Component({
   selector: 'app-product-list',
@@ -24,6 +30,8 @@ type ModalTipo = 'login' | 'register' | 'cart' | null;
 })
 export class ProductListComponent implements OnInit {
   modalAberto: ModalTipo = null;
+
+  filtroAberto = false;
 
   categoriaSelecionada = '';
   tamanhoSelecionado = '';
@@ -64,7 +72,6 @@ export class ProductListComponent implements OnInit {
     this.produtosService.listar().subscribe({
       next: (res) => {
         this.produtos = res;
-        console.log('Produtos carregados:', res);
       },
       error: (err) => {
         console.error('Erro ao carregar produtos:', err);
@@ -73,7 +80,15 @@ export class ProductListComponent implements OnInit {
   }
 
   abrirLogin(): void {
-    this.modalAberto = 'login';
+    const usuario = localStorage.getItem('usuarioLogado');
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+
+    if (usuario === 'true' || token || user) {
+      this.modalAberto = 'profileWelcome';
+    } else {
+      this.modalAberto = 'login';
+    }
   }
 
   abrirCart(): void {
@@ -82,6 +97,14 @@ export class ProductListComponent implements OnInit {
 
   fecharModal(): void {
     this.modalAberto = null;
+  }
+
+  toggleFiltro(): void {
+    this.filtroAberto = !this.filtroAberto;
+  }
+
+  fecharFiltro(): void {
+    this.filtroAberto = false;
   }
 
   selecionarCategoria(categoria: string): void {

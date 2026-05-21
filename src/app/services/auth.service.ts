@@ -22,12 +22,16 @@ register(nome: string, sobrenome: string, email: string, senha: string, cpf: str
 }
 
   logout() {
+    localStorage.removeItem('usuarioLogado');
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     this.router.navigate(['/login']);
   }
 
   isLoggedIn(): boolean {
-    return !!localStorage.getItem('token');
+    return !!localStorage.getItem('token') ||
+      localStorage.getItem('usuarioLogado') === 'true' ||
+      !!localStorage.getItem('user');
   }
 
   getToken(): string | null {

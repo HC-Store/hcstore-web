@@ -4,12 +4,21 @@
 ></app-header>
 
 <main>
+
+  <!-- BOTÃO MOBILE -->
+  <button class="btn-filtro-mobile" type="button" (click)="toggleFiltro()">
+    {{ filtroAberto ? 'Fechar filtros' : 'Filtros' }}
+  </button>
+
   <div class="catalogo">
 
     <!-- FILTROS -->
-    <section class="categorias">
+    <section class="categorias" [class.filtro-aberto]="filtroAberto">
+    
 
-      <h3 class="titulo-categoria">Categoria</h3>
+      <h3 class="titulo-categoria">
+        Categoria
+      </h3>
 
       <button
         class="filtro-item"
@@ -53,6 +62,14 @@
         Limpar filtros
       </button>
 
+      <!-- FECHAR FILTRO MOBILE -->
+      <button
+        class="btn-fechar-filtro"
+        (click)="fecharFiltro()"
+      >
+        Fechar filtros
+      </button>
+
     </section>
 
     <!-- PRODUTOS -->
@@ -69,13 +86,11 @@
           *ngFor="let produto of produtos"
         >
 
-          <!-- IMAGEM -->
           <img
-             [src]="produto.imagens?.[0]?.url || produto.imagem || 'assets/img/sem-imagem.png'"
-             [alt]="produto.nome"
+            [src]="produto.imagens?.[0]?.url || produto.imagem || 'assets/img/sem-imagem.png'"
+            [alt]="produto.nome"
           />
 
-          <!-- INFO -->
           <div class="produto-info">
 
             <h3>
@@ -89,7 +104,6 @@
               {{ produto.preco | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
             </p>
 
-            <!-- BOTÃO -->
             <a
               [routerLink]="['/product-detail', produto.id]"
               class="btn-produto"

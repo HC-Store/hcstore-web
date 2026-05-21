@@ -7,7 +7,13 @@ import { HeaderComponent } from '../../layout/header/header.component';
 import { FooterComponent } from '../../layout/footer/footer.component';
 import { ModalsComponent } from '../../components/modals/modals.component';
 
-type ModalTipo = 'login' | 'register' | 'cart' | null;
+type ModalTipo =
+  | 'login'
+  | 'register'
+  | 'cart'
+  | 'profileWelcome'
+  | 'profileEdit'
+  | null;
 
 @Component({
   selector: 'app-pagamento',
@@ -24,7 +30,6 @@ type ModalTipo = 'login' | 'register' | 'cart' | null;
   styleUrls: ['./pagamento.component.css']
 })
 export class PagamentoComponent implements OnInit {
-
   modalAberto: ModalTipo = null;
 
   carregando = false;
@@ -42,102 +47,63 @@ export class PagamentoComponent implements OnInit {
     nome: ''
   };
 
-  constructor(
-    private router: Router
-  ) {}
+  constructor(private router: Router) {}
 
   ngOnInit(): void {
-
     this.itensCarrinho = JSON.parse(
       localStorage.getItem('checkoutData') || '[]'
     );
   }
 
   selecionarPagamento(tipo: string): void {
-
     this.metodoPagamento = tipo;
   }
 
   get subtotal(): number {
-
-    return this.itensCarrinho.reduce(
-
-      (total, item) => {
-
-        return total +
-
-        (
-          (item.produto?.preco || item.price || 0)
-          *
+    return this.itensCarrinho.reduce((total, item) => {
+      return (
+        total +
+        (item.produto?.preco || item.price || 0) *
           (item.quantidade || item.qty || 1)
-        );
-      },
-
-      0
-    );
+      );
+    }, 0);
   }
 
   formatPrice(value: number): string {
-
-    return 'R$' +
-      value.toFixed(2).replace('.', ',');
+    return 'R$' + value.toFixed(2).replace('.', ',');
   }
 
   formatarNumero(event: any): void {
+    let value = event.target.value.replace(/\D/g, '');
 
-    let value =
-      event.target.value.replace(/\D/g, '');
-
-    value =
-      value.replace(/(\d{4})(?=\d)/g, '$1 ');
+    value = value.replace(/(\d{4})(?=\d)/g, '$1 ');
 
     this.cardData.numero = value;
   }
 
   formatarValidade(event: any): void {
-
-    let value =
-      event.target.value.replace(/\D/g, '');
+    let value = event.target.value.replace(/\D/g, '');
 
     if (value.length > 2) {
-
-      value =
-        value.slice(0, 2) +
-        '/' +
-        value.slice(2, 4);
+      value = value.slice(0, 2) + '/' + value.slice(2, 4);
     }
 
     this.cardData.validade = value;
   }
 
   formatarCvv(event: any): void {
-
-    this.cardData.cvv =
-      event.target.value.replace(/\D/g, '');
+    this.cardData.cvv = event.target.value.replace(/\D/g, '');
   }
 
   formatarNome(event: any): void {
+    const value = event.target.value.replace(/[^a-zA-ZÀ-ÿ\s]/g, '');
 
-    let value =
-      event.target.value.replace(
-        /[^a-zA-ZÀ-ÿ\s]/g,
-        ''
-      );
-
-    this.cardData.nome =
-      value.toUpperCase();
+    this.cardData.nome = value.toUpperCase();
   }
 
   concluirCompra(): void {
-
     if (this.metodoPagamento === 'cartao') {
-
-      const {
-        numero,
-        validade,
-        cvv,
-        nome
-      } = this.cardData;
+      const { numero, validade, cvv, nome } = this.cardData;
 
       if (
         !numero.trim() ||
@@ -145,53 +111,44 @@ export class PagamentoComponent implements OnInit {
         !cvv.trim() ||
         !nome.trim()
       ) {
-
-        this.erro =
-          'Preencha todos os dados do cartão.';
-
+        this.erro = 'Preencha todos os dados do cartão.';
         return;
       }
     }
 
     this.erro = '';
-
     this.carregando = true;
 
     setTimeout(() => {
-
       this.carregando = false;
-
       this.sucesso = true;
 
-      localStorage.removeItem(
-        'checkoutData'
-      );
-
-      localStorage.removeItem(
-        'cart'
-      );
+      localStorage.removeItem('checkoutData');
+      localStorage.removeItem('cart');
 
       setTimeout(() => {
-
         this.router.navigate(['/home']);
-
       }, 3000);
-
     }, 2000);
   }
 
   abrirLogin(): void {
+    const usuario = localStorage.getItem('usuarioLogado');
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
 
-    this.modalAberto = 'login';
+    if (usuario === 'true' || token || user) {
+      this.modalAberto = 'profileWelcome';
+    } else {
+      this.modalAberto = 'login';
+    }
   }
 
   abrirCart(): void {
-
     this.modalAberto = 'cart';
   }
 
   fecharModal(): void {
-
     this.modalAberto = null;
   }
 }

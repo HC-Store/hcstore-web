@@ -25,32 +25,38 @@ export const routes: Routes = [
 
   {
     path: 'home',
-    component: HomeComponent
+    component: HomeComponent,
+    title: 'HC Store'
   },
 
   {
     path: 'colecoes',
-    component: ColecoesComponent
+    component: ColecoesComponent,
+    title: 'Colecoes | HC Store'
   },
 
   {
     path: 'product-list',
-    component: ProductListComponent
+    component: ProductListComponent,
+    title: 'Produtos | HC Store'
   },
 
   {
     path: 'product-detail/:id',
-    component: ProductDetailComponent
+    component: ProductDetailComponent,
+    title: 'Detalhes do produto | HC Store'
   },
 
   {
     path: 'checkout',
-    component: CheckoutComponent
+    component: CheckoutComponent,
+    title: 'Checkout | HC Store'
   },
    //Quando criar a página de pagamento
    {
     path: 'pagamento',
-    component: PagamentoComponent
+    component: PagamentoComponent,
+    title: 'Pagamento | HC Store'
    },
 
    {
@@ -65,23 +71,28 @@ export const routes: Routes = [
     },
     {
       path: 'dashboard',
-      component: DashboardComponent
+      component: DashboardComponent,
+      title: 'Dashboard | HC Store Admin'
     },
     {
       path: 'produtos',
-      component: ProductsComponent
+      component: ProductsComponent,
+      title: 'Produtos | HC Store Admin'
     },
     {
       path: 'pedidos',
-      component: OrdersComponent
+      component: OrdersComponent,
+      title: 'Pedidos | HC Store Admin'
     },
     {
       path: 'usuarios',
-      component: UsersComponent
+      component: UsersComponent,
+      title: 'Usuarios | HC Store Admin'
     },
     {
       path: 'adicionar-produto',
-      component: AddProductComponent
+      component: AddProductComponent,
+      title: 'Adicionar produto | HC Store Admin'
     }
   ]
 },
@@ -93,6 +104,3 @@ export const routes: Routes = [
     redirectTo: 'home'
   }
 ];
-
-
-

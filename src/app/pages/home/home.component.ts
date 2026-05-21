@@ -6,7 +6,13 @@ import { HeaderComponent } from '../../layout/header/header.component';
 import { FooterComponent } from '../../layout/footer/footer.component';
 import { ModalsComponent } from '../../components/modals/modals.component';
 
-type ModalTipo = 'login' | 'register' | 'cart' | null;
+type ModalTipo =
+  | 'login'
+  | 'register'
+  | 'cart'
+  | 'profileWelcome'
+  | 'profileEdit'
+  | null;
 
 @Component({
   selector: 'app-home',
@@ -25,7 +31,15 @@ export class HomeComponent {
   modalAberto: ModalTipo = null;
 
   abrirLogin(): void {
-    this.modalAberto = 'login';
+    const usuario = localStorage.getItem('usuarioLogado');
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+
+    if (usuario === 'true' || token || user) {
+      this.modalAberto = 'profileWelcome';
+    } else {
+      this.modalAberto = 'login';
+    }
   }
 
   abrirRegister(): void {
