@@ -6,7 +6,13 @@ import { HeaderComponent } from '../../layout/header/header.component';
 import { FooterComponent } from '../../layout/footer/footer.component';
 import { ModalsComponent } from '../../components/modals/modals.component';
 
-type ModalTipo = 'login' | 'register' | 'cart' | null;
+type ModalTipo =
+  | 'login'
+  | 'register'
+  | 'cart'
+  | 'profileWelcome'
+  | 'profileEdit'
+  | null;
 
 @Component({
   selector: 'app-colecoes',
@@ -34,14 +40,15 @@ export class ColecoesComponent implements OnInit, OnDestroy {
 
   launchDate = new Date();
 
-constructor() {
-  this.launchDate = new Date();
-  this.launchDate.setMonth(this.launchDate.getMonth() + 1);
-  this.launchDate.setHours(12, 45, 9, 0);
-}
+  constructor() {
+    this.launchDate = new Date();
+    this.launchDate.setMonth(this.launchDate.getMonth() + 1);
+    this.launchDate.setHours(12, 45, 9, 0);
+  }
 
   ngOnInit(): void {
     this.updateCountdown();
+
     this.intervalId = setInterval(() => {
       this.updateCountdown();
     }, 1000);
@@ -54,7 +61,15 @@ constructor() {
   }
 
   abrirLogin(): void {
-    this.modalAberto = 'login';
+    const usuario = localStorage.getItem('usuarioLogado');
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+
+    if (usuario === 'true' || token || user) {
+      this.modalAberto = 'profileWelcome';
+    } else {
+      this.modalAberto = 'login';
+    }
   }
 
   abrirRegister(): void {

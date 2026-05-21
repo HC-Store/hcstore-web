@@ -9,17 +9,31 @@ import { ModalsComponent } from '../../components/modals/modals.component';
 import { ApiService } from '../../services/api.service';
 import { CarrinhoService } from '../../services/carrinho.service';
 
-type ModalTipo = 'login' | 'register' | 'cart' | null;
+type ModalTipo =
+  | 'login'
+  | 'register'
+  | 'cart'
+  | 'profileWelcome'
+  | 'profileEdit'
+  | null;
 
 @Component({
   selector: 'app-checkout',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, HeaderComponent, FooterComponent, ModalsComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterModule,
+    HeaderComponent,
+    FooterComponent,
+    ModalsComponent
+  ],
   templateUrl: './checkout.component.html',
   styleUrls: ['./checkout.component.scss']
 })
 export class CheckoutComponent implements OnInit {
   modalAberto: ModalTipo = null;
+
   carregando = false;
   erro = '';
   sucesso = '';
@@ -51,17 +65,44 @@ export class CheckoutComponent implements OnInit {
       this.itensCarrinho = itens;
     });
 
-    // pré-preenche email e telefone do usuário logado
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-    if (user.email) this.formData.email = user.email;
-    if (user.telefone) this.formData.telefone = user.telefone;
-    if (user.nome) this.formData.nome = user.nome;
-    if (user.sobrenome) this.formData.sobrenome = user.sobrenome;
+
+    if (user.email) {
+      this.formData.email = user.email;
+    }
+
+    if (user.telefone) {
+      this.formData.telefone = user.telefone;
+    }
+
+    if (user.nome) {
+      this.formData.nome = user.nome;
+    }
+
+    if (user.sobrenome) {
+      this.formData.sobrenome = user.sobrenome;
+    }
   }
 
-  abrirLogin(): void { this.modalAberto = 'login'; }
-  abrirCart(): void { this.modalAberto = 'cart'; }
-  fecharModal(): void { this.modalAberto = null; }
+  abrirLogin(): void {
+    const usuario = localStorage.getItem('usuarioLogado');
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+
+    if (usuario === 'true' || token || user) {
+      this.modalAberto = 'profileWelcome';
+    } else {
+      this.modalAberto = 'login';
+    }
+  }
+
+  abrirCart(): void {
+    this.modalAberto = 'cart';
+  }
+
+  fecharModal(): void {
+    this.modalAberto = null;
+  }
 
   get subtotal(): number {
     return this.itensCarrinho.reduce((total, item) => {
@@ -79,12 +120,21 @@ export class CheckoutComponent implements OnInit {
 
   async buscarCep(): Promise<void> {
     const cep = this.formData.cep.replace(/\D/g, '');
-    if (cep.length !== 8) { alert('CEP inválido'); return; }
+
+    if (cep.length !== 8) {
+      alert('CEP inválido');
+      return;
+    }
 
     try {
       const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
       const dados = await response.json();
-      if (dados.erro) { alert('CEP não encontrado'); return; }
+
+      if (dados.erro) {
+        alert('CEP não encontrado');
+        return;
+      }
+
       this.formData.endereco = dados.logradouro || '';
       this.formData.bairro = dados.bairro || '';
       this.formData.cidade = dados.localidade || '';
@@ -95,10 +145,30 @@ export class CheckoutComponent implements OnInit {
   }
 
   finalizarCompra(): void {
-    const { email, telefone, nome, sobrenome, cep, endereco, bairro, cidade, estado, casaApartamento, numeroBloco } = this.formData;
+    const {
+      email,
+      telefone,
+      nome,
+      sobrenome,
+      cep,
+      endereco,
+      bairro,
+      cidade,
+      estado,
+      numeroBloco
+    } = this.formData;
 
-    if (!email.trim() || !telefone.trim() || !nome.trim() || !sobrenome.trim() ||
-        !cep.trim() || !endereco.trim() || !cidade.trim() || !estado.trim() || !numeroBloco.trim()) {
+    if (
+      !email.trim() ||
+      !telefone.trim() ||
+      !nome.trim() ||
+      !sobrenome.trim() ||
+      !cep.trim() ||
+      !endereco.trim() ||
+      !cidade.trim() ||
+      !estado.trim() ||
+      !numeroBloco.trim()
+    ) {
       this.erro = 'Preencha todos os campos obrigatórios.';
       return;
     }
@@ -113,7 +183,6 @@ export class CheckoutComponent implements OnInit {
 
     const user = JSON.parse(localStorage.getItem('user') || '{}');
 
-    // 1. Salva o endereço
     this.api.createEndereco({
       rua: `${endereco}, ${bairro}`,
       numero: numeroBloco,
@@ -123,8 +192,6 @@ export class CheckoutComponent implements OnInit {
       usuarioId: user.id
     }).subscribe({
       next: (enderecoSalvo: any) => {
-
-        // 2. Cria o pedido com o enderecoId retornado
         this.api.createPedido({
           usuarioId: user.id,
           enderecoId: enderecoSalvo.id
@@ -132,8 +199,12 @@ export class CheckoutComponent implements OnInit {
           next: () => {
             this.carregando = false;
             this.sucesso = 'Pedido realizado com sucesso!';
-            this.carrinho.carregarCarrinho(); // atualiza carrinho
-            setTimeout(() => this.router.navigate(['/pagamento']), 2000);
+
+            this.carrinho.carregarCarrinho();
+
+            setTimeout(() => {
+              this.router.navigate(['/pagamento']);
+            }, 2000);
           },
           error: (err) => {
             this.carregando = false;

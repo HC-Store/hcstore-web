@@ -1,12 +1,15 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from './api.service';
 import { AuthService } from './auth.service';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { catchError, switchMap, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CarrinhoService {
+
+  private readonly localStorageKey = 'hcStoreCarrinho';
 
   private carrinhoId: number | null = null;
 
@@ -33,21 +36,56 @@ export class CarrinhoService {
     return this.itens$.getValue();
   }
 
+  private temTokenApi(): boolean {
+    return !!this.auth.getToken();
+  }
+
+  private carregarCarrinhoLocal(): any[] {
+    const itens = JSON.parse(
+      localStorage.getItem(this.localStorageKey) || '[]'
+    );
+
+    this.itens$.next(itens);
+
+    return itens;
+  }
+
+  private salvarCarrinhoLocal(itens: any[]): any[] {
+    localStorage.setItem(
+      this.localStorageKey,
+      JSON.stringify(itens)
+    );
+
+    this.itens$.next([...itens]);
+
+    return itens;
+  }
+
+  private atualizarCarrinho(carrinho: any): any {
+    if (carrinho) {
+      this.carrinhoId = carrinho.id;
+
+      this.itens$.next(
+        carrinho.itemcarrinho || []
+      );
+    }
+
+    return carrinho;
+  }
+
+  private carregarCarrinho$(): Observable<any> {
+    return this.api.getCarrinho().pipe(
+      tap((carrinho: any) => this.atualizarCarrinho(carrinho))
+    );
+  }
+
   carregarCarrinho(): void {
+    if (!this.temTokenApi()) {
+      this.carregarCarrinhoLocal();
+      return;
+    }
 
-    this.api.getCarrinho().subscribe({
-
-      next: (carrinho: any) => {
-
-        if (carrinho) {
-
-          this.carrinhoId = carrinho.id;
-
-          this.itens$.next(
-            carrinho.itemcarrinho || []
-          );
-        }
-      },
+    this.carregarCarrinho$().subscribe({
 
       error: (err) =>
 
@@ -60,41 +98,83 @@ export class CarrinhoService {
 
   adicionarItem(
     produtoId: number,
-    quantidade: number
-  ): void {
+    quantidade: number,
+    tamanho?: string,
+    produto?: any
+  ): Observable<any> {
 
-    if (!this.auth.isLoggedIn()) {
+    if (!this.temTokenApi()) {
+      const itens = this.carregarCarrinhoLocal();
+      const itemExistente = itens.find(
+        (item: any) =>
+          item.produto?.id === produtoId &&
+          item.tamanho === tamanho
+      );
 
-      alert('Faça login para adicionar ao carrinho!');
-      return;
+      if (itemExistente) {
+        itemExistente.quantidade += quantidade;
+      } else {
+        itens.push({
+          id: Date.now(),
+          produto: produto || { id: produtoId },
+          quantidade,
+          tamanho
+        });
+      }
+
+      return of(this.salvarCarrinhoLocal(itens));
     }
 
-    if (!this.carrinhoId) {
+    const adicionar = () => {
+      if (!this.carrinhoId) {
+        return throwError(() => new Error('Carrinho nao encontrado.'));
+      }
 
-      console.error('Carrinho não encontrado');
-      return;
+      return this.api.addItemCarrinho({
+
+        carrinhoId: this.carrinhoId,
+        produtoId,
+        quantidade
+
+      }).pipe(
+        switchMap(() => this.carregarCarrinho$())
+      );
+    };
+
+    if (this.carrinhoId) {
+      return adicionar();
     }
 
-    this.api.addItemCarrinho({
+    return this.carregarCarrinho$().pipe(
+      catchError(() => of(null)),
+      switchMap((carrinho: any) => {
+        if (carrinho?.id) {
+          return adicionar();
+        }
 
-      carrinhoId: this.carrinhoId,
-      produtoId,
-      quantidade
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
 
-    }).subscribe({
+        if (!user.id) {
+          return throwError(() => new Error('Usuario nao encontrado.'));
+        }
 
-      next: () => this.carregarCarrinho(),
-
-      error: (err) =>
-
-        console.error(
-          'Erro ao adicionar item:',
-          err
-        )
-    });
+        return this.api.createCarrinho({ usuarioId: user.id }).pipe(
+          tap((novoCarrinho: any) => this.atualizarCarrinho(novoCarrinho)),
+          switchMap(() => adicionar())
+        );
+      })
+    );
   }
 
   removerItem(itemId: number): void {
+    if (!this.temTokenApi()) {
+      const itens = this.carregarCarrinhoLocal().filter(
+        (item: any) => item.id !== itemId
+      );
+
+      this.salvarCarrinhoLocal(itens);
+      return;
+    }
 
     this.api.deleteItemCarrinho(itemId).subscribe({
 
@@ -113,7 +193,11 @@ export class CarrinhoService {
 
     item.quantidade++;
 
-    this.itens$.next([...this.itensSnapshot]);
+    if (this.temTokenApi()) {
+      this.itens$.next([...this.itensSnapshot]);
+    } else {
+      this.salvarCarrinhoLocal(this.itensSnapshot);
+    }
   }
 
   diminuirQuantidade(item: any): void {
@@ -122,7 +206,11 @@ export class CarrinhoService {
 
       item.quantidade--;
 
-      this.itens$.next([...this.itensSnapshot]);
+      if (this.temTokenApi()) {
+        this.itens$.next([...this.itensSnapshot]);
+      } else {
+        this.salvarCarrinhoLocal(this.itensSnapshot);
+      }
     }
   }
 
