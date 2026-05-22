@@ -65,23 +65,56 @@ export class CheckoutComponent implements OnInit {
       this.itensCarrinho = itens;
     });
 
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    this.carregarDadosUsuarioLogado();
+  }
 
-    if (user.email) {
-      this.formData.email = user.email;
+  carregarDadosUsuarioLogado(): void {
+    const user = this.obterUsuarioLocal();
+
+    this.preencherDadosUsuario(user);
+
+    if (!user?.id || !localStorage.getItem('token')) {
+      return;
     }
 
-    if (user.telefone) {
-      this.formData.telefone = user.telefone;
-    }
+    this.api.getUsuarioById(user.id).subscribe({
+      next: (resposta) => {
+        const usuarioBanco = this.normalizarUsuario(resposta);
 
-    if (user.nome) {
-      this.formData.nome = user.nome;
-    }
+        this.preencherDadosUsuario(usuarioBanco);
+        localStorage.setItem(
+          'user',
+          JSON.stringify({
+            ...user,
+            ...usuarioBanco
+          })
+        );
+      },
+      error: () => {
+        console.warn('Nao foi possivel carregar os dados do usuario pelo banco.');
+      }
+    });
+  }
 
-    if (user.sobrenome) {
-      this.formData.sobrenome = user.sobrenome;
+  preencherDadosUsuario(user: any): void {
+    if (!user) return;
+
+    this.formData.email = user.email || this.formData.email;
+    this.formData.telefone = user.telefone || this.formData.telefone;
+    this.formData.nome = user.nome || this.formData.nome;
+    this.formData.sobrenome = user.sobrenome || this.formData.sobrenome;
+  }
+
+  obterUsuarioLocal(): any {
+    try {
+      return JSON.parse(localStorage.getItem('user') || '{}');
+    } catch {
+      return {};
     }
+  }
+
+  normalizarUsuario(resposta: any): any {
+    return resposta?.usuario || resposta?.user || resposta;
   }
 
   abrirLogin(): void {
@@ -181,7 +214,7 @@ export class CheckoutComponent implements OnInit {
     this.carregando = true;
     this.erro = '';
 
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const user = this.obterUsuarioLocal();
 
     this.api.createEndereco({
       rua: `${endereco}, ${bairro}`,
