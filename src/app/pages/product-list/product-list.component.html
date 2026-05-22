@@ -6,7 +6,13 @@
 <main>
 
   <!-- BOTÃO MOBILE -->
-  <button class="btn-filtro-mobile" type="button" (click)="toggleFiltro()">
+  <button
+    class="btn-filtro-mobile"
+    type="button"
+    [class.active]="filtroAberto"
+    (click)="toggleFiltro()"
+  >
+    <span class="filtro-icon"></span>
     {{ filtroAberto ? 'Fechar filtros' : 'Filtros' }}
   </button>
 
@@ -33,14 +39,16 @@
         Tamanho
       </h3>
 
-      <button
-        class="filtro-item"
-        *ngFor="let tamanho of tamanhos"
-        [class.active]="tamanhoSelecionado === tamanho"
-        (click)="selecionarTamanho(tamanho)"
-      >
-        {{ tamanho }}
-      </button>
+      <div class="tamanhos-lista">
+        <button
+          class="filtro-item tamanho-item"
+          *ngFor="let tamanho of tamanhos"
+          [class.active]="tamanhoSelecionado === tamanho"
+          (click)="selecionarTamanho(tamanho)"
+        >
+          {{ tamanho }}
+        </button>
+      </div>
 
       <h3 class="titulo-categoria preco-titulo">
         Faixa de Preço
@@ -62,14 +70,6 @@
         Limpar filtros
       </button>
 
-      <!-- FECHAR FILTRO MOBILE -->
-      <button
-        class="btn-fechar-filtro"
-        (click)="fecharFiltro()"
-      >
-        Fechar filtros
-      </button>
-
     </section>
 
     <!-- PRODUTOS -->
@@ -81,15 +81,19 @@
 
       <div class="grid-produtos">
 
-        <div
+        <a
           class="produto-card"
-          *ngFor="let produto of produtos"
+          *ngFor="let produto of produtosPaginados"
+          [routerLink]="['/product-detail', produto.id]"
+          [attr.aria-label]="'Ver detalhes de ' + produto.nome"
         >
 
-          <img
-            [src]="produto.imagens?.[0]?.url || produto.imagem || 'assets/img/sem-imagem.png'"
-            [alt]="produto.nome"
-          />
+          <div class="produto-imagem">
+            <img
+              [src]="produto.imagens?.[0]?.url || produto.imagem || 'assets/img/sem-imagem.png'"
+              [alt]="produto.nome"
+            />
+          </div>
 
           <div class="produto-info">
 
@@ -104,16 +108,13 @@
               {{ produto.preco | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
             </p>
 
-            <a
-              [routerLink]="['/product-detail', produto.id]"
-              class="btn-produto"
-            >
+            <span class="btn-produto">
               Ver produto
-            </a>
+            </span>
 
           </div>
 
-        </div>
+        </a>
 
       </div>
 
@@ -122,10 +123,15 @@
   </div>
 
   <!-- DOTS -->
-  <div class="dots">
-    <span class="dot active"></span>
-    <span class="dot"></span>
-    <span class="dot"></span>
+  <div class="dots" *ngIf="totalPaginas > 1">
+    <button
+      class="dot"
+      type="button"
+      *ngFor="let pagina of paginas"
+      [class.active]="paginaAtual === pagina"
+      [attr.aria-label]="'Ir para pagina ' + pagina"
+      (click)="irParaPagina(pagina)"
+    ></button>
   </div>
 
 </main>

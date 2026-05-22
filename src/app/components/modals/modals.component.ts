@@ -13,6 +13,7 @@ import { RouterModule } from '@angular/router';
 
 import { CarrinhoService } from '../../services/carrinho.service';
 import { AuthService } from '../../services/auth.service';
+import { ApiService } from '../../services/api.service';
 
 type ModalTipo =
   | 'login'
@@ -38,6 +39,7 @@ export class ModalsComponent implements OnInit, OnChanges {
   @Output() closeModal = new EventEmitter<void>();
 
   carregando = false;
+  carregandoPerfil = false;
 
   erroLogin = '';
   sucessoLogin = '';
@@ -50,6 +52,7 @@ export class ModalsComponent implements OnInit, OnChanges {
 
   itensCarrinho: any[] = [];
   totalCart = 0;
+  nomeUsuario = '';
 
   loginData = {
     email: '',
@@ -84,7 +87,8 @@ export class ModalsComponent implements OnInit, OnChanges {
 
   constructor(
     private carrinho: CarrinhoService,
-    private auth: AuthService
+    private auth: AuthService,
+    private api: ApiService
   ) {}
 
   ngOnInit(): void {
@@ -97,6 +101,10 @@ export class ModalsComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['modalAberto'] && this.modalAberto === 'cart') {
       this.carrinho.carregarCarrinho();
+    }
+
+    if (changes['modalAberto'] && this.modalAberto === 'profileWelcome') {
+      this.carregarNomeUsuario();
     }
   }
 
@@ -122,11 +130,13 @@ export class ModalsComponent implements OnInit, OnChanges {
   }
 
   abrirProfileWelcome(): void {
+    this.carregarNomeUsuario();
     this.modalAberto = 'profileWelcome';
   }
 
   abrirProfileEdit(): void {
     this.modalAberto = 'profileEdit';
+    this.carregarDadosPerfil();
   }
 
   fechar(): void {
@@ -140,9 +150,12 @@ export class ModalsComponent implements OnInit, OnChanges {
       'user',
       JSON.stringify({
         id: 1,
+        nome: this.registerData.nome || '',
+        sobrenome: this.registerData.sobrenome || '',
         email
       })
     );
+    this.carregarNomeUsuario();
   }
 
   submitLogin(): void {
@@ -158,6 +171,7 @@ export class ModalsComponent implements OnInit, OnChanges {
         this.sucessoLogin = 'Login realizado com sucesso!';
 
         setTimeout(() => {
+          this.carregarNomeUsuario();
           this.modalAberto = 'profileWelcome';
           this.sucessoLogin = '';
         }, 1000);
@@ -169,6 +183,7 @@ export class ModalsComponent implements OnInit, OnChanges {
         this.sucessoLogin = 'Login local ativado para teste!';
 
         setTimeout(() => {
+          this.carregarNomeUsuario();
           this.modalAberto = 'profileWelcome';
           this.sucessoLogin = '';
         }, 1000);
@@ -220,8 +235,56 @@ export class ModalsComponent implements OnInit, OnChanges {
 
   salvarPerfil(): void {
     this.carregando = true;
+    this.mensagemPerfil = '';
+
+    const usuarioLogado = this.obterUsuarioLocal();
+    const dadosPerfil = {
+      nome: this.profileData.nome,
+      sobrenome: this.profileData.sobrenome,
+      email: this.profileData.email,
+      cpf: this.profileData.cpf,
+      telefone: this.profileData.telefone,
+      sexo: this.profileData.sexo,
+      dataNascimento: this.montarDataNascimento()
+    };
+
+    if (usuarioLogado?.id && localStorage.getItem('token')) {
+      this.api.updateUsuario(usuarioLogado.id, dadosPerfil).subscribe({
+        next: (usuarioAtualizado) => {
+          this.atualizarUsuarioLocal(this.normalizarUsuario(usuarioAtualizado) || dadosPerfil);
+          this.carregando = false;
+          this.tipoMensagemPerfil = 'sucesso';
+          this.mensagemPerfil = 'Informações atualizadas com sucesso!';
+        },
+        error: () => {
+          this.atualizarUsuarioLocal(dadosPerfil);
+          this.carregando = false;
+          this.tipoMensagemPerfil = 'erro';
+          this.mensagemPerfil = 'Não foi possível atualizar no banco agora. Dados mantidos localmente.';
+        }
+      });
+
+      return;
+    }
 
     setTimeout(() => {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+      localStorage.setItem(
+        'user',
+        JSON.stringify({
+          ...user,
+          nome: this.profileData.nome,
+          sobrenome: this.profileData.sobrenome,
+          email: this.profileData.email,
+          telefone: this.profileData.telefone,
+          cpf: this.profileData.cpf,
+          sexo: this.profileData.sexo,
+          dataNascimento: this.montarDataNascimento()
+        })
+      );
+
+      this.carregarNomeUsuario();
       this.carregando = false;
       this.tipoMensagemPerfil = 'sucesso';
       this.mensagemPerfil = 'Informações atualizadas com sucesso!';
@@ -242,12 +305,112 @@ export class ModalsComponent implements OnInit, OnChanges {
   }
 
   carregarDadosPerfil(): void {
+    this.mensagemPerfil = '';
+    const usuarioLocal = this.obterUsuarioLocal();
+
+    if (usuarioLocal) {
+      this.preencherPerfil(usuarioLocal);
+    }
+
+    if (!usuarioLocal?.id || !localStorage.getItem('token')) {
+      return;
+    }
+
+    this.carregandoPerfil = true;
+
+    this.api.getUsuarioById(usuarioLocal.id).subscribe({
+      next: (resposta) => {
+        const usuarioBanco = this.normalizarUsuario(resposta);
+        this.preencherPerfil(usuarioBanco);
+        this.atualizarUsuarioLocal(usuarioBanco);
+        this.carregandoPerfil = false;
+      },
+      error: () => {
+        this.carregandoPerfil = false;
+        this.tipoMensagemPerfil = 'erro';
+        this.mensagemPerfil = 'Não foi possível carregar os dados do banco agora.';
+      }
+    });
+  }
+
+  carregarNomeUsuario(): void {
+    const usuario = this.obterUsuarioLocal();
+
+    if (!usuario) {
+      this.nomeUsuario = '';
+      return;
+    }
+
+    const nomeCompleto = [usuario.nome, usuario.sobrenome]
+      .filter(Boolean)
+      .join(' ')
+      .trim();
+
+    this.nomeUsuario = nomeCompleto || usuario.email || '';
+  }
+
+  private obterUsuarioLocal(): any {
     const user = localStorage.getItem('user');
 
-    if (user) {
-      const usuario = JSON.parse(user);
-      this.profileData.email = usuario.email || '';
+    if (!user) {
+      return null;
     }
+
+    try {
+      return JSON.parse(user);
+    } catch {
+      return null;
+    }
+  }
+
+  private atualizarUsuarioLocal(dados: any): void {
+    const user = this.obterUsuarioLocal() || {};
+
+    localStorage.setItem(
+      'user',
+      JSON.stringify({
+        ...user,
+        ...dados
+      })
+    );
+
+    this.carregarNomeUsuario();
+  }
+
+  private preencherPerfil(usuario: any): void {
+    this.profileData.nome = usuario?.nome || '';
+    this.profileData.sobrenome = usuario?.sobrenome || '';
+    this.profileData.sexo = usuario?.sexo || '';
+    this.profileData.cpf = usuario?.cpf || '';
+    this.profileData.telefone = usuario?.telefone || '';
+    this.profileData.email = usuario?.email || '';
+    this.profileData.senha = '';
+
+    this.preencherDataNascimento(usuario?.dataNascimento || usuario?.nascimento);
+  }
+
+  private normalizarUsuario(resposta: any): any {
+    return resposta?.usuario || resposta?.user || resposta;
+  }
+
+  private preencherDataNascimento(dataNascimento?: string): void {
+    if (!dataNascimento) {
+      this.profileData.dia = '';
+      this.profileData.mes = '';
+      this.profileData.ano = '';
+      return;
+    }
+
+    const [ano, mes, dia] = dataNascimento.split('T')[0].split('-');
+    this.profileData.ano = ano || '';
+    this.profileData.mes = mes || '';
+    this.profileData.dia = dia || '';
+  }
+
+  private montarDataNascimento(): string {
+    const { ano, mes, dia } = this.profileData;
+
+    return [ano, mes, dia].filter(Boolean).join('-');
   }
 
   apenasNumeros(
