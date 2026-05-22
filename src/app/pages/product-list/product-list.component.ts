@@ -51,7 +51,10 @@ export class ProductListComponent implements OnInit {
     'Acessórios'
   ];
 
-  tamanhos = ['M', 'G', 'GG', 'XG'];
+  tamanhosPadrao = ['M', 'G', 'GG', 'XG'];
+  numeracoesCalcado = ['38', '39', '40', '41', '42'];
+  tamanhoUnico = ['Tamanho unico'];
+  tamanhos = this.tamanhosPadrao;
 
   faixasPreco = [
     'R$0 - R$250',
@@ -61,8 +64,23 @@ export class ProductListComponent implements OnInit {
   ];
 
   produtos: Produto[] = [];
+  paginaAtual = 1;
+  produtosPorPagina = 6;
 
   constructor(private produtosService: ProdutosService) {}
+
+  get totalPaginas(): number {
+    return Math.ceil(this.produtos.length / this.produtosPorPagina);
+  }
+
+  get paginas(): number[] {
+    return Array.from({ length: this.totalPaginas }, (_, index) => index + 1);
+  }
+
+  get produtosPaginados(): Produto[] {
+    const inicio = (this.paginaAtual - 1) * this.produtosPorPagina;
+    return this.produtos.slice(inicio, inicio + this.produtosPorPagina);
+  }
 
   ngOnInit(): void {
     this.carregarProdutos();
@@ -72,6 +90,7 @@ export class ProductListComponent implements OnInit {
     this.produtosService.listar().subscribe({
       next: (res) => {
         this.produtos = res;
+        this.paginaAtual = 1;
       },
       error: (err) => {
         console.error('Erro ao carregar produtos:', err);
@@ -109,19 +128,54 @@ export class ProductListComponent implements OnInit {
 
   selecionarCategoria(categoria: string): void {
     this.categoriaSelecionada = categoria;
+    this.tamanhos = this.obterTamanhosPorCategoria(categoria);
+    this.paginaAtual = 1;
+
+    if (this.tamanhoSelecionado && !this.tamanhos.includes(this.tamanhoSelecionado)) {
+      this.tamanhoSelecionado = '';
+    }
   }
 
   selecionarTamanho(tamanho: string): void {
     this.tamanhoSelecionado = tamanho;
+    this.paginaAtual = 1;
   }
 
   selecionarPreco(preco: string): void {
     this.precoSelecionado = preco;
+    this.paginaAtual = 1;
   }
 
   limparFiltros(): void {
     this.categoriaSelecionada = '';
     this.tamanhoSelecionado = '';
     this.precoSelecionado = '';
+    this.tamanhos = this.tamanhosPadrao;
+    this.paginaAtual = 1;
+  }
+
+  irParaPagina(pagina: number): void {
+    this.paginaAtual = pagina;
+  }
+
+  private categoriaEhCalcado(categoria: string): boolean {
+    const nome = categoria.toLowerCase();
+    return nome.includes('chinelo') || nome.endsWith('nis');
+  }
+
+  private categoriaEhAcessorio(categoria: string): boolean {
+    return categoria.toLowerCase().includes('acess');
+  }
+
+  private obterTamanhosPorCategoria(categoria: string): string[] {
+    if (this.categoriaEhCalcado(categoria)) {
+      return this.numeracoesCalcado;
+    }
+
+    if (this.categoriaEhAcessorio(categoria)) {
+      return this.tamanhoUnico;
+    }
+
+    return this.tamanhosPadrao;
   }
 }

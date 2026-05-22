@@ -66,7 +66,7 @@
   <button class="global-modal-close" (click)="fechar()">&times;</button>
 
   <div class="profile-welcome-card">
-    <h1>Bem-vindo(a) de volta!</h1>
+    <h1>Bem-vindo(a) de volta<span *ngIf="nomeUsuario">, {{ nomeUsuario }}</span>!</h1>
     <p>Deixe suas informações sempre atualizadas</p>
 
     <button class="profile-action-btn profile-edit-btn" type="button" (click)="abrirProfileEdit()">
@@ -94,6 +94,10 @@
     </div>
 
     <form class="profile-edit-form" (ngSubmit)="salvarPerfil()">
+      <div class="profile-message" *ngIf="carregandoPerfil">
+        Carregando informações do usuário...
+      </div>
+
       <div class="profile-row-2">
         <input type="text" name="perfilNome" [(ngModel)]="profileData.nome" placeholder="Nome" />
         <input type="text" name="perfilSobrenome" [(ngModel)]="profileData.sobrenome" placeholder="Sobrenome" />

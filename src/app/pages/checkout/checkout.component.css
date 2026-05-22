@@ -89,15 +89,17 @@ section {
 }
 
 .cep-conteiner {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 400px) minmax(180px, 270px);
   align-items: center;
   gap: 10px;
   padding: 0 10px;
+  margin: 10px 0;
 }
 
 .cep-conteiner input {
-  width: 400px;
-  margin: 10px 0;
+  width: 100%;
+  margin: 0;
   padding: 10px;
   height: 40px;
   background-color: black;
@@ -107,9 +109,9 @@ section {
 }
 
 .cep-conteiner button {
-  width: 270px;
+  width: 100%;
   height: 40px;
-  margin-top: 10px;
+  margin: 0;
   background-color: #111;
   border: 1px solid white;
   color: white;
@@ -233,8 +235,7 @@ hr {
   }
 
   .cep-conteiner {
-    flex-direction: column;
-    align-items: stretch;
+    grid-template-columns: 1fr;
   }
 
   .cep-conteiner input,
