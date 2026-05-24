@@ -18,6 +18,7 @@ export class AddProductComponent implements OnInit {
   categorias: any[] = [];
 
   carregando = false;
+  uploadando = false;
   sucesso = '';
   erro = '';
 
@@ -48,6 +49,35 @@ export class AddProductComponent implements OnInit {
     }
   }
 
+  // 🔌 UPLOAD CLOUDINARY
+  onImageSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+
+    const file = input.files[0];
+    if (!file.type.startsWith('image/')) {
+      this.erro = 'Selecione apenas arquivos de imagem.';
+      return;
+    }
+
+    this.uploadando = true;
+    this.erro = '';
+
+    const formData = new FormData();
+    formData.append('imagem', file);
+
+    this.api.uploadImagem(formData).subscribe({
+  next: (res: any) => {
+    this.produto.imagem = res.url;
+    this.uploadando = false;
+  },
+  error: () => {
+    this.erro = 'Erro ao fazer upload da imagem.';
+    this.uploadando = false;
+  }
+});
+  }
+
   salvar(): void {
     this.erro = '';
     this.sucesso = '';
@@ -59,14 +89,15 @@ export class AddProductComponent implements OnInit {
     this.carregando = true;
 
     const body = {
-     nome: this.produto.nome,
-     descricao: this.produto.descricao,
-     preco: Number(this.produto.preco),
-     estoque: Number(this.produto.estoque),
-     categoriaId: this.produto.categoriaId,
-     marca: this.produto.marca,
-     tamanho: this.selectedSizes.join(','),  // ← era tamanhos, agora tamanho (string)
-};
+      nome: this.produto.nome,
+      descricao: this.produto.descricao,
+      preco: Number(this.produto.preco),
+      estoque: Number(this.produto.estoque),
+      categoriaId: this.produto.categoriaId,
+      marca: this.produto.marca,
+      tamanho: this.selectedSizes.join(','),
+      imagem: this.produto.imagem
+    };
 
     this.api.createProduto(body).subscribe({
       next: () => {

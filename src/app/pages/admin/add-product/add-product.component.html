@@ -2,8 +2,6 @@
   <h2>Adicionar Produto</h2>
 
   <div class="container">
-
-    <!-- ESQUERDA (FORM) -->
     <div class="form-card">
 
       <p class="sucesso-msg" *ngIf="sucesso">✓ {{ sucesso }}</p>
@@ -37,18 +35,38 @@
       <label>Preço</label>
       <input type="number" [(ngModel)]="produto.preco" placeholder="Ex: 189.90" />
 
-      <label>URL da Imagem</label>
-      <input [(ngModel)]="produto.imagem" placeholder="https://res.cloudinary.com/sua-imagem.jpg" />
-
-      <div class="image-preview" *ngIf="produto.imagem">
-        <img [src]="produto.imagem" alt="Preview" style="max-width: 100%; max-height: 200px; margin-top: 8px; border-radius: 8px;" />
+      <!-- UPLOAD DE IMAGEM -->
+      <label>Imagem do Produto</label>
+      <div class="upload-area" (click)="fileInput.click()">
+        <input
+          #fileInput
+          type="file"
+          hidden
+          accept="image/*"
+          (change)="onImageSelected($event)"
+        />
+        <div *ngIf="!produto.imagem && !uploadando" class="upload-placeholder">
+          <span>📷 Clique para selecionar uma imagem</span>
+        </div>
+        <div *ngIf="uploadando" class="upload-placeholder">
+          <span>Enviando imagem...</span>
+        </div>
+        <img
+          *ngIf="produto.imagem && !uploadando"
+          [src]="produto.imagem"
+          alt="Preview"
+          style="max-width: 100%; max-height: 200px; border-radius: 8px;"
+        />
       </div>
 
-      <button class="btn" (click)="salvar()" [disabled]="carregando">
+      <!-- URL MANUAL (fallback) -->
+      <label style="margin-top: 8px;">Ou cole a URL da imagem</label>
+      <input [(ngModel)]="produto.imagem" placeholder="https://res.cloudinary.com/sua-imagem.jpg" />
+
+      <button class="btn" (click)="salvar()" [disabled]="carregando || uploadando">
         {{ carregando ? 'SALVANDO...' : 'ADICIONAR' }}
       </button>
 
     </div>
-
   </div>
 </div>

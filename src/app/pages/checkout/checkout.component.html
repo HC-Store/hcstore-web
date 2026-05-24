@@ -171,16 +171,51 @@
     <span>{{ item.produto?.nome }}</span>
     <span class="price">{{ formatPrice(item.produto?.preco * item.quantidade) }}</span>
   </div>
-
+  
+  
   <div class="subtotal">
-    <span>Subtotal</span>
-    <span class="price">{{ formatPrice(subtotal) }}</span>
-  </div>
+  <span>Subtotal</span>
+  <span class="price">{{ formatPrice(subtotal) }}</span>
+</div>
 
-  <div class="frete">
-    <span>Frete</span>
-    <span class="gratis">GRÁTIS</span>
+<div class="entrega-opcoes">
+  <h3>Entrega</h3>
+
+  <label>
+    <input type="radio" name="entrega" value="SEDEX" [(ngModel)]="tipoEntrega" />
+    Sedex - {{ subtotal >= 200 ? 'Grátis' : formatPrice(25) }}
+  </label>
+
+  <label>
+    <input type="radio" name="entrega" value="MOTOBOY" [(ngModel)]="tipoEntrega" />
+    Motoboy - {{ subtotal >= 200 ? 'Grátis' : formatPrice(15) }}
+  </label>
+
+  <small *ngIf="tipoEntrega === 'MOTOBOY'">
+    Entraremos em contato pelo WhatsApp para combinar a entrega.
+  </small>
+</div>
+
+<div class="cupom">
+  <label>Cupom de desconto</label>
+  <div class="cupom-box">
+    <input [(ngModel)]="cupom" placeholder="Digite seu cupom" />
+    <button type="button" (click)="aplicarCupom()">Aplicar</button>
   </div>
+</div>
+
+<div class="frete">
+  <span>Frete</span>
+  <span [class.gratis]="frete === 0">
+    {{ frete === 0 ? 'GRÁTIS' : formatPrice(frete) }}
+  </span>
+</div>
+
+<div class="subtotal" *ngIf="desconto > 0">
+  <span>Desconto</span>
+  <span class="gratis">- {{ formatPrice(desconto) }}</span>
+</div>
+
 
   <hr />
 

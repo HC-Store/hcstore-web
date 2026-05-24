@@ -1,68 +1,31 @@
-<app-header
-  (openLogin)="abrirLogin()"
-  (openCart)="abrirCart()"
-></app-header>
+<app-header (openLogin)="abrirLogin()" (openCart)="abrirCart()"></app-header>
 
 <main class="colecoes-page">
-
   <section class="launch-top">
     <p class="launch-label">Próximo lançamento</p>
-
-    <h1 class="launch-title">DROP 01:</h1>
-    <h2 class="launch-subtitle">OFF-GRID</h2>
+    <h1 class="launch-title">{{ config.dropTitulo }}</h1>
+    <h2 class="launch-subtitle">{{ config.dropSubtitulo }}</h2>
 
     <div class="countdown">
-      <div class="time-box">
-        <strong>{{ meses }}</strong>
-        <span>Meses</span>
-      </div>
-
-      <div class="time-box">
-        <strong>{{ dias }}</strong>
-        <span>Dias</span>
-      </div>
-
-      <div class="time-box">
-        <strong>{{ horas }}</strong>
-        <span>Horas</span>
-      </div>
-
-      <div class="time-box">
-        <strong>{{ minutos }}</strong>
-        <span>Min</span>
-      </div>
-
-      <div class="time-box">
-        <strong>{{ segundos }}</strong>
-        <span>Secs</span>
-      </div>
+      <div class="time-box"><strong>{{ meses }}</strong><span>Meses</span></div>
+      <div class="time-box"><strong>{{ dias }}</strong><span>Dias</span></div>
+      <div class="time-box"><strong>{{ horas }}</strong><span>Horas</span></div>
+      <div class="time-box"><strong>{{ minutos }}</strong><span>Min</span></div>
+      <div class="time-box"><strong>{{ segundos }}</strong><span>Secs</span></div>
     </div>
   </section>
 
   <section class="launch-bottom">
     <div class="product-image">
-      <img src="assets/img/banner-colecoes.png" alt="Produto do drop">
+      <img [src]="config.bannerImagem" alt="Produto do drop" />
     </div>
-
     <div class="product-info">
       <h3>O Conceito</h3>
-
-      <p>
-        O OFF-GRID é um mergulho na textura brutalista da cidade. Criamos uma
-        fusão entre a estética utilitária das ruas e o acabamento premium.
-      </p>
-
-      <a routerLink="/product-list" class="cta-button">
-        CONFERIR <span>→</span>
-      </a>
+      <p>{{ config.dropDescricao }}</p>
+      <a routerLink="/product-list" class="cta-button">CONFERIR <span>→</span></a>
     </div>
   </section>
-
 </main>
 
 <app-footer></app-footer>
-
-<app-modals
-  [modalAberto]="modalAberto"
-  (closeModal)="fecharModal()"
-></app-modals>
+<app-modals [modalAberto]="modalAberto" (closeModal)="fecharModal()"></app-modals>

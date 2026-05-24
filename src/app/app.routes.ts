@@ -13,9 +13,9 @@ import { ProductsComponent } from './pages/admin/products/products.component';
 import { OrdersComponent } from './pages/admin/orders/orders.component';
 import { UsersComponent } from './pages/admin/users/users.component';
 import { AddProductComponent } from './pages/admin/add-product/add-product.component';
-
+import { ConfigHomeComponent } from './pages/admin/config-home/config-home.component';
 import { AuthGuard } from './guards/auth.guard';
-
+import { ConfigColecoesComponent } from './pages/admin/config-colecoes/config-colecoes.component';
 export const routes: Routes = [
   {
     path: '',
@@ -93,7 +93,16 @@ export const routes: Routes = [
       path: 'adicionar-produto',
       component: AddProductComponent,
       title: 'Adicionar produto | HC Store Admin'
+    },
+    {
+      path: 'config-home',
+      component: ConfigHomeComponent
+    },
+    {
+      path: 'config-colecoes',
+      component: ConfigColecoesComponent
     }
+
   ]
 },
 

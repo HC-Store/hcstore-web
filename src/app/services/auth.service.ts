@@ -8,30 +8,34 @@ export class AuthService {
 
   constructor(private api: ApiService, private router: Router) {}
 
-login(email: string, senha: string) {
-  return this.api.login({ email, senha }).pipe(
-    tap((res: any) => {
-      localStorage.setItem('token', res.token);
-      localStorage.setItem('user', JSON.stringify(res.user));
-    })
-  );
-}
+  login(email: string, senha: string) {
+    return this.api.login({ email, senha }).pipe(
+      tap((res: any) => {
+        localStorage.setItem('token', res.token);
+        localStorage.setItem('user', JSON.stringify(res.user));
+        localStorage.setItem('role', res.role || 'USER');
+      })
+    );
+  }
 
-register(nome: string, sobrenome: string, email: string, senha: string, cpf: string, telefone: string, sexo: string, dataNascimento: string) {
-  return this.api.register({ nome, sobrenome, email, senha, cpf, telefone, sexo, dataNascimento });
-}
+  register(nome: string, sobrenome: string, email: string, senha: string, cpf: string, telefone: string, sexo: string, dataNascimento: string) {
+    return this.api.register({ nome, sobrenome, email, senha, cpf, telefone, sexo, dataNascimento });
+  }
 
   logout() {
-    localStorage.removeItem('usuarioLogado');
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    this.router.navigate(['/login']);
+    localStorage.removeItem('role');
+    localStorage.removeItem('usuarioLogado');
+    this.router.navigate(['/home']);
   }
 
   isLoggedIn(): boolean {
-    return !!localStorage.getItem('token') ||
-      localStorage.getItem('usuarioLogado') === 'true' ||
-      !!localStorage.getItem('user');
+    return !!localStorage.getItem('token');
+  }
+
+  isAdmin(): boolean {
+    return localStorage.getItem('role') === 'ADMIN';
   }
 
   getToken(): string | null {

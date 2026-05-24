@@ -212,3 +212,21 @@ textarea {
   border-color: #25df14;
   background: #f9fff9;
 }
+.upload-area {
+  border: 2px dashed #555;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: border-color 0.2s;
+}
+
+.upload-area:hover {
+  border-color: #39ff14;
+}
+
+.upload-placeholder {
+  color: #888;
+  font-size: 0.95rem;
+}

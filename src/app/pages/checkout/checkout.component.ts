@@ -38,6 +38,10 @@ export class CheckoutComponent implements OnInit {
   erro = '';
   sucesso = '';
 
+  tipoEntrega: 'SEDEX' | 'MOTOBOY' = 'SEDEX';
+  cupom = '';
+  desconto = 0;
+
   formData = {
     email: '',
     telefone: '',
@@ -73,15 +77,14 @@ export class CheckoutComponent implements OnInit {
 
     this.preencherDadosUsuario(user);
 
-    if (!user?.id || !localStorage.getItem('token')) {
-      return;
-    }
+    if (!user?.id || !localStorage.getItem('token')) return;
 
     this.api.getUsuarioById(user.id).subscribe({
       next: (resposta) => {
         const usuarioBanco = this.normalizarUsuario(resposta);
 
         this.preencherDadosUsuario(usuarioBanco);
+
         localStorage.setItem(
           'user',
           JSON.stringify({
@@ -122,11 +125,9 @@ export class CheckoutComponent implements OnInit {
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
 
-    if (usuario === 'true' || token || user) {
-      this.modalAberto = 'profileWelcome';
-    } else {
-      this.modalAberto = 'login';
-    }
+    this.modalAberto = usuario === 'true' || token || user
+      ? 'profileWelcome'
+      : 'login';
   }
 
   abrirCart(): void {
@@ -139,16 +140,47 @@ export class CheckoutComponent implements OnInit {
 
   get subtotal(): number {
     return this.itensCarrinho.reduce((total, item) => {
-      return total + Number(item.produto?.preco || 0) * item.quantidade;
+      return total + Number(item.produto?.preco || 0) * Number(item.quantidade || 1);
     }, 0);
   }
 
+  get frete(): number {
+    if (this.subtotal >= 200) return 0;
+    return this.tipoEntrega === 'MOTOBOY' ? 15 : 25;
+  }
+
   get total(): number {
-    return this.subtotal;
+    return this.subtotal + this.frete - this.desconto;
+  }
+
+  aplicarCupom(): void {
+    const codigo = this.cupom.trim().toUpperCase();
+
+    if (!codigo) {
+      this.erro = 'Digite um cupom.';
+      return;
+    }
+
+    this.api.validarCupom({
+      codigo,
+      subtotal: this.subtotal
+    }).subscribe({
+      next: (res: any) => {
+        this.desconto = Number(res.desconto || 0);
+        this.cupom = res.codigo || codigo;
+        this.sucesso = 'Cupom aplicado com sucesso!';
+        this.erro = '';
+      },
+      error: (err) => {
+        this.desconto = 0;
+        this.sucesso = '';
+        this.erro = err.error?.error || 'Cupom inválido.';
+      }
+    });
   }
 
   formatPrice(value: number): string {
-    return 'R$' + value.toFixed(2).replace('.', ',');
+    return 'R$' + Number(value || 0).toFixed(2).replace('.', ',');
   }
 
   async buscarCep(): Promise<void> {
@@ -211,10 +243,15 @@ export class CheckoutComponent implements OnInit {
       return;
     }
 
+    const user = this.obterUsuarioLocal();
+
+    if (!user?.id) {
+      this.erro = 'Faça login para finalizar a compra.';
+      return;
+    }
+
     this.carregando = true;
     this.erro = '';
-
-    const user = this.obterUsuarioLocal();
 
     this.api.createEndereco({
       rua: `${endereco}, ${bairro}`,
@@ -227,7 +264,12 @@ export class CheckoutComponent implements OnInit {
       next: (enderecoSalvo: any) => {
         this.api.createPedido({
           usuarioId: user.id,
-          enderecoId: enderecoSalvo.id
+          enderecoId: enderecoSalvo.id,
+          tipoEntrega: this.tipoEntrega,
+          frete: this.frete,
+          desconto: this.desconto,
+          cupomCodigo: this.cupom || null,
+          totalFinal: this.total
         }).subscribe({
           next: () => {
             this.carregando = false;

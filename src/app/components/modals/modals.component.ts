@@ -9,11 +9,10 @@ import {
   SimpleChanges
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-
 import { CarrinhoService } from '../../services/carrinho.service';
 import { AuthService } from '../../services/auth.service';
 import { ApiService } from '../../services/api.service';
+import { Router, RouterModule } from '@angular/router';
 
 type ModalTipo =
   | 'login'
@@ -85,11 +84,12 @@ export class ModalsComponent implements OnInit, OnChanges {
     senha: ''
   };
 
-  constructor(
-    private carrinho: CarrinhoService,
-    private auth: AuthService,
-    private api: ApiService
-  ) {}
+constructor(
+  private carrinho: CarrinhoService,
+  private auth: AuthService,
+  private api: ApiService,
+  private router: Router
+) {}
 
   ngOnInit(): void {
     this.carrinho.itens.subscribe((itens) => {
@@ -159,37 +159,33 @@ export class ModalsComponent implements OnInit, OnChanges {
   }
 
   submitLogin(): void {
-    this.carregando = true;
-    this.erroLogin = '';
-    this.sucessoLogin = '';
+  this.carregando = true;
+  this.erroLogin = '';
+  this.sucessoLogin = '';
 
-    this.auth.login(this.loginData.email, this.loginData.senha).subscribe({
-      next: () => {
-        this.carregando = false;
-        localStorage.setItem('usuarioLogado', 'true');
-        this.carrinho.carregarCarrinho();
-        this.sucessoLogin = 'Login realizado com sucesso!';
+  this.auth.login(this.loginData.email, this.loginData.senha).subscribe({
+    next: () => {
+      this.carregando = false;
+      this.sucessoLogin = 'Login realizado com sucesso!';
+      this.carrinho.carregarCarrinho();
+      this.carregarNomeUsuario();
 
-        setTimeout(() => {
-          this.carregarNomeUsuario();
+      setTimeout(() => {
+        this.sucessoLogin = '';
+        this.fechar();
+        if (this.auth.isAdmin()) {
+          this.router.navigate(['/admin']);
+        } else {
           this.modalAberto = 'profileWelcome';
-          this.sucessoLogin = '';
-        }, 1000);
-      },
-      error: () => {
-        this.carregando = false;
-        this.iniciarSessaoLocal(this.loginData.email);
-        this.carrinho.carregarCarrinho();
-        this.sucessoLogin = 'Login local ativado para teste!';
-
-        setTimeout(() => {
-          this.carregarNomeUsuario();
-          this.modalAberto = 'profileWelcome';
-          this.sucessoLogin = '';
-        }, 1000);
-      }
-    });
-  }
+        }
+      }, 1500);
+    },
+    error: (err) => {
+      this.carregando = false;
+      this.erroLogin = err.error?.erro || 'E-mail ou senha incorretos.';
+    }
+  });
+}
 
   submitRegister(): void {
     this.carregando = true;
@@ -220,15 +216,9 @@ export class ModalsComponent implements OnInit, OnChanges {
           this.modalAberto = 'login';
         }, 1500);
       },
-      error: () => {
-        this.carregando = false;
-        this.iniciarSessaoLocal(this.registerData.email);
-        this.sucessoRegister = 'Conta local criada para teste!';
-
-        setTimeout(() => {
-          this.modalAberto = 'profileWelcome';
-          this.sucessoRegister = '';
-        }, 1500);
+      error: (err) => {
+       this.carregando = false;
+       this.erroRegister = err.error?.erro || 'Erro ao criar conta. Tente novamente.';
       }
     });
   }

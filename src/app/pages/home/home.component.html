@@ -6,11 +6,9 @@
 <main>
   <section class="banner">
     <video autoplay muted loop playsinline class="video-banner">
-      <source src="assets/video/banner-home.mp4" type="video/mp4" />
+      <source [src]="config.videoUrl" type="video/mp4" />
     </video>
-
     <div class="overlay"></div>
-
     <div class="texto-banner">
       <h1>Seu estilo fala antes de você.</h1>
       <button class="btn-banner" routerLink="/product-list">Explore seu estilo</button>
@@ -21,23 +19,21 @@
 
   <section class="menu1">
     <div class="item">
-      <img src="assets/img/nikegreen.jpg" alt="Tênis" />
+      <img [src]="config.banner1" alt="Tênis" />
       <div class="overlay">
         <h3>Tênis</h3>
         <a routerLink="/product-list" class="explorar">Explore →</a>
       </div>
     </div>
-
     <div class="item">
-      <img src="assets/img/brinco.jpg" alt="Acessórios" />
+      <img [src]="config.banner2" alt="Acessórios" />
       <div class="overlay">
         <h3>Acessórios</h3>
-        <a routerLink="/product-list" class="explorar" >Explore →</a>
+        <a routerLink="/product-list" class="explorar">Explore →</a>
       </div>
     </div>
-
     <div class="item">
-      <img src="assets/img/baseball.webp" alt="Roupas" />
+      <img [src]="config.banner3" alt="Roupas" />
       <div class="overlay">
         <h3>Roupas</h3>
         <a routerLink="/product-list" class="explorar">Explore →</a>
@@ -51,33 +47,14 @@
         <h3 class="drop">Drops Selecionados</h3>
         <h1 class="text_inspire">Inspire-se</h1>
       </div>
-
-      <a routerLink="/product-list" class="text_conferir text_conferir_light">
-  CONFERIR →
-</a>
+      <a routerLink="/product-list" class="text_conferir text_conferir_light">CONFERIR →</a>
     </div>
-
     <div class="grid">
-      <div class="item2">
-        <a routerLink="/product-detail/1">
-          <img src="assets/img/calça.png" alt="Calça" />
+      <div class="item2" *ngFor="let d of config.destaques">
+        <a [routerLink]="['/product-detail', d.id]">
+          <img [src]="d.imagem" [alt]="d.titulo" />
         </a>
-        
-        <p class="desc"><strong>CALÇA CARGO OVERSIZED</strong></p>
-      </div>
-
-      <div class="item2">
-        <a routerLink="/product-detail/2">
-          <img src="assets/img/outfit.png" alt="Outfit" />
-        </a>
-        <p class="desc"><strong>CALÇA ALFAIATARIA</strong></p>
-      </div>
-
-      <div class="item2">
-        <a routerLink="/product-detail/3">
-          <img src="assets/img/oversized.png" alt="Roupa" />
-        </a>
-        <p class="desc"><strong>CONJUNTOS OVERSIZED's</strong></p>
+        <p class="desc"><strong>{{ d.titulo }}</strong></p>
       </div>
     </div>
   </section>
@@ -88,22 +65,12 @@
         <h2 class="novidades">Novidades</h2>
         <h1 class="lancamentos">Últimos lançamentos</h1>
       </div>
-
-   <a routerLink="/product-list" class="text_conferir text_conferir_dark">
-  CONFERIR →
-</a>
+      <a routerLink="/product-list" class="text_conferir text_conferir_dark">CONFERIR →</a>
     </div>
-
     <div class="grid2">
-      <div class="item3">
-        <a routerLink="/product-detail/4">
-          <img src="assets/img/baseball.webp" alt="Outfit" />
-        </a>
-      </div>
-
-      <div class="item3">
-        <a routerLink="/product-detail/5">
-          <img src="assets/img/outfit.png" alt="Roupa" />
+      <div class="item3" *ngFor="let l of config.lancamentos">
+        <a [routerLink]="['/product-detail', l.id]">
+          <img [src]="l.imagem" [alt]="l.titulo" />
         </a>
       </div>
     </div>
@@ -111,8 +78,4 @@
 </main>
 
 <app-footer></app-footer>
-
-<app-modals
-  [modalAberto]="modalAberto"
-  (closeModal)="fecharModal()"
-></app-modals>
+<app-modals [modalAberto]="modalAberto" (closeModal)="fecharModal()"></app-modals>

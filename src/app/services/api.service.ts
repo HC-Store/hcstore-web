@@ -186,4 +186,25 @@ export class ApiService {
       headers: this.headers()
     });
   }
+  uploadImagem(body: FormData): Observable<any> {
+  const token = localStorage.getItem('token');
+  const headers = new HttpHeaders({ ...(token ? { Authorization: `Bearer ${token}` } : {}) });
+  return this.http.post(`${this.base}/upload`, body, { headers });
+}
+
+getCupons(): Observable<any> {
+  return this.http.get(`${this.base}/cupons`, {
+    headers: this.headers()
+  });
+}
+
+createCupom(body: any): Observable<any> {
+  return this.http.post(`${this.base}/cupons`, body, {
+    headers: this.headers()
+  });
+}
+
+validarCupom(body: any): Observable<any> {
+  return this.http.post(`${this.base}/cupons/validar`, body);
+}
 }
