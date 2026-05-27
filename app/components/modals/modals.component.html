@@ -1,0 +1,359 @@
+<div
+  class="global-modal-overlay"
+  *ngIf="modalAberto"
+  [class.active]="!!modalAberto"
+  (click)="fechar()"
+></div>
+
+<!-- LOGIN -->
+<div
+  class="global-modal login-modal"
+  [class.active]="modalAberto === 'login'"
+  *ngIf="modalAberto === 'login'"
+>
+  <button class="global-modal-close" (click)="fechar()">&times;</button>
+
+  <div class="modal-card">
+    <h1>Bem-vindo(a) de volta!</h1>
+    <p class="modal-subtitle">Insira sua credenciais para acessar sua conta.</p>
+
+    <form class="modal-form" (ngSubmit)="submitLogin()">
+      <div class="input-group">
+        <input
+          type="email"
+          name="loginEmail"
+          [(ngModel)]="loginData.email"
+          placeholder="ENDEREÇO DE E-MAIL"
+        />
+      </div>
+
+      <div class="input-group">
+        <input
+          type="password"
+          name="loginSenha"
+          [(ngModel)]="loginData.senha"
+          placeholder="SENHA"
+        />
+      </div>
+
+      <div class="forgot-wrap">
+        <a href="#">Esqueceu sua senha?</a>
+      </div>
+      <p class="sucesso-msg" *ngIf="sucessoLogin">{{ sucessoLogin }}</p>
+
+      <p class="erro-msg" *ngIf="erroLogin">{{ erroLogin }}</p>
+      <button type="submit" class="btn-primary" [disabled]="carregando">
+         {{ carregando ? 'Entrando...' : 'Entrar' }}
+      </button>
+
+    </form>
+
+    <div class="modal-bottom-text">
+      <p>Não tem uma conta?</p>
+      <button class="switch-modal-btn" type="button" (click)="abrirRegister()">
+        Cadastre-se agora
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- BOAS-VINDAS APOS LOGIN -->
+<div
+  class="global-modal profile-welcome-modal"
+  [class.active]="modalAberto === 'profileWelcome'"
+  *ngIf="modalAberto === 'profileWelcome'"
+>
+  <button class="global-modal-close" (click)="fechar()">&times;</button>
+
+  <div class="profile-welcome-card">
+    <h1>Bem-vindo(a) de volta<span *ngIf="nomeUsuario">, {{ nomeUsuario }}</span>!</h1>
+    <p>Deixe suas informações sempre atualizadas</p>
+
+    <button class="profile-action-btn profile-edit-btn" type="button" (click)="abrirProfileEdit()">
+      Editar informações
+    </button>
+
+    <button class="profile-action-btn profile-exit-btn" type="button" (click)="sairPerfil()">
+      Sair
+    </button>
+  </div>
+</div>
+
+<!-- EDITAR INFORMACOES -->
+<div
+  class="global-modal profile-edit-modal"
+  [class.active]="modalAberto === 'profileEdit'"
+  *ngIf="modalAberto === 'profileEdit'"
+>
+  <button class="global-modal-close" (click)="fechar()">&times;</button>
+
+  <div class="profile-edit-card">
+    <div class="profile-edit-header">
+      <h1>Editar informações</h1>
+      <p>Atualize suas informações para receber novidades</p>
+    </div>
+
+    <form class="profile-edit-form" (ngSubmit)="salvarPerfil()">
+      <div class="profile-message" *ngIf="carregandoPerfil">
+        Carregando informações do usuário...
+      </div>
+
+      <div class="profile-row-2">
+        <input type="text" name="perfilNome" [(ngModel)]="profileData.nome" placeholder="Nome" />
+        <input type="text" name="perfilSobrenome" [(ngModel)]="profileData.sobrenome" placeholder="Sobrenome" />
+      </div>
+
+      <span class="profile-field-label">Data de nascimento</span>
+      <div class="profile-row-3">
+        <input
+          type="text"
+          name="perfilDia"
+          [(ngModel)]="profileData.dia"
+          (ngModelChange)="apenasNumeros('dia', $event)"
+          placeholder="Dia"
+          class="centered"
+          maxlength="2"
+        />
+        <input
+          type="text"
+          name="perfilMes"
+          [(ngModel)]="profileData.mes"
+          (ngModelChange)="apenasNumeros('mes', $event)"
+          placeholder="Mês"
+          class="centered"
+          maxlength="2"
+        />
+        <input
+          type="text"
+          name="perfilAno"
+          [(ngModel)]="profileData.ano"
+          (ngModelChange)="apenasNumeros('ano', $event)"
+          placeholder="Ano"
+          class="centered"
+          maxlength="4"
+        />
+      </div>
+
+      <div class="profile-sexo-cpf-row">
+        <div>
+          <span class="profile-field-label">Sexo</span>
+          <div class="profile-radio-group">
+            <label class="profile-radio-label">
+              <input type="radio" name="perfilSexo" value="Masculino" [(ngModel)]="profileData.sexo" />
+              Masculino
+            </label>
+            <label class="profile-radio-label">
+              <input type="radio" name="perfilSexo" value="Feminino" [(ngModel)]="profileData.sexo" />
+              Feminino
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <span class="profile-field-label">CPF</span>
+          <input
+            type="text"
+            name="perfilCpf"
+            [ngModel]="profileData.cpf"
+            (ngModelChange)="formatarCpf($event)"
+            placeholder="000.000.000-00"
+            maxlength="14"
+          />
+        </div>
+      </div>
+
+      <div class="profile-field-group">
+        <input
+          type="tel"
+          name="perfilTelefone"
+          [ngModel]="profileData.telefone"
+          (ngModelChange)="formatarTelefone($event)"
+          placeholder="Telefone: (xx) 0 0000-0000"
+        />
+      </div>
+
+      <div class="profile-field-group">
+        <input type="email" name="perfilEmail" [(ngModel)]="profileData.email" placeholder="Endereço de e-mail" />
+      </div>
+
+      <div class="profile-field-group profile-password-field">
+        <input type="password" name="perfilSenha" [(ngModel)]="profileData.senha" placeholder="Nova senha" />
+      </div>
+
+      <button class="profile-save-btn" type="submit" [disabled]="carregando">
+        {{ carregando ? 'Salvando...' : 'Salvar' }}
+      </button>
+      <button class="profile-cancel-btn" type="button" (click)="cancelarEdicaoPerfil()">
+        Cancelar
+      </button>
+
+      <div class="profile-message" *ngIf="mensagemPerfil" [ngClass]="tipoMensagemPerfil">
+        {{ mensagemPerfil }}
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- CRIAR CONTA -->
+<div
+  class="global-modal register-modal"
+  [class.active]="modalAberto === 'register'"
+  *ngIf="modalAberto === 'register'"
+>
+  <button class="global-modal-close" (click)="fechar()">&times;</button>
+
+  <div class="modal-card register-card">
+    <h1>Junte-se a nós.</h1>
+    <p class="modal-subtitle">Crie uma conta para receber ofertas exclusivas</p>
+
+    <form class="modal-form" (ngSubmit)="submitRegister()">
+      <div class="row two-columns">
+        <input type="text" name="nome" [(ngModel)]="registerData.nome" placeholder="Nome" />
+        <input type="text" name="sobrenome" [(ngModel)]="registerData.sobrenome" placeholder="Sobrenome" />
+      </div>
+
+      <div class="modal-label">Data de nascimento</div>
+
+      <div class="row three-columns">
+        <input type="text" name="dia" [(ngModel)]="registerData.dia" placeholder="Dia" maxlength="2" />
+        <input type="text" name="mes" [(ngModel)]="registerData.mes" placeholder="Mês" maxlength="2" />
+        <input type="text" name="ano" [(ngModel)]="registerData.ano" placeholder="Ano" maxlength="4" />
+      </div>
+
+      <div class="row sexo-cpf">
+        <div class="sexo-box">
+          <div class="modal-label">Sexo</div>
+
+          <div class="radio-group">
+            <label>
+              <input type="radio" name="sexo" value="Masculino" [(ngModel)]="registerData.sexo" />
+              Masculino
+            </label>
+
+            <label>
+              <input type="radio" name="sexo" value="Feminino" [(ngModel)]="registerData.sexo" />
+              Feminino
+            </label>
+          </div>
+        </div>
+
+        <div class="cpf-box">
+          <div class="modal-label">CPF</div>
+          <input type="text" name="cpf" [(ngModel)]="registerData.cpf" placeholder="00000000000" maxlength="11" />
+        </div>
+      </div>
+
+      <input type="text" name="telefone" [(ngModel)]="registerData.telefone" placeholder="Telefone: (xx) 0 0000 - 0000" />
+      <input type="email" name="registerEmail" [(ngModel)]="registerData.email" placeholder="ENDEREÇO DE E-MAIL" />
+      <input type="password" name="registerSenha" [(ngModel)]="registerData.senha" placeholder="SENHA" />
+
+      <p class="sucesso-msg" *ngIf="sucessoRegister">{{ sucessoRegister }}</p>
+      <p class="erro-msg" *ngIf="erroRegister">{{ erroRegister }}</p>
+        <button type="submit" class="btn-primary" [disabled]="carregando">
+          {{ carregando ? 'Criando conta...' : 'Criar Conta' }}
+        </button>
+
+    </form>
+
+    <div class="modal-bottom-text">
+      <p>Já tem uma conta?</p>
+      <button class="switch-modal-btn" type="button" (click)="abrirLogin()">
+        Entrar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- CARRINHO -->
+<div
+  class="global-modal cart-modal"
+  [class.active]="modalAberto === 'cart'"
+  *ngIf="modalAberto === 'cart'"
+>
+  <button class="global-modal-close cart-close" (click)="fechar()">&times;</button>
+
+  <div class="cart-modal-box">
+    <div class="cart-content">
+      <div class="cart-items">
+        <ng-container *ngIf="itensCarrinho.length > 0; else carrinhoVazio">
+   <article class="cart-item" *ngFor="let item of itensCarrinho">
+  <img
+    [src]="item.produto?.imagem || 'https://placehold.co/170x140/1a1a1a/ffffff?text=PRODUTO'"
+    [alt]="item.produto?.nome"
+  />
+
+  <div class="item-info">
+
+    <div class="item-header">
+      <div>
+        <h2>{{ item.produto?.nome }}</h2>
+       <p class="category">
+  {{ item.produto?.categoria || 'Produto' }}
+</p>
+
+<p class="size-text">
+  Tamanho: {{ item.tamanho || 'Único' }}
+</p>
+      </div>
+
+      <button class="remove-btn" (click)="removerItem(item.id)">
+        x
+      </button>
+    </div>
+
+  <div class="qty-box">
+  <button class="qty-btn" (click)="diminuirQtd(item)">
+    -
+  </button>
+
+  <span class="qty">
+    {{ item.quantidade }}
+  </span>
+
+  <button class="qty-btn" (click)="aumentarQtd(item)">
+    +
+  </button>
+</div>
+
+    <p class="item-price">
+      {{ formatPrice(item.produto?.preco * item.quantidade) }}
+    </p>
+
+  </div>
+</article>
+        </ng-container>
+
+        <ng-template #carrinhoVazio>
+          <p class="empty-cart">Seu carrinho está vazio.</p>
+        </ng-template>
+      </div>
+
+      <aside class="summary">
+        <h3>Resumo</h3>
+
+      <div *ngFor="let item of itensCarrinho" class="summary-line">
+        <span>{{ item.produto?.nome }}</span>
+        <span>{{ formatPrice(item.produto?.preco * item.quantidade) }}</span>
+      </div>
+
+        <div class="summary-line">
+          <span>Frete</span>
+          <span class="free-shipping">GRÁTIS</span>
+        </div>
+
+        <div class="summary-total">
+          <span>Total</span>
+          <span>{{ formatPrice(totalCart) }}</span>
+        </div>
+
+        <button
+          class="checkout-btn"
+          routerLink="/checkout"
+          (click)="irParaCheckout()"
+        >
+          Finalizar Compra
+        </button>
+      </aside>
+    </div>
+  </div>
+</div>
