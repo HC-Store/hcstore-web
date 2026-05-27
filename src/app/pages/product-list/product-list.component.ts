@@ -7,30 +7,17 @@ import { FooterComponent } from '../../layout/footer/footer.component';
 import { ModalsComponent } from '../../components/modals/modals.component';
 import { ProdutosService, Produto } from '../../services/produtos.service';
 
-type ModalTipo =
-  | 'login'
-  | 'register'
-  | 'cart'
-  | 'profileWelcome'
-  | 'profileEdit'
-  | null;
+type ModalTipo = 'login' | 'register' | 'cart' | 'profileWelcome' | 'profileEdit' | null;
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterModule,
-    HeaderComponent,
-    FooterComponent,
-    ModalsComponent
-  ],
+  imports: [CommonModule, RouterModule, HeaderComponent, FooterComponent, ModalsComponent],
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.css']
 })
 export class ProductListComponent implements OnInit {
   modalAberto: ModalTipo = null;
-
   filtroAberto = false;
 
   categoriaSelecionada = '';
@@ -38,17 +25,9 @@ export class ProductListComponent implements OnInit {
   precoSelecionado = '';
 
   categorias = [
-    'Todos os Produtos',
-    'Casual',
-    'Streetwear',
-    'Camisetas',
-    'Bermudas & Shorts',
-    'Conjuntos',
-    'Calças',
-    'Moletons',
-    'Chinelos',
-    'Tênis',
-    'Acessórios'
+    'Todos os Produtos', 'Casual', 'Streetwear', 'Camisetas',
+    'Bermudas & Shorts', 'Conjuntos', 'Calças', 'Moletons',
+    'Chinelos', 'Tênis', 'Acessórios'
   ];
 
   tamanhosPadrao = ['M', 'G', 'GG', 'XG'];
@@ -56,31 +35,13 @@ export class ProductListComponent implements OnInit {
   tamanhoUnico = ['Tamanho unico'];
   tamanhos = this.tamanhosPadrao;
 
-  faixasPreco = [
-    'R$0 - R$250',
-    'R$250 - R$500',
-    'R$500 - R$750',
-    'R$750 +'
-  ];
+  faixasPreco = ['R$0 - R$250', 'R$250 - R$500', 'R$500 - R$750', 'R$750 +'];
 
   produtos: Produto[] = [];
   paginaAtual = 1;
   produtosPorPagina = 6;
 
   constructor(private produtosService: ProdutosService) {}
-
-  get totalPaginas(): number {
-    return Math.ceil(this.produtos.length / this.produtosPorPagina);
-  }
-
-  get paginas(): number[] {
-    return Array.from({ length: this.totalPaginas }, (_, index) => index + 1);
-  }
-
-  get produtosPaginados(): Produto[] {
-    const inicio = (this.paginaAtual - 1) * this.produtosPorPagina;
-    return this.produtos.slice(inicio, inicio + this.produtosPorPagina);
-  }
 
   ngOnInit(): void {
     this.carregarProdutos();
@@ -92,45 +53,81 @@ export class ProductListComponent implements OnInit {
         this.produtos = res;
         this.paginaAtual = 1;
       },
-      error: (err) => {
-        console.error('Erro ao carregar produtos:', err);
-      }
+      error: (err) => console.error('Erro ao carregar produtos:', err)
     });
   }
 
+  get produtosFiltrados(): Produto[] {
+    return this.produtos.filter(produto => {
+
+      // filtro categoria
+      if (this.categoriaSelecionada && this.categoriaSelecionada !== 'Todos os Produtos') {
+        const nomeCategoria = (produto as any).categoria?.nome?.toLowerCase() || '';
+        if (!nomeCategoria.includes(this.categoriaSelecionada.toLowerCase())) {
+          return false;
+        }
+      }
+
+      // filtro tamanho
+      if (this.tamanhoSelecionado) {
+        const tamanhos = (produto as any).tamanho || '';
+        if (!tamanhos.includes(this.tamanhoSelecionado)) {
+          return false;
+        }
+      }
+
+      // filtro preço
+      if (this.precoSelecionado) {
+        const preco = Number(produto.preco);
+        if (this.precoSelecionado === 'R$0 - R$250' && preco > 250) return false;
+        if (this.precoSelecionado === 'R$250 - R$500' && (preco < 250 || preco > 500)) return false;
+        if (this.precoSelecionado === 'R$500 - R$750' && (preco < 500 || preco > 750)) return false;
+        if (this.precoSelecionado === 'R$750 +' && preco < 750) return false;
+      }
+
+      return true;
+    });
+  }
+
+  get totalPaginas(): number {
+    return Math.ceil(this.produtosFiltrados.length / this.produtosPorPagina);
+  }
+
+  get paginas(): number[] {
+    return Array.from({ length: this.totalPaginas }, (_, i) => i + 1);
+  }
+
+  get produtosPaginados(): Produto[] {
+    const inicio = (this.paginaAtual - 1) * this.produtosPorPagina;
+    return this.produtosFiltrados.slice(inicio, inicio + this.produtosPorPagina);
+  }
+
+  get tituloSecao(): string {
+    if (this.categoriaSelecionada && this.categoriaSelecionada !== 'Todos os Produtos') {
+      return this.categoriaSelecionada;
+    }
+    return 'Produtos em destaque';
+  }
+
   abrirLogin(): void {
-    const usuario = localStorage.getItem('usuarioLogado');
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
-
-    if (usuario === 'true' || token || user) {
+    if (token || user) {
       this.modalAberto = 'profileWelcome';
     } else {
       this.modalAberto = 'login';
     }
   }
 
-  abrirCart(): void {
-    this.modalAberto = 'cart';
-  }
-
-  fecharModal(): void {
-    this.modalAberto = null;
-  }
-
-  toggleFiltro(): void {
-    this.filtroAberto = !this.filtroAberto;
-  }
-
-  fecharFiltro(): void {
-    this.filtroAberto = false;
-  }
+  abrirCart(): void { this.modalAberto = 'cart'; }
+  fecharModal(): void { this.modalAberto = null; }
+  toggleFiltro(): void { this.filtroAberto = !this.filtroAberto; }
+  fecharFiltro(): void { this.filtroAberto = false; }
 
   selecionarCategoria(categoria: string): void {
     this.categoriaSelecionada = categoria;
     this.tamanhos = this.obterTamanhosPorCategoria(categoria);
     this.paginaAtual = 1;
-
     if (this.tamanhoSelecionado && !this.tamanhos.includes(this.tamanhoSelecionado)) {
       this.tamanhoSelecionado = '';
     }
@@ -168,14 +165,8 @@ export class ProductListComponent implements OnInit {
   }
 
   private obterTamanhosPorCategoria(categoria: string): string[] {
-    if (this.categoriaEhCalcado(categoria)) {
-      return this.numeracoesCalcado;
-    }
-
-    if (this.categoriaEhAcessorio(categoria)) {
-      return this.tamanhoUnico;
-    }
-
+    if (this.categoriaEhCalcado(categoria)) return this.numeracoesCalcado;
+    if (this.categoriaEhAcessorio(categoria)) return this.tamanhoUnico;
     return this.tamanhosPadrao;
   }
 }

@@ -1,144 +1,104 @@
-<app-header
-  (openLogin)="abrirLogin()"
-  (openCart)="abrirCart()"
-></app-header>
+<app-header (openLogin)="abrirLogin()" (openCart)="abrirCart()"></app-header>
 
 <main>
-
-  <!-- BOTÃO MOBILE -->
-  <button
-    class="btn-filtro-mobile"
-    type="button"
-    [class.active]="filtroAberto"
+  <button 
+    class="btn-filtro-mobile" 
+    type="button" 
+    [class.active]="filtroAberto" 
     (click)="toggleFiltro()"
   >
-    <span class="filtro-icon"></span>
+    <span class="filtro-icon"></span> 
     {{ filtroAberto ? 'Fechar filtros' : 'Filtros' }}
   </button>
 
   <div class="catalogo">
-
-    <!-- FILTROS -->
     <section class="categorias" [class.filtro-aberto]="filtroAberto">
-    
-
-      <h3 class="titulo-categoria">
-        Categoria
-      </h3>
-
-      <button
-        class="filtro-item"
-        *ngFor="let categoria of categorias"
-        [class.active]="categoriaSelecionada === categoria"
+      <h3 class="titulo-categoria">Categoria</h3>
+      <button 
+        class="filtro-item" 
+        *ngFor="let categoria of categorias" 
+        [class.active]="categoriaSelecionada === categoria" 
         (click)="selecionarCategoria(categoria)"
       >
         {{ categoria }}
       </button>
 
-      <h3 class="titulo-categoria tamanho-titulo">
-        Tamanho
-      </h3>
-
+      <h3 class="titulo-categoria tamanho-titulo">Tamanho</h3>
       <div class="tamanhos-lista">
-        <button
-          class="filtro-item tamanho-item"
-          *ngFor="let tamanho of tamanhos"
-          [class.active]="tamanhoSelecionado === tamanho"
+        <button 
+          class="filtro-item tamanho-item" 
+          *ngFor="let tamanho of tamanhos" 
+          [class.active]="tamanhoSelecionado === tamanho" 
           (click)="selecionarTamanho(tamanho)"
         >
           {{ tamanho }}
         </button>
       </div>
 
-      <h3 class="titulo-categoria preco-titulo">
-        Faixa de Preço
-      </h3>
-
-      <button
-        class="filtro-item"
-        *ngFor="let preco of faixasPreco"
-        [class.active]="precoSelecionado === preco"
+      <h3 class="titulo-categoria preco-titulo">Faixa de Preço</h3>
+      <button 
+        class="filtro-item" 
+        *ngFor="let preco of faixasPreco" 
+        [class.active]="precoSelecionado === preco" 
         (click)="selecionarPreco(preco)"
       >
         {{ preco }}
       </button>
 
-      <button
-        class="btn-limpar"
-        (click)="limparFiltros()"
-      >
+      <button class="btn-limpar" (click)="limparFiltros()">
         Limpar filtros
       </button>
-
     </section>
 
-    <!-- PRODUTOS -->
     <section class="produtos">
-
-      <h2 class="titulo">
-        Produtos em destaque
-      </h2>
+      <h2 class="titulo">{{ tituloSecao }}</h2>
+      
+      <p *ngIf="produtosFiltrados.length === 0" style="color:#aaa; padding:20px;">
+        Nenhum produto encontrado para os filtros selecionados.
+      </p>
 
       <div class="grid-produtos">
-
-        <a
-          class="produto-card"
-          *ngFor="let produto of produtosPaginados"
-          [routerLink]="['/product-detail', produto.id]"
+        <!-- Linha corrigida abaixo: adicionado o <a no início do elemento -->
+        <a 
+          class="produto-card" 
+          *ngFor="let produto of produtosPaginados" 
+          [routerLink]="['/product-detail', produto.id]" 
           [attr.aria-label]="'Ver detalhes de ' + produto.nome"
         >
-
           <div class="produto-imagem">
-            <img
-              [src]="produto.imagens?.[0]?.url || produto.imagem || 'assets/img/sem-imagem.png'"
-              [alt]="produto.nome"
+            <img 
+              [src]="produto.imagens?.[0]?.url || produto.imagem || 'assets/img/sem-imagem.png'" 
+              [alt]="produto.nome" 
             />
           </div>
-
+          
           <div class="produto-info">
-
-            <h3>
-              {{ produto.nome }}
-            </h3>
-
-            <p
-              class="preco"
-              *ngIf="produto.preco"
-            >
+            <h3>{{ produto.nome }}</h3>
+            <p class="preco" *ngIf="produto.preco">
               {{ produto.preco | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
             </p>
-
-            <span class="btn-produto">
-              Ver produto
-            </span>
-
+            <span class="btn-produto">Ver produto</span>
           </div>
-
         </a>
-
       </div>
-
     </section>
-
   </div>
 
-  <!-- DOTS -->
   <div class="dots" *ngIf="totalPaginas > 1">
-    <button
-      class="dot"
-      type="button"
-      *ngFor="let pagina of paginas"
-      [class.active]="paginaAtual === pagina"
-      [attr.aria-label]="'Ir para pagina ' + pagina"
+    <button 
+      class="dot" 
+      type="button" 
+      *ngFor="let pagina of paginas" 
+      [class.active]="paginaAtual === pagina" 
+      [attr.aria-label]="'Ir para pagina ' + pagina" 
       (click)="irParaPagina(pagina)"
     ></button>
   </div>
-
 </main>
 
 <app-footer></app-footer>
 
-<app-modals
-  [modalAberto]="modalAberto"
+<app-modals 
+  [modalAberto]="modalAberto" 
   (closeModal)="fecharModal()"
 ></app-modals>
