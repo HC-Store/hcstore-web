@@ -1,0 +1,433 @@
+/* CONTAINER */
+.dashboard {
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* 🔥 resolve tudo */
+}
+
+/* TITULO */
+.dashboard h2 {
+  margin-bottom: 20px;
+}
+
+/* GRID TOP */
+.top {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+}
+
+/* CARD */
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* CARD MAIS VENDIDOS */
+.best h3 {
+  margin-bottom: 15px;
+}
+
+
+/* CHARTS */
+.charts {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.chart {
+  text-align: center;
+}
+
+/* DONUT */
+.circle {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  position: relative;
+}
+
+
+/* centro branco */
+.circle::after {
+  content: "";
+  width: 60px;
+  height: 60px;
+  background: white;
+  border-radius: 50%;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* TEXTO */
+.circle span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
+}
+
+/* TEXTO (🔥 CORRIGIDO) */
+.percent {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  font-weight: bold;
+  font-size: 14px;
+
+  z-index: 2; /* 🔥 ESSA LINHA RESOLVE */
+}
+
+/* CORES COM PORCENTAGEM */
+.red {
+  background: conic-gradient(#ff6b6b 81%, #eee 0);
+}
+
+.green {
+  background: conic-gradient(#25df14 22%, #eee 0);
+}
+
+.blue {
+  background: conic-gradient(#3b82f6 62%, #eee 0);
+}
+/* MAIS VENDIDOS */
+.product {
+  display: grid;
+  grid-template-columns: 50px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+/* IMAGEM */
+.product img {
+  width: 45px;
+  height: 45px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+
+/* TEXTO */
+.product div {
+  display: flex;
+  flex-direction: column;
+}
+
+
+
+.product strong {
+  font-size: 13px;
+}
+
+.product small {
+  font-size: 11px;
+  color: #777;
+}
+
+/* PREÇO */
+.product span {
+  font-weight: 500;
+}
+
+/* BOTÃO */
+.report {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  background: #eee;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.report:hover {
+  background: #ddd;
+}
+
+/* FAKE CHART */
+.fake-chart {
+  height: 180px;
+  border-radius: 10px;
+
+  background: linear-gradient(
+    to top,
+    rgba(37,223,20,0.8),
+    rgba(37,223,20,0.2),
+    transparent
+  );
+
+  position: relative;
+}
+
+.fake-chart::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background: #25df14;
+  bottom: 0;
+}
+
+/* TABELA */
+.table h3 {
+  margin-bottom: 10px;
+}
+
+/* TABELA */
+.table table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; /* 🔥 ESSENCIAL */
+}
+
+
+.table thead th {
+  text-align: left;
+  font-size: 12px;
+  color: #777;
+  padding: 12px;
+}
+
+/* LINHAS */
+.table tbody tr {
+  border-bottom: 1px solid #eee;
+}
+
+/* LARGURA DAS COLUNAS */
+.table th:nth-child(1), .table td:nth-child(1) { width: 20%; }
+.table th:nth-child(2), .table td:nth-child(2) { width: 10%; }
+.table th:nth-child(3), .table td:nth-child(3) { width: 15%; }
+.table th:nth-child(4), .table td:nth-child(4) { width: 25%; }
+.table th:nth-child(5), .table td:nth-child(5) { width: 15%; }
+.table th:nth-child(6), .table td:nth-child(6) { width: 15%; }
+
+/* CLIENTE */
+/* CLIENTE */
+.user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap; /* 🔥 NÃO DEIXA QUEBRAR */
+}
+
+/* AVATAR */
+.avatar {
+  min-width: 32px;
+  min-height: 32px;
+
+  width: 32px;
+  height: 32px;
+
+  border-radius: 50%;
+  background: #25df14;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-weight: bold;
+  font-size: 13px;
+
+  flex-shrink: 0; /* 🔥 impede deformar */
+}
+
+/* NOME */
+.user span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* STATUS */
+.status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* BOLINHA */
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.delivered .dot {
+  background: #3b82f6;
+}
+
+.canceled .dot {
+  background: #f59e0b;
+}
+
+/* VALOR */
+.table td:last-child {
+  font-weight: 500;
+}
+
+th, td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+/* USER */
+.user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.avatar {
+  width: 30px;
+  height: 30px;
+  background: #25df14;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* STATUS */
+.status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.delivered .dot {
+  background: #3b82f6;
+}
+
+.canceled .dot {
+  background: #f59e0b;
+}
+
+/* FUNDO ESCURO */
+/* MODAL */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  background: rgba(0,0,0,0.4);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 1000;
+}
+
+/* CARD */
+.modal-content {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  width: 420px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+/* TÍTULO */
+.title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* LISTA */
+.report-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* ITEM */
+.report-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ESQUERDA */
+.left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* IMAGEM */
+.left img {
+  width: 45px;
+  height: 45px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+/* TEXTO */
+.info {
+  display: flex;
+  flex-direction: column;
+}
+
+.name {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.sales {
+  font-size: 12px;
+  color: #777;
+}
+
+/* PREÇO */
+.price {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* BOTÃO */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.close-btn {
+  background: #25df14;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.close-btn:hover {
+  background: #1fc90f;
+}
+
+.card canvas {
+  width: 100% !important;
+  height: 250px !important;
+}

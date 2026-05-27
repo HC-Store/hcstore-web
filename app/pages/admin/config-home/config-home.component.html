@@ -1,0 +1,68 @@
+<div class="page">
+  <h2>Configurar Home</h2>
+
+  <p class="sucesso-msg" *ngIf="sucesso">✓ {{ sucesso }}</p>
+  <p class="erro-msg" *ngIf="erro">{{ erro }}</p>
+
+  <!-- VÍDEO -->
+  <div class="section-card">
+    <h3> Vídeo do Banner Principal</h3>
+    <label>URL do vídeo</label>
+    <input [(ngModel)]="config.videoUrl" placeholder="assets/video/banner-home.mp4" />
+    <video *ngIf="config.videoUrl" [src]="config.videoUrl" muted autoplay loop
+      style="max-width:100%; max-height:200px; margin-top:8px; border-radius:8px;"></video>
+  </div>
+
+  <!-- BANNERS -->
+  <div class="section-card">
+    <h3> Banners das Categorias</h3>
+
+    <label>Banner 1 (Tênis) — URL da imagem</label>
+    <input [(ngModel)]="config.banner1" placeholder="URL da imagem" />
+    <img *ngIf="config.banner1" [src]="config.banner1" style="max-height:100px; margin-top:4px; border-radius:6px;" />
+
+    <label>Banner 2 (Acessórios) — URL da imagem</label>
+    <input [(ngModel)]="config.banner2" placeholder="URL da imagem" />
+    <img *ngIf="config.banner2" [src]="config.banner2" style="max-height:100px; margin-top:4px; border-radius:6px;" />
+
+    <label>Banner 3 (Roupas) — URL da imagem</label>
+    <input [(ngModel)]="config.banner3" placeholder="URL da imagem" />
+    <img *ngIf="config.banner3" [src]="config.banner3" style="max-height:100px; margin-top:4px; border-radius:6px;" />
+  </div>
+
+  <!-- DESTAQUES -->
+  <div class="section-card">
+    <h3> Produtos em Destaque</h3>
+
+    <div class="item-row" *ngFor="let d of config.destaques; let i = index">
+      <div class="item-fields">
+        <input [(ngModel)]="d.id" type="number" placeholder="ID do produto" />
+        <input [(ngModel)]="d.titulo" placeholder="Título" />
+        <input [(ngModel)]="d.imagem" placeholder="URL da imagem" />
+        <img *ngIf="d.imagem" [src]="d.imagem" style="max-height:60px; border-radius:4px;" />
+      </div>
+      <button class="btn-remove" (click)="removerDestaque(i)">✕</button>
+    </div>
+
+    <button class="btn-add" (click)="adicionarDestaque()">+ Adicionar Destaque</button>
+  </div>
+
+  <!-- LANÇAMENTOS -->
+  <div class="section-card">
+    <h3>Últimos Lançamentos</h3>
+
+    <div class="item-row" *ngFor="let l of config.lancamentos; let i = index">
+      <div class="item-fields">
+        <input [(ngModel)]="l.id" type="number" placeholder="ID do produto" />
+        <input [(ngModel)]="l.titulo" placeholder="Título" />
+        <input [(ngModel)]="l.imagem" placeholder="URL da imagem" />
+        <img *ngIf="l.imagem" [src]="l.imagem" style="max-height:60px; border-radius:4px;" />
+      </div>
+      <button class="btn-remove" (click)="removerLancamento(i)">✕</button>
+    </div>
+
+    <button class="btn-add" (click)="adicionarLancamento()">+ Adicionar Lançamento</button>
+  </div>
+
+  <button class="btn-salvar" (click)="salvar()">SALVAR CONFIGURAÇÕES</button>
+</div>

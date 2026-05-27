@@ -1,0 +1,61 @@
+<div class="topbar">
+
+  <div class="left">
+    <span class="breadcrumb">
+      HOME > <span class="active">{{ currentPage }}</span>
+    </span>
+  </div>
+
+  <div class="right">
+     <input *ngIf="showSearch"
+         [(ngModel)]="searchTerm"
+         (keyup.enter)="search()"
+         class="search-input"
+         placeholder="Buscar..." />
+
+
+    <!-- 🔍 -->
+    <span class="icon" (click)="toggleSearch()">🔍</span>
+
+    <!-- 🔔 -->
+    <div class="notif-container">
+      <span class="icon" (click)="toggleNotifications()">🔔</span>
+
+      <div class="notif-dropdown" *ngIf="showNotifications">
+        <div class="notif-title">Notificações</div>
+
+        <div *ngFor="let n of notifications"
+             class="notif-item"
+             [class.unread]="!n.read"
+             (click)="markAsRead(n)">
+          {{ n.text }}
+        </div>
+
+        <div *ngIf="notifications.length === 0" class="empty">
+          Nenhuma notificação
+        </div>
+      </div>
+    </div>
+
+    <!-- 👤 ADMIN -->
+    <div class="admin-container">
+
+      <div class="admin" (click)="toggleAdminMenu()">
+        ADMIN ▾
+      </div>
+
+      <div class="admin-dropdown" *ngIf="showAdminMenu">
+
+        <div class="admin-item">Perfil</div>
+
+        <div class="admin-item logout" (click)="logout()">
+          Sair
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

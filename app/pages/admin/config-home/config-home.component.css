@@ -1,0 +1,102 @@
+.page {
+  padding: 24px;
+}
+
+.page h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 24px;
+}
+
+.section-card {
+  background: #f9f9f9;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.section-card h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.section-card input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.item-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: white;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  margin-bottom: 8px;
+}
+
+.item-fields {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.btn-remove {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.btn-add {
+  background: transparent;
+  border: 2px dashed #aaa;
+  border-radius: 6px;
+  padding: 10px;
+  cursor: pointer;
+  color: #666;
+  font-size: 0.9rem;
+  width: 100%;
+}
+
+.btn-add:hover {
+  border-color: #39ff14;
+  color: #333;
+}
+
+.btn-salvar {
+  width: 100%;
+  padding: 16px;
+  background: #39ff14;
+  color: black;
+  font-weight: 800;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.sucesso-msg {
+  color: #27ae60;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.erro-msg {
+  color: #e74c3c;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
