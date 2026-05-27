@@ -1,0 +1,135 @@
+<div class="dashboard">
+
+  <h2>DASHBOARD</h2>
+
+  <!-- TOP -->
+  <div class="top">
+
+    <!-- GRÁFICOS -->
+    <div class="card charts">
+
+      <div class="circle red">
+        <span class="percent">81%</span>
+      </div>
+      
+      <div class="circle green">
+        <span class="percent">20%</span>
+      </div>
+      
+      <div class="circle blue">
+        <span class="percent">65%</span>
+      </div>
+
+    </div>
+
+    <!-- MAIS VENDIDOS -->
+    <div class="card best">
+
+      <h3>Mais Vendidos</h3>
+
+      <div class="product" *ngFor="let p of products">
+        <img [src]="p.image" />
+        <div>
+          <strong>{{ p.name }}</strong>
+          <small>{{ p.sales }} sales</small>
+        </div>
+        <span>${{ p.price }}</span>
+      </div>
+
+      <button class="report" (click)="openReport()">RELATÓRIO</button>
+
+    </div>
+
+  </div>
+
+  
+<!-- MODAL RELATÓRIO -->
+<div class="modal" *ngIf="showReport">
+
+  <div class="modal-content">
+
+    <h3 class="title">Relatório de Vendas</h3>
+
+    <div class="report-list">
+
+      <div class="report-item" *ngFor="let p of products">
+
+        <div class="left">
+          <img [src]="p.image" />
+          <div class="info">
+            <span class="name">{{ p.name }}</span>
+            <span class="sales">{{ p.sales }} vendas</span>
+          </div>
+        </div>
+
+        <div class="price">
+          ${{ p.price }}
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="modal-actions">
+      <button class="close-btn" (click)="closeReport()">Fechar</button>
+    </div>
+
+  </div>
+
+</div>
+
+  <!-- GRÁFICO -->
+  <div class="card">
+    <h3>Vendas ao Mês</h3>
+    <canvas id="salesChart"></canvas>
+  </div>
+
+  <!-- TABELA -->
+  <div class="card table">
+
+    <h3>Pedidos Recentes</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Produto</th>
+          <th>ID</th>
+          <th>Data</th>
+          <th>Cliente</th>
+          <th>Status</th>
+          <th>Valor</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let order of orders">
+
+          <td>{{ order.product }}</td>
+          <td>#{{ order.id }}</td>
+          <td>{{ order.date }}</td>
+
+          <td class="user">
+            <div class="avatar">{{ order.name.charAt(0) }}</div>
+            {{ order.name }}
+          </td>
+
+          <td>
+            <span class="status"
+                  [class.delivered]="order.status === 'Entrega'"
+                  [class.canceled]="order.status === 'Cancelado'">
+
+              <span class="dot"></span>
+              {{ order.status }}
+
+            </span>
+          </td>
+
+          <td>R${{ order.price }}</td>
+
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+
+</div>

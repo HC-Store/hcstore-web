@@ -1,0 +1,79 @@
+<div class="page">
+
+  <div class="header">
+    <h2>Usuários</h2>
+  </div>
+
+  <p *ngIf="carregando" style="color:white; padding:20px;">Carregando...</p>
+  <p *ngIf="erro" style="color:#e74c3c; padding:20px;">{{ erro }}</p>
+
+  <div class="table-card">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nome</th>
+          <th>E-mail</th>
+          <th>Telefone</th>
+          <th>CPF</th>
+          <th>Cadastro</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let usuario of usuarios">
+          <td>#{{ usuario.id }}</td>
+
+          <td class="user">
+            <div class="avatar">{{ usuario.nome.charAt(0) }}</div>
+            {{ usuario.nome }} {{ usuario.sobrenome }}
+          </td>
+
+          <td>{{ usuario.email }}</td>
+          <td>{{ usuario.telefone }}</td>
+          <td>{{ usuario.cpf }}</td>
+          <td>{{ usuario.createdAt | date:'dd/MM/yyyy' }}</td>
+
+          <td class="actions">
+            <button class="edit" (click)="editUser(usuario)">Editar</button>
+            <button class="delete" (click)="deleteUser(usuario.id)">Excluir</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal" *ngIf="showForm">
+    <div class="modal-content">
+      <h3 class="title">Editar Usuário</h3>
+
+      <div class="form-group">
+        <label>Nome</label>
+        <input [(ngModel)]="form.nome" placeholder="Nome" />
+      </div>
+
+      <div class="form-group">
+        <label>Sobrenome</label>
+        <input [(ngModel)]="form.sobrenome" placeholder="Sobrenome" />
+      </div>
+
+      <div class="form-group">
+        <label>E-mail</label>
+        <input [(ngModel)]="form.email" placeholder="E-mail" />
+      </div>
+
+      <div class="form-group">
+        <label>Telefone</label>
+        <input [(ngModel)]="form.telefone" placeholder="Telefone" />
+      </div>
+
+      <div class="modal-actions">
+        <button class="save" (click)="saveUser()">Salvar</button>
+        <button class="cancel" (click)="closeForm()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+</div>

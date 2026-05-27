@@ -1,0 +1,39 @@
+<div class="page">
+  <h2>Configurar Coleções</h2>
+
+  <p class="sucesso-msg" *ngIf="sucesso">✓ {{ sucesso }}</p>
+  <p class="erro-msg" *ngIf="erro">{{ erro }}</p>
+
+  <!-- BANNER -->
+  <div class="section-card">
+    <h3> Banner da Página</h3>
+    <label>URL da imagem</label>
+    <input [(ngModel)]="config.bannerImagem" placeholder="assets/img/banner-colecoes.png" />
+    <img *ngIf="config.bannerImagem" [src]="config.bannerImagem"
+      style="max-height:150px; margin-top:8px; border-radius:8px;" />
+  </div>
+
+  <!-- TIMER -->
+  <div class="section-card">
+    <h3> Countdown — Data de Lançamento</h3>
+    <label>Data e hora do lançamento</label>
+    <input type="datetime-local" [(ngModel)]="config.dataLancamento" />
+  </div>
+
+  <!-- TEXTOS -->
+  <div class="section-card">
+    <h3>Textos do Drop</h3>
+
+    <label>Título (ex: DROP 01:)</label>
+    <input [(ngModel)]="config.dropTitulo" placeholder="DROP 01:" />
+
+    <label>Subtítulo (ex: OFF-GRID)</label>
+    <input [(ngModel)]="config.dropSubtitulo" placeholder="OFF-GRID" />
+
+    <label>Descrição</label>
+    <textarea [(ngModel)]="config.dropDescricao" rows="4"
+      placeholder="Descrição do drop..."></textarea>
+  </div>
+
+  <button class="btn-salvar" (click)="salvar()">SALVAR CONFIGURAÇÕES</button>
+</div>
