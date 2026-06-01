@@ -66,6 +66,24 @@ export class ProductDetailComponent implements OnInit {
     'XG'
   ];
 
+  private tamanhosPadrao = ['M', 'G', 'GG', 'XG'];
+  private numeracoesCalcado = ['38', '39', '40', '41', '42'];
+  private tamanhoUnico = ['Tamanho unico'];
+
+  get categoriaProduto(): string {
+    const categoria = this.produto?.categoria;
+
+    if (categoria?.nome) {
+      return categoria.nome;
+    }
+
+    if (typeof categoria === 'string') {
+      return categoria;
+    }
+
+    return 'PRODUTO';
+  }
+
   constructor(
     private route: ActivatedRoute,
     private produtosService: ProdutosService,
@@ -90,14 +108,11 @@ export class ProductDetailComponent implements OnInit {
 
           if (this.produto) {
 
-            this.mainImage =
-              this.produto.imagens?.[0]?.url ||
-              this.produto.imagem ||
-              'assets/img/sem-imagem.png';
+            const imagens = this.obterImagensProduto();
+            this.mainImage = imagens[0];
+            this.thumbnails = imagens.slice(1);
 
-            this.thumbnails = [
-              this.mainImage
-            ];
+            this.tamanhos = this.obterTamanhosProduto();
           } else {
             this.erro = 'Produto nao encontrado.';
           }
@@ -116,14 +131,91 @@ export class ProductDetailComponent implements OnInit {
     }
   }
 
-  trocarImagem(image: string): void {
+  trocarImagem(image: string, index: number): void {
 
+    this.thumbnails[index] = this.mainImage;
     this.mainImage = image;
+  }
+
+  private obterImagensProduto(): string[] {
+    const imagensProduto = Array.isArray(this.produto?.imagens)
+      ? this.produto.imagens
+          .map((imagem: any) => imagem?.url || imagem)
+          .filter(Boolean)
+      : [];
+
+    const imagens = [
+      ...imagensProduto,
+      this.produto?.imagem
+    ].filter(Boolean);
+
+    return imagens.length > 0
+      ? imagens.slice(0, 3)
+      : ['assets/img/sem-imagem.png'];
   }
 
   selecionarTamanho(size: string): void {
 
     this.selectedSize = size;
+  }
+
+  private obterTamanhosProduto(): string[] {
+    const tamanhosCadastrados = this.obterTamanhosCadastrados();
+
+    if (tamanhosCadastrados.length > 0) {
+      return tamanhosCadastrados;
+    }
+
+    const categoria = this.normalizarTexto(this.categoriaProduto);
+
+    if (
+      categoria.includes('tenis') ||
+      categoria.includes('streetwear') ||
+      categoria.includes('chinelo')
+    ) {
+      return this.numeracoesCalcado;
+    }
+
+    if (categoria.includes('acessor')) {
+      return this.tamanhoUnico;
+    }
+
+    return this.tamanhosPadrao;
+  }
+
+  private obterTamanhosCadastrados(): string[] {
+    const tamanho = this.produto?.tamanho;
+
+    if (Array.isArray(tamanho)) {
+      return tamanho.map(String);
+    }
+
+    if (typeof tamanho === 'string') {
+      return tamanho.split(',').map(item => item.trim()).filter(Boolean);
+    }
+
+    const quantidadePorTamanho = this.produto?.quantidadePorTamanho;
+
+    if (quantidadePorTamanho && typeof quantidadePorTamanho === 'object') {
+      return Object.keys(quantidadePorTamanho);
+    }
+
+    if (typeof quantidadePorTamanho === 'string') {
+      try {
+        return Object.keys(JSON.parse(quantidadePorTamanho));
+      } catch {
+        return [];
+      }
+    }
+
+    return [];
+  }
+
+  private normalizarTexto(valor: string): string {
+    return valor
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
   }
 
   toggleAccordion(
