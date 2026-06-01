@@ -63,8 +63,8 @@
 }
 
 .thumbs {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   margin-top: 10px;
 }
@@ -76,6 +76,8 @@
   padding: 0;
   opacity: 0.9;
   transition: 0.2s ease;
+  width: 118px;
+  height: 118px;
 }
 
 .thumb:hover,
@@ -85,7 +87,7 @@
 
 .thumb img {
   width: 100%;
-  aspect-ratio: 1 / 1;
+  height: 100%;
   object-fit: cover;
   display: block;
 }
@@ -270,6 +272,11 @@
   .thumbs {
     gap: 6px;
     margin-top: 8px;
+  }
+
+  .thumb {
+    width: 86px;
+    height: 86px;
   }
 
   .info-column {

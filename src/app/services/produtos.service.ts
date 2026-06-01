@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
@@ -11,8 +11,19 @@ export interface Produto {
   preco: number;
   estoque?: number;
   categoriaId?: number;
+  categoria?: { id: number; nome: string };
+  tamanho?: string;
+  quantidadePorTamanho?: string | Record<string, number>;
   imagem?: string;
   imagens?: { id: number; url: string; produtoId: number }[];
+}
+
+export interface ProdutoFiltros {
+  categoria?: string;
+  categoriaId?: number;
+  tamanho?: string;
+  precoMin?: number;
+  precoMax?: number;
 }
 
 @Injectable({
@@ -20,6 +31,7 @@ export interface Produto {
 })
 export class ProdutosService {
   private apiUrl = `${environment.apiUrl}/produtos`;
+  private categoriasUrl = `${environment.apiUrl}/categorias`;
 
   private produtosFallback: Produto[] = [
     {
@@ -71,13 +83,25 @@ export class ProdutosService {
 
   constructor(private http: HttpClient) {}
 
-  listar(): Observable<Produto[]> {
-    return this.http.get<Produto[]>(this.apiUrl).pipe(
+  listar(filtros: ProdutoFiltros = {}): Observable<Produto[]> {
+    let params = new HttpParams();
+
+    if (filtros.categoria) params = params.set('categoria', filtros.categoria);
+    if (filtros.categoriaId) params = params.set('categoriaId', filtros.categoriaId);
+    if (filtros.tamanho) params = params.set('tamanho', filtros.tamanho);
+    if (filtros.precoMin !== undefined) params = params.set('precoMin', filtros.precoMin);
+    if (filtros.precoMax !== undefined) params = params.set('precoMax', filtros.precoMax);
+
+    return this.http.get<Produto[]>(this.apiUrl, { params }).pipe(
       catchError((err) => {
         console.warn('Usando produtos locais para teste:', err);
         return of(this.produtosFallback);
       })
     );
+  }
+
+  listarCategorias(): Observable<{ id: number; nome: string }[]> {
+    return this.http.get<{ id: number; nome: string }[]>(this.categoriasUrl);
   }
 
   cadastrar(produto: Produto): Observable<Produto> {

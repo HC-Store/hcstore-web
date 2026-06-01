@@ -44,24 +44,12 @@
         <button
           type="button"
           class="thumb"
-          [class.active]="mainImage === thumbnails[0]"
-          (click)="trocarImagem(thumbnails[0])"
+          *ngFor="let thumbnail of thumbnails; let i = index"
+          (click)="trocarImagem(thumbnail, i)"
         >
           <img
-            [src]="thumbnails[0]"
-            alt="Miniatura 1"
-          />
-        </button>
-
-        <button
-          type="button"
-          class="thumb"
-          [class.active]="mainImage === thumbnails[1]"
-          (click)="trocarImagem(thumbnails[1])"
-        >
-          <img
-            [src]="thumbnails[1]"
-            alt="Miniatura 2"
+            [src]="thumbnail"
+            [alt]="'Miniatura ' + (i + 1)"
           />
         </button>
 
@@ -73,7 +61,7 @@
     <div class="info-column">
 
       <p class="category">
-        {{ produto?.categoria || 'PRODUTO' }}
+        {{ categoriaProduto }}
       </p>
 
       <h1 class="product-title">
@@ -99,37 +87,11 @@
           <button
             type="button"
             class="size-btn"
-            [class.active]="selectedSize === 'M'"
-            (click)="selecionarTamanho('M')"
+            *ngFor="let tamanho of tamanhos"
+            [class.active]="selectedSize === tamanho"
+            (click)="selecionarTamanho(tamanho)"
           >
-            M
-          </button>
-
-          <button
-            type="button"
-            class="size-btn"
-            [class.active]="selectedSize === 'G'"
-            (click)="selecionarTamanho('G')"
-          >
-            G
-          </button>
-
-          <button
-            type="button"
-            class="size-btn"
-            [class.active]="selectedSize === 'GG'"
-            (click)="selecionarTamanho('GG')"
-          >
-            GG
-          </button>
-
-          <button
-            type="button"
-            class="size-btn"
-            [class.active]="selectedSize === 'XG'"
-            (click)="selecionarTamanho('XG')"
-          >
-            XG
+            {{ tamanho }}
           </button>
 
         </div>
