@@ -449,6 +449,37 @@ constructor(
     }, 0);
   }
 
+  imagemProdutoCarrinho(item: any): string {
+    const produto = item?.produto || {};
+
+    return (
+      produto.imagens?.[0]?.url ||
+      produto.imagens?.[0] ||
+      produto.imagem ||
+      produto.imagem2 ||
+      produto.imagem3 ||
+      'https://placehold.co/170x140/1a1a1a/ffffff?text=PRODUTO'
+    );
+  }
+
+  categoriaProdutoCarrinho(item: any): string {
+    const categoria = item?.produto?.categoria;
+
+    if (categoria?.nome) {
+      return categoria.nome;
+    }
+
+    if (typeof categoria === 'string') {
+      return categoria;
+    }
+
+    return 'Produto';
+  }
+
+  tamanhoProdutoCarrinho(item: any): string {
+    return item?.tamanho || item?.produto?.tamanhoSelecionado || item?.produto?.selectedSize || 'Único';
+  }
+
   formatPrice(valor: number): string {
     return valor?.toLocaleString('pt-BR', {
       style: 'currency',
