@@ -32,6 +32,33 @@
   font-size: 0.9rem;
 }
 
+.preview-video,
+.preview-banner,
+.preview-thumb {
+  display: block;
+  background: #eee;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.preview-video {
+  width: min(100%, 420px);
+  height: 200px;
+  margin-top: 8px;
+}
+
+.preview-banner {
+  width: min(100%, 360px);
+  height: 120px;
+  margin-top: 4px;
+}
+
+.preview-thumb {
+  width: 90px;
+  height: 70px;
+  border-radius: 4px;
+}
+
 .item-row {
   display: flex;
   align-items: flex-start;

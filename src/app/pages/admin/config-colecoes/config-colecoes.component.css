@@ -33,6 +33,16 @@
   font-size: 0.9rem;
 }
 
+.preview-banner {
+  display: block;
+  width: min(100%, 520px);
+  height: 170px;
+  margin-top: 8px;
+  background: #eee;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
 .btn-salvar {
   width: 100%;
   padding: 16px;

@@ -28,7 +28,10 @@ export class ProductsComponent implements OnInit {
     descricao: '',
     tamanho: '',
     estoque: '',
-    marca: ''
+    marca: '',
+    composicaoMaterial: '',
+    instrucaoLavagem: '',
+    enviosDevolucoes: ''
   };
 
   constructor(private router: Router, private api: ApiService) {}
@@ -67,7 +70,10 @@ export class ProductsComponent implements OnInit {
       descricao: p.descricao,
       tamanho: p.tamanho || '',
       estoque: p.estoque,
-      marca: p.marca || ''
+      marca: p.marca || '',
+      composicaoMaterial: p.composicaoMaterial || '',
+      instrucaoLavagem: p.instrucaoLavagem || '',
+      enviosDevolucoes: p.enviosDevolucoes || ''
     };
 
     this.showModal = true;
@@ -83,7 +89,10 @@ export class ProductsComponent implements OnInit {
       tamanho: this.form.tamanho,
       estoque: Number(this.form.estoque),
       marca: this.form.marca,
-      categoriaId: this.form.categoriaId
+      categoriaId: this.form.categoriaId,
+      composicaoMaterial: this.form.composicaoMaterial,
+      instrucaoLavagem: this.form.instrucaoLavagem,
+      enviosDevolucoes: this.form.enviosDevolucoes
     };
 
     this.api.updateProduto(this.editId, body).subscribe({

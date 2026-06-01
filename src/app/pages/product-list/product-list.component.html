@@ -57,7 +57,10 @@
         Nenhum produto encontrado para os filtros selecionados.
       </p>
 
-      <div class="grid-produtos">
+      <div
+        class="grid-produtos"
+        [class.apenas-um-produto]="produtosPaginados.length === 1"
+      >
         <!-- Linha corrigida abaixo: adicionado o <a no início do elemento -->
         <a 
           class="produto-card" 
