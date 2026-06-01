@@ -435,11 +435,13 @@ constructor(
 
   aumentarQtd(item: any): void {
     this.carrinho.aumentarQuantidade(item);
+    this.itensCarrinho = this.carrinho.itensSnapshot;
     this.calcularTotal();
   }
 
   diminuirQtd(item: any): void {
     this.carrinho.diminuirQuantidade(item);
+    this.itensCarrinho = this.carrinho.itensSnapshot;
     this.calcularTotal();
   }
 

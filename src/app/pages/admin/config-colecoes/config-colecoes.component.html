@@ -9,8 +9,7 @@
     <h3> Banner da Página</h3>
     <label>URL da imagem</label>
     <input [(ngModel)]="config.bannerImagem" placeholder="assets/img/banner-colecoes.png" />
-    <img *ngIf="config.bannerImagem" [src]="config.bannerImagem"
-      style="max-height:150px; margin-top:8px; border-radius:8px;" />
+    <img *ngIf="config.bannerImagem" [src]="config.bannerImagem" class="preview-banner" />
   </div>
 
   <!-- TIMER -->

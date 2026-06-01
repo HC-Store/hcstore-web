@@ -191,28 +191,43 @@ export class CarrinhoService {
   }
 
   aumentarQuantidade(item: any): void {
+    const itens = this.itensSnapshot.map((itemAtual: any) => {
+      if (itemAtual.id !== item.id) {
+        return itemAtual;
+      }
 
-    item.quantidade++;
+      return {
+        ...itemAtual,
+        quantidade: Number(itemAtual.quantidade || 1) + 1
+      };
+    });
 
     if (this.temTokenApi()) {
-      this.itens$.next([...this.itensSnapshot]);
-    } else {
-      this.salvarCarrinhoLocal(this.itensSnapshot);
+      this.itens$.next(itens);
+      return;
     }
+
+    this.salvarCarrinhoLocal(itens);
   }
 
   diminuirQuantidade(item: any): void {
-
-    if (item.quantidade > 1) {
-
-      item.quantidade--;
-
-      if (this.temTokenApi()) {
-        this.itens$.next([...this.itensSnapshot]);
-      } else {
-        this.salvarCarrinhoLocal(this.itensSnapshot);
+    const itens = this.itensSnapshot.map((itemAtual: any) => {
+      if (itemAtual.id !== item.id) {
+        return itemAtual;
       }
+
+      return {
+        ...itemAtual,
+        quantidade: Math.max(Number(itemAtual.quantidade || 1) - 1, 1)
+      };
+    });
+
+    if (this.temTokenApi()) {
+      this.itens$.next(itens);
+      return;
     }
+
+    this.salvarCarrinhoLocal(itens);
   }
 
   get total(): number {

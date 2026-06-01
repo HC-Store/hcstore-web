@@ -161,6 +161,29 @@ export class ProductDetailComponent implements OnInit {
     this.selectedSize = size;
   }
 
+  textoAccordion(
+    campo: 'composicaoMaterial' | 'instrucaoLavagem' | 'enviosDevolucoes'
+  ): string[] {
+    const texto = this.produto?.[campo] || this.textoPadraoAccordion(campo);
+
+    return String(texto)
+      .split(/\r?\n/)
+      .map(linha => linha.trim())
+      .filter(Boolean);
+  }
+
+  private textoPadraoAccordion(
+    campo: 'composicaoMaterial' | 'instrucaoLavagem' | 'enviosDevolucoes'
+  ): string {
+    const textos = {
+      composicaoMaterial: 'Composicao do material nao informada.',
+      instrucaoLavagem: 'Instrucoes de lavagem nao informadas.',
+      enviosDevolucoes: 'Informacoes de envio e devolucoes nao informadas.'
+    };
+
+    return textos[campo];
+  }
+
   private obterTamanhosProduto(): string[] {
     const tamanhosCadastrados = this.obterTamanhosCadastrados();
 
