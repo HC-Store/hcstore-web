@@ -146,11 +146,13 @@ export class ProductDetailComponent implements OnInit {
 
     const imagens = [
       ...imagensProduto,
-      this.produto?.imagem
+      this.produto?.imagem,
+      this.produto?.imagem2,
+      this.produto?.imagem3
     ].filter(Boolean);
 
     return imagens.length > 0
-      ? imagens.slice(0, 3)
+      ? [...new Set(imagens)]
       : ['assets/img/sem-imagem.png'];
   }
 

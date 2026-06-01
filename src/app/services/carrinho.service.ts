@@ -134,7 +134,8 @@ export class CarrinhoService {
 
         carrinhoId: this.carrinhoId,
         produtoId,
-        quantidade
+        quantidade,
+        tamanho
 
       }).pipe(
         switchMap(() => this.carregarCarrinho$())

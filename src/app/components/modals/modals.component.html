@@ -278,8 +278,8 @@
         <ng-container *ngIf="itensCarrinho.length > 0; else carrinhoVazio">
    <article class="cart-item" *ngFor="let item of itensCarrinho">
   <img
-    [src]="item.produto?.imagem || 'https://placehold.co/170x140/1a1a1a/ffffff?text=PRODUTO'"
-    [alt]="item.produto?.nome"
+    [src]="imagemProdutoCarrinho(item)"
+    [alt]="item.produto?.nome || 'Produto'"
   />
 
   <div class="item-info">
@@ -288,11 +288,11 @@
       <div>
         <h2>{{ item.produto?.nome }}</h2>
        <p class="category">
-  {{ item.produto?.categoria || 'Produto' }}
+  {{ categoriaProdutoCarrinho(item) }}
 </p>
 
 <p class="size-text">
-  Tamanho: {{ item.tamanho || 'Único' }}
+  Tamanho: {{ tamanhoProdutoCarrinho(item) }}
 </p>
       </div>
 
