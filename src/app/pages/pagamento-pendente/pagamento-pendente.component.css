@@ -1,0 +1,30 @@
+.pending-page {
+  min-height: 100vh;
+  background: #050505;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+}
+
+.pending-page h1 {
+  color: #f5c542;
+  font-size: 2.4rem;
+  margin-bottom: 16px;
+}
+
+.pending-page p {
+  color: #cfcfcf;
+  margin-bottom: 24px;
+}
+
+.pending-page a {
+  color: #fff;
+  border: 1px solid #fff;
+  padding: 12px 22px;
+  border-radius: 8px;
+  text-decoration: none;
+}

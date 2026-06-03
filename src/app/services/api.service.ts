@@ -201,4 +201,10 @@ createCupom(body: any): Observable<any> {
 validarCupom(body: any): Observable<any> {
   return this.http.post(`${this.base}/cupons/validar`, body);
 }
+
+criarCheckoutPagBank(body: any): Observable<any> {
+  return this.http.post(`${this.base}/pagamentos/checkout`, body, {
+    headers: this.headers()
+  });
+}
 }

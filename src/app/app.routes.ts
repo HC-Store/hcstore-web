@@ -106,9 +106,27 @@ export const routes: Routes = [
   ]
 },
 
-  
-
   {
+  path: 'pagamento/sucesso',
+  loadComponent: () =>
+    import('./pages/pagamento-sucesso/pagamento-sucesso.component')
+      .then(m => m.PagamentoSucessoComponent)
+},
+
+{
+  path: 'pagamento/erro',
+  loadComponent: () =>
+    import('./pages/pagamento-erro/pagamento-erro.component')
+      .then(m => m.PagamentoErroComponent)
+},
+
+{
+  path: 'pagamento/pendente',
+  loadComponent: () =>
+    import('./pages/pagamento-pendente/pagamento-pendente.component')
+      .then(m => m.PagamentoPendenteComponent)
+},
+{
     path: '**',
     redirectTo: 'home'
   }
