@@ -29,7 +29,7 @@ type ModalTipo =
     ModalsComponent
   ],
   templateUrl: './checkout.component.html',
-  styleUrls: ['./checkout.component.scss']
+  styleUrls: ['./checkout.component.css']
 })
 export class CheckoutComponent implements OnInit {
   modalAberto: ModalTipo = null;

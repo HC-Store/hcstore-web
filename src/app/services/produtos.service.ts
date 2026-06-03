@@ -109,7 +109,7 @@ export class ProdutosService {
   }
 
   atualizar(id: number, produto: Produto): Observable<Produto> {
-    return this.http.put<Produto>(`${this.apiUrl}/${id}`, produto);
+    return this.http.patch<Produto>(`${this.apiUrl}/${id}`, produto);
   }
 
   deletar(id: number): Observable<void> {
