@@ -31,7 +31,7 @@ type ModalTipo =
     RouterModule
   ],
   templateUrl: './modals.component.html',
-  styleUrls: ['./modals.component.scss']
+  styleUrls: ['./modals.component.css']
 })
 export class ModalsComponent implements OnInit, OnChanges {
   @Input() modalAberto: ModalTipo = null;

@@ -53,7 +53,7 @@ export class ApiService {
   }
 
   deleteUsuario(id: number): Observable<any> {
-    return this.http.delete(`${this.base}/usuarios/${id}`, {
+    return this.http.patch(`${this.base}/usuarios/${id}/desativar`, {}, {
       headers: this.headers()
     });
   }
@@ -70,7 +70,7 @@ export class ApiService {
   }
 
   updateProduto(id: number, body: any): Observable<any> {
-    return this.http.put(`${this.base}/produtos/${id}`, body, {
+    return this.http.patch(`${this.base}/produtos/${id}`, body, {
       headers: this.headers()
     });
   }
@@ -88,15 +88,9 @@ export class ApiService {
     });
   }
 
-  createProdutoImagem(body: FormData): Observable<any> {
-    const token = localStorage.getItem('token');
-
-    const headers = new HttpHeaders({
-      ...(token ? { Authorization: `Bearer ${token}` } : {})
-    });
-
+  createProdutoImagem(body: any): Observable<any> {
     return this.http.post(`${this.base}/produto-imagem`, body, {
-      headers
+      headers: this.headers()
     });
   }
 
@@ -182,7 +176,7 @@ export class ApiService {
   }
 
   updatePedido(id: number, body: any): Observable<any> {
-    return this.http.put(`${this.base}/pedidos/${id}`, body, {
+    return this.http.patch(`${this.base}/pedidos/${id}`, body, {
       headers: this.headers()
     });
   }
