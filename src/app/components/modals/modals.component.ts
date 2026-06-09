@@ -16,6 +16,8 @@ import { Router, RouterModule } from '@angular/router';
 
 type ModalTipo =
   | 'login'
+  | 'forgotPassword'
+  | 'forgotCode'
   | 'register'
   | 'cart'
   | 'profileWelcome'
@@ -48,6 +50,13 @@ export class ModalsComponent implements OnInit, OnChanges {
 
   mensagemPerfil = '';
   tipoMensagemPerfil = '';
+  resetandoSenha = false;
+
+  erroRecuperacao = '';
+  sucessoRecuperacao = '';
+  carregandoRecuperacao = false;
+  codigoGerado = '';
+  usuarioRecuperacao: any = null;
 
   itensCarrinho: any[] = [];
   totalCart = 0;
@@ -56,6 +65,11 @@ export class ModalsComponent implements OnInit, OnChanges {
   loginData = {
     email: '',
     senha: ''
+  };
+
+  forgotData = {
+    email: '',
+    codigo: ''
   };
 
   registerData = {
@@ -121,6 +135,7 @@ constructor(
   }
 
   abrirRegister(): void {
+    this.resetarRecuperacaoSenha();
     this.modalAberto = 'register';
   }
 
@@ -135,12 +150,21 @@ constructor(
   }
 
   abrirProfileEdit(): void {
+    this.resetandoSenha = false;
     this.modalAberto = 'profileEdit';
     this.carregarDadosPerfil();
   }
 
+  abrirEsqueciSenha(): void {
+    this.erroLogin = '';
+    this.sucessoLogin = '';
+    this.resetarRecuperacaoSenha();
+    this.modalAberto = 'forgotPassword';
+  }
+
   fechar(): void {
     this.modalAberto = null;
+    this.resetandoSenha = false;
     this.closeModal.emit();
   }
 
@@ -186,6 +210,89 @@ constructor(
     }
   });
 }
+
+  enviarCodigoRecuperacao(): void {
+    const email = this.forgotData.email.trim().toLowerCase();
+    this.erroRecuperacao = '';
+    this.sucessoRecuperacao = '';
+
+    if (!email) {
+      this.erroRecuperacao = 'Informe o e-mail usado para entrar.';
+      return;
+    }
+
+    this.carregandoRecuperacao = true;
+
+    this.api.enviarCodigoRecuperacao({ email }).subscribe({
+      next: (resposta) => {
+        const usuario = this.normalizarUsuario(resposta);
+
+        this.carregandoRecuperacao = false;
+
+        if (!usuario) {
+          this.erroRecuperacao = 'E-mail não cadastrado. Cadastre-se para criar sua conta.';
+          return;
+        }
+
+        this.usuarioRecuperacao = usuario;
+        this.codigoGerado = '';
+        this.forgotData.codigo = '';
+        this.sucessoRecuperacao = `Código enviado: ${this.codigoGerado}`;
+        this.sucessoRecuperacao = 'Código enviado para seu e-mail.';
+        this.modalAberto = 'forgotCode';
+      },
+      error: () => {
+        this.carregandoRecuperacao = false;
+        this.erroRecuperacao = 'Não foi possível validar o e-mail agora.';
+      }
+    });
+  }
+
+  confirmarCodigoRecuperacao(): void {
+    this.erroRecuperacao = '';
+    this.sucessoRecuperacao = '';
+
+    const email = this.forgotData.email.trim().toLowerCase();
+    const codigo = this.forgotData.codigo.trim();
+
+    if (!codigo) {
+      this.erroRecuperacao = 'Informe o código recebido por e-mail.';
+      return;
+    }
+
+    this.carregandoRecuperacao = true;
+
+    this.api.confirmarCodigoRecuperacao({ email, codigo }).subscribe({
+      next: (resposta) => {
+        const usuario = this.normalizarUsuario(resposta);
+        this.usuarioRecuperacao = usuario;
+        this.resetandoSenha = true;
+        this.tipoMensagemPerfil = '';
+        this.mensagemPerfil = 'Confira seus dados e defina uma nova senha.';
+        localStorage.setItem('user', JSON.stringify(usuario));
+        this.preencherPerfil(usuario);
+        this.carregandoRecuperacao = false;
+        this.modalAberto = 'profileEdit';
+      },
+      error: (err) => {
+        this.carregandoRecuperacao = false;
+        this.erroRecuperacao = err.error?.erro || err.error?.error || 'Código inválido. Confira e tente novamente.';
+      }
+    });
+    return;
+
+    if (this.forgotData.codigo.trim() !== this.codigoGerado) {
+      this.erroRecuperacao = 'Código inválido. Confira e tente novamente.';
+      return;
+    }
+
+    this.resetandoSenha = true;
+    this.tipoMensagemPerfil = '';
+    this.mensagemPerfil = 'Confira seus dados e defina uma nova senha.';
+    localStorage.setItem('user', JSON.stringify(this.usuarioRecuperacao));
+    this.preencherPerfil(this.usuarioRecuperacao);
+    this.modalAberto = 'profileEdit';
+  }
 
   submitRegister(): void {
     this.carregando = true;
@@ -235,15 +342,61 @@ constructor(
       cpf: this.profileData.cpf,
       telefone: this.profileData.telefone,
       sexo: this.profileData.sexo,
-      dataNascimento: this.montarDataNascimento()
+      dataNascimento: this.montarDataNascimento(),
+      ...(this.profileData.senha ? { senha: this.profileData.senha } : {})
     };
 
-    if (usuarioLogado?.id && localStorage.getItem('token')) {
+    if (this.resetandoSenha && !this.profileData.senha) {
+      this.carregando = false;
+      this.tipoMensagemPerfil = 'erro';
+      this.mensagemPerfil = 'Informe uma nova senha para continuar.';
+      return;
+    }
+
+    if (this.resetandoSenha) {
+      this.api.redefinirSenha({
+        email: this.forgotData.email.trim().toLowerCase(),
+        codigo: this.forgotData.codigo.trim(),
+        senha: this.profileData.senha
+      }).subscribe({
+        next: () => {
+          this.carregando = false;
+          this.tipoMensagemPerfil = 'sucesso';
+          this.mensagemPerfil = 'Senha redefinida com sucesso! Entre com sua nova senha.';
+          this.resetandoSenha = false;
+          localStorage.removeItem('usuarioLogado');
+          localStorage.removeItem('token');
+
+          setTimeout(() => {
+            this.modalAberto = 'login';
+          }, 1500);
+        },
+        error: (err) => {
+          this.carregando = false;
+          this.tipoMensagemPerfil = 'erro';
+          this.mensagemPerfil = err.error?.erro || err.error?.error || 'Não foi possível redefinir a senha agora.';
+        }
+      });
+      return;
+    }
+
+    if (usuarioLogado?.id && (localStorage.getItem('token') || this.resetandoSenha)) {
       this.api.updateUsuario(usuarioLogado.id, dadosPerfil).subscribe({
         next: (usuarioAtualizado) => {
           this.atualizarUsuarioLocal(this.normalizarUsuario(usuarioAtualizado) || dadosPerfil);
           this.carregando = false;
           this.tipoMensagemPerfil = 'sucesso';
+          if (this.resetandoSenha) {
+            this.mensagemPerfil = 'Senha redefinida com sucesso! Entre com sua nova senha.';
+            this.resetandoSenha = false;
+            localStorage.removeItem('usuarioLogado');
+            localStorage.removeItem('token');
+
+            setTimeout(() => {
+              this.modalAberto = 'login';
+            }, 1500);
+            return;
+          }
           this.mensagemPerfil = 'Informações atualizadas com sucesso!';
         },
         error: () => {
@@ -282,6 +435,12 @@ constructor(
   }
 
   cancelarEdicaoPerfil(): void {
+    if (this.resetandoSenha) {
+      this.resetandoSenha = false;
+      this.modalAberto = 'login';
+      return;
+    }
+
     this.modalAberto = 'profileWelcome';
   }
 
@@ -381,6 +540,27 @@ constructor(
 
   private normalizarUsuario(resposta: any): any {
     return resposta?.usuario || resposta?.user || resposta;
+  }
+
+  private normalizarLista(resposta: any): any[] {
+    if (Array.isArray(resposta)) return resposta;
+    if (Array.isArray(resposta?.data)) return resposta.data;
+    if (Array.isArray(resposta?.usuarios)) return resposta.usuarios;
+    if (Array.isArray(resposta?.users)) return resposta.users;
+    return [];
+  }
+
+  private gerarCodigoRecuperacao(): string {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+  }
+
+  private resetarRecuperacaoSenha(): void {
+    this.forgotData = { email: '', codigo: '' };
+    this.erroRecuperacao = '';
+    this.sucessoRecuperacao = '';
+    this.codigoGerado = '';
+    this.usuarioRecuperacao = null;
+    this.resetandoSenha = false;
   }
 
   private preencherDataNascimento(dataNascimento?: string): void {
