@@ -1,135 +1,143 @@
 <div class="dashboard">
 
-  <h2>DASHBOARD</h2>
+  <div class="header-row">
+    <h2>DASHBOARD</h2>
+    <button class="refresh" type="button" (click)="loadDashboard()" [disabled]="loading">
+      {{ loading ? 'Atualizando...' : 'Atualizar' }}
+    </button>
+  </div>
 
-  <!-- TOP -->
+  <p class="message loading" *ngIf="loading">Carregando dados do dashboard...</p>
+  <p class="message error" *ngIf="error">{{ error }}</p>
+
+  <div class="summary">
+    <div class="summary-item">
+      <small>Faturamento</small>
+      <strong>{{ formatCurrency(totals.revenue) }}</strong>
+    </div>
+    <div class="summary-item">
+      <small>Pedidos</small>
+      <strong>{{ totals.orders }}</strong>
+    </div>
+    <div class="summary-item">
+      <small>Produtos</small>
+      <strong>{{ totals.products }}</strong>
+    </div>
+    <div class="summary-item">
+      <small>Usuarios</small>
+      <strong>{{ totals.users }}</strong>
+    </div>
+    <div class="summary-item warning">
+      <small>Estoque baixo</small>
+      <strong>{{ totals.lowStock }}</strong>
+    </div>
+  </div>
+
   <div class="top">
-
-    <!-- GRÁFICOS -->
     <div class="card charts">
-
-      <div class="circle red">
-        <span class="percent">81%</span>
+      <div class="chart" *ngFor="let metric of metrics">
+        <div class="circle" [style.background]="metricBackground(metric)">
+          <span class="percent">{{ metric.value }}</span>
+        </div>
+        <small>{{ metric.label }}</small>
       </div>
-      
-      <div class="circle green">
-        <span class="percent">20%</span>
-      </div>
-      
-      <div class="circle blue">
-        <span class="percent">65%</span>
-      </div>
-
     </div>
 
-    <!-- MAIS VENDIDOS -->
     <div class="card best">
-
       <h3>Mais Vendidos</h3>
 
       <div class="product" *ngFor="let p of products">
-        <img [src]="p.image" />
+        <img [src]="p.image" [alt]="p.name" />
         <div>
           <strong>{{ p.name }}</strong>
-          <small>{{ p.sales }} sales</small>
+          <small>{{ p.sales }} vendas</small>
         </div>
-        <span>${{ p.price }}</span>
+        <span>{{ formatCurrency(p.price) }}</span>
       </div>
 
-      <button class="report" (click)="openReport()">RELATÓRIO</button>
+      <p class="empty" *ngIf="!products.length && !loading">Nenhum produto vendido ainda.</p>
 
+      <button class="report" type="button" (click)="openReport()" [disabled]="!products.length">
+        RELATORIO
+      </button>
     </div>
-
   </div>
 
-  
-<!-- MODAL RELATÓRIO -->
-<div class="modal" *ngIf="showReport">
+  <div class="modal" *ngIf="showReport">
+    <div class="modal-content">
+      <h3 class="title">Relatorio de Vendas</h3>
 
-  <div class="modal-content">
+      <div class="report-list">
+        <div class="report-item" *ngFor="let p of products">
+          <div class="left">
+            <img [src]="p.image" [alt]="p.name" />
+            <div class="info">
+              <span class="name">{{ p.name }}</span>
+              <span class="sales">{{ p.sales }} vendas</span>
+            </div>
+          </div>
 
-    <h3 class="title">Relatório de Vendas</h3>
-
-    <div class="report-list">
-
-      <div class="report-item" *ngFor="let p of products">
-
-        <div class="left">
-          <img [src]="p.image" />
-          <div class="info">
-            <span class="name">{{ p.name }}</span>
-            <span class="sales">{{ p.sales }} vendas</span>
+          <div class="price">
+            {{ formatCurrency(p.price) }}
           </div>
         </div>
-
-        <div class="price">
-          ${{ p.price }}
-        </div>
-
       </div>
 
+      <div class="modal-actions">
+        <button class="close-btn" type="button" (click)="closeReport()">Fechar</button>
+      </div>
     </div>
-
-    <div class="modal-actions">
-      <button class="close-btn" (click)="closeReport()">Fechar</button>
-    </div>
-
   </div>
 
-</div>
-
-  <!-- GRÁFICO -->
   <div class="card">
-    <h3>Vendas ao Mês</h3>
+    <h3>Faturamento ao Mes</h3>
     <canvas id="salesChart"></canvas>
   </div>
 
-  <!-- TABELA -->
   <div class="card table">
-
     <h3>Pedidos Recentes</h3>
 
-    <table>
-      <thead>
-        <tr>
-          <th>Produto</th>
-          <th>ID</th>
-          <th>Data</th>
-          <th>Cliente</th>
-          <th>Status</th>
-          <th>Valor</th>
-        </tr>
-      </thead>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Produto</th>
+            <th>ID</th>
+            <th>Data</th>
+            <th>Cliente</th>
+            <th>Status</th>
+            <th>Valor</th>
+          </tr>
+        </thead>
 
-      <tbody>
-        <tr *ngFor="let order of orders">
+        <tbody>
+          <tr *ngFor="let order of orders">
+            <td>{{ order.product }}</td>
+            <td>#{{ order.id }}</td>
+            <td>{{ order.date }}</td>
 
-          <td>{{ order.product }}</td>
-          <td>#{{ order.id }}</td>
-          <td>{{ order.date }}</td>
+            <td class="user">
+              <div class="avatar">{{ order.name.charAt(0) }}</div>
+              <span>{{ order.name }}</span>
+            </td>
 
-          <td class="user">
-            <div class="avatar">{{ order.name.charAt(0) }}</div>
-            {{ order.name }}
-          </td>
+            <td>
+              <span class="status"
+                    [class.delivered]="statusClass(order.status) === 'delivered'"
+                    [class.canceled]="statusClass(order.status) === 'canceled'"
+                    [class.pending]="statusClass(order.status) === 'pending'">
+                <span class="dot"></span>
+                {{ order.status }}
+              </span>
+            </td>
 
-          <td>
-            <span class="status"
-                  [class.delivered]="order.status === 'Entrega'"
-                  [class.canceled]="order.status === 'Cancelado'">
+            <td>{{ formatCurrency(order.price) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-              <span class="dot"></span>
-              {{ order.status }}
-
-            </span>
-          </td>
-
-          <td>R${{ order.price }}</td>
-
-        </tr>
-      </tbody>
-    </table>
-
+    <p class="empty" *ngIf="!orders.length && !loading">Nenhum pedido encontrado.</p>
   </div>
 
 </div>

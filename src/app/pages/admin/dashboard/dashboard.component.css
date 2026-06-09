@@ -11,6 +11,78 @@
   margin-bottom: 20px;
 }
 
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.header-row h2 {
+  margin: 0;
+}
+
+.refresh {
+  border: none;
+  background: #25df14;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  padding: 10px 16px;
+}
+
+.refresh:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.message {
+  border-radius: 8px;
+  margin: 0;
+  padding: 12px 14px;
+}
+
+.message.loading {
+  background: #eefbea;
+  color: #1f7a17;
+}
+
+.message.error {
+  background: #ffecec;
+  color: #c0392b;
+}
+
+.summary {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.summary-item {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  padding: 16px;
+}
+
+.summary-item small {
+  color: #777;
+  font-size: 12px;
+}
+
+.summary-item strong {
+  font-size: 20px;
+  overflow-wrap: anywhere;
+}
+
+.summary-item.warning strong {
+  color: #f59e0b;
+}
+
 /* GRID TOP */
 .top {
   display: grid;
@@ -42,6 +114,15 @@
 
 .chart {
   text-align: center;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chart small {
+  color: #666;
+  font-size: 12px;
 }
 
 /* DONUT */
@@ -150,6 +231,17 @@
   border-radius: 8px;
   cursor: pointer;
   margin-top: 10px;
+}
+
+.report:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.empty {
+  color: #777;
+  font-size: 13px;
+  margin: 10px 0 0;
 }
 
 .report:hover {
@@ -271,6 +363,10 @@
   background: #f59e0b;
 }
 
+.pending .dot {
+  background: #9ca3af;
+}
+
 /* VALOR */
 .table td:last-child {
   font-weight: 500;
@@ -317,6 +413,14 @@ th, td {
 
 .canceled .dot {
   background: #f59e0b;
+}
+
+.pending .dot {
+  background: #9ca3af;
+}
+
+.table-wrap {
+  overflow-x: auto;
 }
 
 /* FUNDO ESCURO */
@@ -430,4 +534,15 @@ th, td {
 .card canvas {
   width: 100% !important;
   height: 250px !important;
+}
+
+@media (max-width: 980px) {
+  .top,
+  .summary {
+    grid-template-columns: 1fr;
+  }
+
+  .charts {
+    gap: 18px;
+  }
 }
