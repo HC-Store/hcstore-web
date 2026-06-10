@@ -11,7 +11,29 @@
 
   <div class="right">
     <div class="search-box">
-      <input type="text" placeholder="" />
+      <input
+        type="text"
+        placeholder="Buscar produto..."
+        [(ngModel)]="searchQuery"
+        (input)="onSearchInput(searchQuery, false)"
+        (keyup.enter)="pesquisar(searchQuery)"
+        (blur)="fecharSugestoes()"
+        autocomplete="off"
+      />
+      <div class="autocomplete-dropdown" *ngIf="mostrarSugestoes && sugestoes.length > 0">
+        <div
+          class="autocomplete-item"
+          *ngFor="let s of sugestoes"
+          (mousedown)="selecionarSugestao(s)"
+        >
+          <img *ngIf="s.imagem" [src]="s.imagem" alt="" class="autocomplete-img" />
+          <span class="autocomplete-nome">{{ s.nome }}</span>
+          <span class="autocomplete-preco">R$ {{ s.preco | number:'1.2-2' }}</span>
+        </div>
+      </div>
+      <div class="autocomplete-dropdown" *ngIf="mostrarSugestoes && sugestoes.length === 0 && searchQuery.length > 1">
+        <div class="autocomplete-item autocomplete-empty">Nenhum produto encontrado</div>
+      </div>
     </div>
 
     <nav class="icons">
@@ -45,7 +67,29 @@
   </div>
 
   <div class="search-mobile">
-    <input type="text" placeholder="" />
+    <input
+      type="text"
+      placeholder="Buscar produto..."
+      [(ngModel)]="mobileSearchQuery"
+      (input)="onSearchInput(mobileSearchQuery, true)"
+      (keyup.enter)="pesquisar(mobileSearchQuery)"
+      (blur)="fecharSugestoes()"
+      autocomplete="off"
+    />
+    <div class="autocomplete-dropdown autocomplete-dropdown-mobile" *ngIf="mostrarSugestoesMobile && sugestoes.length > 0">
+      <div
+        class="autocomplete-item"
+        *ngFor="let s of sugestoes"
+        (mousedown)="selecionarSugestao(s)"
+      >
+        <img *ngIf="s.imagem" [src]="s.imagem" alt="" class="autocomplete-img" />
+        <span class="autocomplete-nome">{{ s.nome }}</span>
+        <span class="autocomplete-preco">R$ {{ s.preco | number:'1.2-2' }}</span>
+      </div>
+    </div>
+    <div class="autocomplete-dropdown autocomplete-dropdown-mobile" *ngIf="mostrarSugestoesMobile && sugestoes.length === 0 && mobileSearchQuery.length > 1">
+      <div class="autocomplete-item autocomplete-empty">Nenhum produto encontrado</div>
+    </div>
   </div>
 
   <a routerLink="/colecoes" (click)="fecharMenu()">Coleções</a>
