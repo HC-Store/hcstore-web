@@ -117,8 +117,8 @@
             <td>{{ order.date }}</td>
 
             <td class="user">
-              <div class="avatar">{{ order.name.charAt(0) }}</div>
-              <span>{{ order.name }}</span>
+              <div class="avatar" [title]="order.name">{{ order.name.charAt(0) }}</div>
+              <span [title]="order.name">{{ order.name }}</span>
             </td>
 
             <td>
