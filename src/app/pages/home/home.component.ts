@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { HeaderComponent } from '../../layout/header/header.component';
 import { FooterComponent } from '../../layout/footer/footer.component';
 import { ModalsComponent } from '../../components/modals/modals.component';
+import { ApiService } from '../../services/api.service';
 
 type ModalTipo = 'login' | 'register' | 'cart' | 'profileWelcome' | 'profileEdit' | null;
 
@@ -38,22 +39,40 @@ export class HomeComponent implements OnInit {
     banner1: 'assets/img/nikegreen.jpg',
     banner2: 'assets/img/brinco.jpg',
     banner3: 'assets/img/baseball.webp',
-    destaques: [
-      { id: 1, titulo: 'CALÇA CARGO OVERSIZED', imagem: 'assets/img/calça.png' },
-      { id: 2, titulo: 'CALÇA ALFAIATARIA', imagem: 'assets/img/outfit.png' },
-      { id: 3, titulo: "CONJUNTOS OVERSIZED's", imagem: 'assets/img/oversized.png' }
-    ],
+    destaques: [],
     lancamentos: [
       { id: 4, titulo: 'Lançamento 1', imagem: 'assets/img/baseball.webp' },
       { id: 5, titulo: 'Lançamento 2', imagem: 'assets/img/outfit.png' }
     ]
   };
 
+  constructor(private api: ApiService) {}
+
   ngOnInit(): void {
     const salvo = localStorage.getItem('configHome');
     if (salvo) {
       this.config = { ...this.config, ...JSON.parse(salvo) };
     }
+
+    this.carregarDestaquesBanco();
+  }
+
+  private carregarDestaquesBanco(): void {
+    this.api.getProdutos().subscribe({
+      next: (res) => {
+        const produtos = Array.isArray(res) ? res : [];
+
+        this.config.destaques = produtos
+          .filter((produto: any) => produto?.id && produto?.nome)
+          .slice(0, 3)
+          .map((produto: any) => ({
+            id: produto.id,
+            titulo: produto.nome,
+            imagem: produto.imagens?.[0]?.url || produto.imagem || 'assets/img/sem-imagem.png'
+          }));
+      },
+      error: (err) => console.error('Erro ao carregar destaques da home:', err)
+    });
   }
 
   abrirLogin(): void {
