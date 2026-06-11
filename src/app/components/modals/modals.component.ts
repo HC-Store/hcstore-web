@@ -234,20 +234,11 @@ constructor(
 
     this.api.enviarCodigoRecuperacao({ email }).subscribe({
       next: (resposta) => {
-        const usuario = this.normalizarUsuario(resposta);
-
         this.carregandoRecuperacao = false;
 
-        if (!usuario) {
-          this.emailNaoCadastrado = true;
-          this.erroRecuperacao = 'E-mail não cadastrado.';
-          return;
-        }
-
-        this.usuarioRecuperacao = usuario;
+        this.usuarioRecuperacao = this.normalizarUsuario(resposta) || { email };
         this.codigoGerado = '';
         this.forgotData.codigo = '';
-        this.sucessoRecuperacao = `Código enviado: ${this.codigoGerado}`;
         this.sucessoRecuperacao = 'Código enviado para seu e-mail.';
         this.modalAberto = 'forgotCode';
       },
