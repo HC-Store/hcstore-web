@@ -278,6 +278,17 @@ export class CheckoutComponent implements OnInit {
             this.carregando = false;
             this.sucesso = 'Pedido realizado com sucesso!';
 
+            localStorage.setItem(
+              'checkoutData',
+              JSON.stringify({
+                itens: this.itensCarrinho,
+                subtotal: this.subtotal,
+                frete: this.frete,
+                desconto: this.desconto,
+                total: this.total
+              })
+            );
+
             this.carrinho.carregarCarrinho();
 
             setTimeout(() => {
