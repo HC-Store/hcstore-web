@@ -274,10 +274,40 @@ export class CheckoutComponent implements OnInit {
           cupomCodigo: this.cupom || null,
           totalFinal: this.total
         }).subscribe({
-          next: () => {
-            this.carregando = false;
-            this.sucesso = 'Pedido realizado com sucesso!';
+          
+         next: (pedidoCriado: any) => {
+  const checkoutData = {
+    pedido: pedidoCriado,
+    contato: {
+      email: this.formData.email,
+      telefone: this.formData.telefone,
+      nome: this.formData.nome,
+      sobrenome: this.formData.sobrenome
+    },
+    entrega: {
+      tipoEntrega: this.tipoEntrega,
+      frete: this.frete,
+      endereco: {
+        cep: this.formData.cep,
+        rua: this.formData.endereco,
+        bairro: this.formData.bairro,
+        cidade: this.formData.cidade,
+        estado: this.formData.estado,
+        numero: this.formData.numeroBloco,
+        complemento: this.formData.casaApartamento
+      }
+    },
+    valores: {
+      subtotal: this.subtotal,
+      frete: this.frete,
+      desconto: this.desconto,
+      total: this.total,
+      cupom: this.cupom || null
+    },
+    itens: this.itensCarrinho
+  };
 
+<<<<<<< Updated upstream
             localStorage.setItem(
               'checkoutData',
               JSON.stringify({
@@ -290,11 +320,17 @@ export class CheckoutComponent implements OnInit {
             );
 
             this.carrinho.carregarCarrinho();
+=======
+  localStorage.setItem('checkoutData', JSON.stringify(checkoutData));
+>>>>>>> Stashed changes
 
-            setTimeout(() => {
-              this.router.navigate(['/pagamento']);
-            }, 2000);
-          },
+  this.carregando = false;
+  this.sucesso = 'Pedido realizado com sucesso!';
+
+  setTimeout(() => {
+    this.router.navigate(['/pagamento']);
+  }, 800);
+},
           error: (err) => {
             this.carregando = false;
             this.erro = err.error?.error || 'Erro ao criar pedido.';
