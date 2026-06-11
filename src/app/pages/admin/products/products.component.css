@@ -20,6 +20,33 @@
   cursor: pointer;
 }
 
+.btn-novo {
+  height: 42px;
+  padding: 0 20px;
+  border: 1px solid #25df14;
+  border-radius: 8px;
+  background: #000;
+  color: #25df14;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(37, 223, 20, 0.16);
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-novo:hover {
+  background: #25df14;
+  color: #000;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(37, 223, 20, 0.28);
+}
+
+.btn-novo:active {
+  transform: translateY(0);
+}
+
 .products-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(220px, 1fr));
