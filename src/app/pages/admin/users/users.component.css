@@ -29,29 +29,39 @@
   background: white;
   padding: 20px;
   border-radius: 12px;
+  overflow-x: auto;
 }
 
 /* TABELA */
 table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed; /* 🔥 força alinhamento perfeito */
+  table-layout: fixed;
 }
 
 th, td {
   padding: 14px 12px;
   text-align: left;
-  vertical-align: middle; /* 🔥 alinhamento vertical */
+  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* define largura das colunas */
-th:nth-child(1), td:nth-child(1) { width: 10%; }
-th:nth-child(2), td:nth-child(2) { width: 15%; }
-th:nth-child(3), td:nth-child(3) { width: 15%; }
-th:nth-child(4), td:nth-child(4) { width: 20%; }
-th:nth-child(5), td:nth-child(5) { width: 15%; }
-th:nth-child(6), td:nth-child(6) { width: 10%; }
-th:nth-child(7), td:nth-child(7) { width: 15%; }
+th:nth-child(1), td:nth-child(1) { width: 7%; }
+th:nth-child(2), td:nth-child(2) { width: 20%; }
+th:nth-child(3), td:nth-child(3) { width: 28%; }
+th:nth-child(4), td:nth-child(4) { width: 12%; }
+th:nth-child(5), td:nth-child(5) { width: 12%; }
+th:nth-child(6), td:nth-child(6) { width: 9%; }
+th:nth-child(7), td:nth-child(7) { width: 12%; }
+
+th {
+  color: #777;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
 
 /* linha */
 tbody tr {
@@ -62,10 +72,15 @@ tbody tr {
   display: flex;
   align-items: center;
   gap: 10px;
+  white-space: nowrap;
+  width: 100%;
+  min-width: 0;
 }
 
 /* avatar letra */
 .avatar {
+  min-width: 32px;
+  min-height: 32px;
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -78,7 +93,21 @@ tbody tr {
   justify-content: center;
 
   font-weight: bold;
-  font-size: 14px;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.user span,
+.text-cell {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+td:nth-child(3) .text-cell {
+  max-width: 100%;
 }
 
 /* STATUS */
@@ -98,13 +127,16 @@ tbody tr {
 /* AÇÕES */
 .actions {
   display: flex;
-  gap: 8px;
+  gap: 6px;
+  align-items: center;
+  justify-content: flex-start;
+  white-space: nowrap;
 }
 
 .edit,
 .delete {
   border: none;
-  padding: 6px 10px;
+  padding: 6px 8px;
   border-radius: 6px;
   cursor: pointer;
   font-size: 12px;

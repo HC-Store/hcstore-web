@@ -6,96 +6,139 @@
       <p class="sucesso-msg" *ngIf="sucesso">✓ {{ sucesso }}</p>
       <p class="erro-msg" *ngIf="erro">{{ erro }}</p>
 
-      <label>Nome do Produto</label>
-      <input [(ngModel)]="produto.nome" placeholder="Digite o nome aqui" />
+      <div class="form-section">
+        <h3>Informações principais</h3>
 
-      <label>Descrição</label>
-      <textarea [(ngModel)]="produto.descricao" placeholder="Digite a descrição aqui"></textarea>
+        <div class="form-grid">
+          <div class="field full">
+            <label>Nome do Produto</label>
+            <input [(ngModel)]="produto.nome" placeholder="Digite o nome aqui" />
+          </div>
 
-      <label>Categoria</label>
-      <select [(ngModel)]="produto.categoriaId">
-        <option [ngValue]="null" disabled>Selecione uma categoria</option>
-        <option *ngFor="let cat of categorias" [ngValue]="cat.id">
-          {{ cat.nome }}
-        </option>
-      </select>
+          <div class="field">
+            <label>Categoria</label>
+            <select [(ngModel)]="produto.categoriaId">
+              <option [ngValue]="null" disabled>Selecione uma categoria</option>
+              <option *ngFor="let cat of categorias" [ngValue]="cat.id">
+                {{ cat.nome }}
+              </option>
+            </select>
+          </div>
 
-      <label>Marca</label>
-      <input [(ngModel)]="produto.marca" placeholder="Ex: Nike, Adidas" />
+          <div class="field">
+            <label>Marca</label>
+            <input [(ngModel)]="produto.marca" placeholder="Ex: Nike, Adidas" />
+          </div>
 
-      <label>Tamanhos e quantidade por tamanho</label>
-
-      <div class="sizes">
-        <span
-          *ngFor="let s of sizes"
-          (click)="toggleSize(s)"
-          [class.active]="sizeSelecionado(s)"
-        >
-          {{ s }}
-        </span>
+          <div class="field full">
+            <label>Descrição</label>
+            <textarea [(ngModel)]="produto.descricao" placeholder="Digite a descrição aqui"></textarea>
+          </div>
+        </div>
       </div>
 
-      <div class="size-quantity" *ngFor="let s of sizes">
-        <div *ngIf="sizeSelecionado(s)">
-          <label>Quantidade tamanho {{ s }}</label>
+      <div class="form-section">
+        <h3>Estoque e variações</h3>
+
+        <div class="form-grid">
+          <div class="field">
+            <label>Quantidade total no estoque</label>
+            <input type="number" [(ngModel)]="produto.estoque" placeholder="Ex: 100" />
+          </div>
+
+          <div class="field">
+            <label>Preço</label>
+            <input type="number" [(ngModel)]="produto.preco" placeholder="Ex: 189.90" />
+          </div>
+
+          <div class="field full">
+            <label>Tamanhos e quantidade por tamanho</label>
+
+            <div class="sizes">
+              <span
+                *ngFor="let s of sizes"
+                (click)="toggleSize(s)"
+                [class.active]="sizeSelecionado(s)"
+              >
+                {{ s }}
+              </span>
+            </div>
+          </div>
+
+          <div class="size-quantity-grid full">
+            <div class="size-quantity" *ngFor="let s of sizes">
+              <div *ngIf="sizeSelecionado(s)">
+                <label>Quantidade tamanho {{ s }}</label>
+                <input
+                  type="number"
+                  min="0"
+                  [ngModel]="produto.quantidadePorTamanho[s]"
+                  (ngModelChange)="produto.quantidadePorTamanho[s] = $event"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>Detalhes do produto</h3>
+
+        <div class="form-grid">
+          <div class="field full">
+            <label>Composição / Material</label>
+            <textarea
+              [(ngModel)]="produto.composicaoMaterial"
+              placeholder="Ex: 100% algodão, malha peruana..."
+            ></textarea>
+          </div>
+
+          <div class="field">
+            <label>Instruções de lavagem</label>
+            <textarea
+              [(ngModel)]="produto.instrucaoLavagem"
+              placeholder="Ex: lavar à mão, não usar alvejante..."
+            ></textarea>
+          </div>
+
+          <div class="field">
+            <label>Envios e devoluções</label>
+            <textarea
+              [(ngModel)]="produto.enviosDevolucoes"
+              placeholder="Ex: envio em até 2 dias úteis..."
+            ></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>Imagens</h3>
+        <label>Imagens do Produto — máximo 3</label>
+
+        <div class="upload-area" (click)="fileInput.click()">
           <input
-            type="number"
-            min="0"
-            [ngModel]="produto.quantidadePorTamanho[s]"
-            (ngModelChange)="produto.quantidadePorTamanho[s] = $event"
+            #fileInput
+            type="file"
+            hidden
+            accept="image/*"
+            (change)="onImageSelected($event)"
           />
-        </div>
-      </div>
 
-      <label>Quantidade total no estoque</label>
-      <input type="number" [(ngModel)]="produto.estoque" placeholder="Ex: 100" />
+          <div class="upload-placeholder" *ngIf="!uploadando">
+            <span>📷 Clique para selecionar imagem</span>
+            <small>{{ produto.imagens.length }}/3 imagens adicionadas</small>
+          </div>
 
-      <label>Preço</label>
-      <input type="number" [(ngModel)]="produto.preco" placeholder="Ex: 189.90" />
-
-      <label>Composição / Material</label>
-      <textarea
-        [(ngModel)]="produto.composicaoMaterial"
-        placeholder="Ex: 100% algodão, malha peruana..."
-      ></textarea>
-
-      <label>Instruções de lavagem</label>
-      <textarea
-        [(ngModel)]="produto.instrucaoLavagem"
-        placeholder="Ex: lavar à mão, não usar alvejante..."
-      ></textarea>
-
-      <label>Envios e devoluções</label>
-      <textarea
-        [(ngModel)]="produto.enviosDevolucoes"
-        placeholder="Ex: envio em até 2 dias úteis..."
-      ></textarea>
-
-      <label>Imagens do Produto — máximo 3</label>
-
-      <div class="upload-area" (click)="fileInput.click()">
-        <input
-          #fileInput
-          type="file"
-          hidden
-          accept="image/*"
-          (change)="onImageSelected($event)"
-        />
-
-        <div class="upload-placeholder" *ngIf="!uploadando">
-          <span>📷 Clique para selecionar imagem</span>
-          <small>{{ produto.imagens.length }}/3 imagens adicionadas</small>
+          <div class="upload-placeholder" *ngIf="uploadando">
+            <span>Enviando imagem...</span>
+          </div>
         </div>
 
-        <div class="upload-placeholder" *ngIf="uploadando">
-          <span>Enviando imagem...</span>
-        </div>
-      </div>
-
-      <div class="preview-grid" *ngIf="produto.imagens.length > 0">
-        <div class="preview-card" *ngFor="let img of produto.imagens; let i = index">
-          <img [src]="img" alt="Imagem do produto" />
-          <button type="button" (click)="removerImagem(i)">Remover</button>
+        <div class="preview-grid" *ngIf="produto.imagens.length > 0">
+          <div class="preview-card" *ngFor="let img of produto.imagens; let i = index">
+            <img [src]="img" alt="Imagem do produto" />
+            <button type="button" (click)="removerImagem(i)">Remover</button>
+          </div>
         </div>
       </div>
 

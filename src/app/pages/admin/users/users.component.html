@@ -25,19 +25,31 @@
         <tr *ngFor="let usuario of usuarios">
           <td>#{{ usuario.id }}</td>
 
-          <td class="user">
-            <div class="avatar">{{ usuario.nome.charAt(0) }}</div>
-            {{ usuario.nome }} {{ usuario.sobrenome }}
+          <td>
+            <div class="user">
+              <div class="avatar">{{ usuario.nome.charAt(0) }}</div>
+              <span [title]="usuario.nome + ' ' + usuario.sobrenome">
+                {{ usuario.nome }} {{ usuario.sobrenome }}
+              </span>
+            </div>
           </td>
 
-          <td>{{ usuario.email }}</td>
-          <td>{{ usuario.telefone }}</td>
-          <td>{{ usuario.cpf }}</td>
+          <td>
+            <span class="text-cell" [title]="usuario.email">{{ usuario.email }}</span>
+          </td>
+          <td>
+            <span class="text-cell">{{ usuario.telefone }}</span>
+          </td>
+          <td>
+            <span class="text-cell">{{ usuario.cpf }}</span>
+          </td>
           <td>{{ usuario.createdAt | date:'dd/MM/yyyy' }}</td>
 
-          <td class="actions">
-            <button class="edit" (click)="editUser(usuario)">Editar</button>
-            <button class="delete" (click)="deleteUser(usuario.id)">Excluir</button>
+          <td>
+            <div class="actions">
+              <button class="edit" (click)="editUser(usuario)">Editar</button>
+              <button class="delete" (click)="deleteUser(usuario.id)">Excluir</button>
+            </div>
           </td>
         </tr>
       </tbody>
