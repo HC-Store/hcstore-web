@@ -63,11 +63,17 @@ footer p {
 
 .support,
 .enterprise,
-.coupon,
-.e-mail-box {
+.coupon {
   display: flex;
   flex-direction: column;
   gap: 14px;
+}
+
+.e-mail-box {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  max-width: 360px;
 }
 
 .support h2,
@@ -91,7 +97,6 @@ footer p {
 
 .e-mail-box input {
   width: 100%;
-  max-width: 260px;
   height: 38px;
   background-color: #333;
   color: white;
@@ -102,6 +107,21 @@ footer p {
 
 .e-mail-box input::placeholder {
   color: white;
+}
+
+.e-mail-box button {
+  height: 38px;
+  padding: 0 18px;
+  border: none;
+  background-color: #1eff00;
+  color: black;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.e-mail-box button:hover {
+  background-color: white;
 }
 
 @media (max-width: 900px) {
@@ -122,5 +142,9 @@ footer p {
 
   footer h1 {
     font-size: 2rem;
+  }
+
+  .e-mail-box {
+    max-width: 100%;
   }
 }
