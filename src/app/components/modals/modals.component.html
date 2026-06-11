@@ -364,14 +364,14 @@
    <article class="cart-item" *ngFor="let item of itensCarrinho">
   <img
     [src]="imagemProdutoCarrinho(item)"
-    [alt]="item.produto?.nome || 'Produto'"
+    [alt]="nomeProdutoCarrinho(item)"
   />
 
   <div class="item-info">
 
     <div class="item-header">
       <div>
-        <h2>{{ item.produto?.nome }}</h2>
+        <h2>{{ nomeProdutoCarrinho(item) }}</h2>
        <p class="category">
   {{ categoriaProdutoCarrinho(item) }}
 </p>
@@ -401,7 +401,7 @@
 </div>
 
     <p class="item-price">
-      {{ formatPrice(item.produto?.preco * item.quantidade) }}
+      {{ formatPrice(precoProdutoCarrinho(item) * item.quantidade) }}
     </p>
 
   </div>
@@ -417,7 +417,7 @@
         <h3>Resumo</h3>
 
       <div *ngFor="let item of itensCarrinho" class="summary-line">
-        <span>{{ item.produto?.nome }}</span>
+        <span>{{ nomeProdutoCarrinho(item) }}</span>
         <span>{{ formatPrice(item.produto?.preco * item.quantidade) }}</span>
       </div>
 

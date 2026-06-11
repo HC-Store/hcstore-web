@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ApiService } from './api.service';
 import { AuthService } from './auth.service';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { catchError, switchMap, tap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +10,7 @@ import { catchError, switchMap, tap } from 'rxjs/operators';
 export class CarrinhoService {
 
   private readonly localStorageKey = 'hcStoreCarrinho';
+  private readonly tamanhoStorageKey = 'hcStoreCarrinhoTamanhos';
 
   private carrinhoId: number | null = null;
 
@@ -73,9 +74,78 @@ export class CarrinhoService {
     return carrinho;
   }
 
+  private atualizarCarrinhoComItens(carrinho: any, itens: any[]): any {
+    if (carrinho) {
+      this.carrinhoId = carrinho.id;
+    }
+
+    this.itens$.next(itens);
+
+    return {
+      ...carrinho,
+      itemcarrinho: itens
+    };
+  }
+
+  private carregarTamanhosLogado(): Record<string, string> {
+    return JSON.parse(localStorage.getItem(this.tamanhoStorageKey) || '{}');
+  }
+
+  private salvarTamanhoLogado(produtoId: number, tamanho?: string): void {
+    if (!tamanho) return;
+
+    const tamanhos = this.carregarTamanhosLogado();
+    tamanhos[String(produtoId)] = tamanho;
+    localStorage.setItem(this.tamanhoStorageKey, JSON.stringify(tamanhos));
+  }
+
+  private removerTamanhoLogado(produtoId?: number): void {
+    if (!produtoId) return;
+
+    const tamanhos = this.carregarTamanhosLogado();
+    delete tamanhos[String(produtoId)];
+    localStorage.setItem(this.tamanhoStorageKey, JSON.stringify(tamanhos));
+  }
+
+  private produtoIdItem(item: any): number {
+    return Number(item?.produtoId || item?.produto?.id || 0);
+  }
+
+  private enriquecerItensCarrinho(itens: any[], produtos: any[]): any[] {
+    const tamanhos = this.carregarTamanhosLogado();
+
+    return itens.map((item: any) => {
+      const produtoId = this.produtoIdItem(item);
+      const produtoCompleto = produtos.find((produto: any) => Number(produto.id) === produtoId);
+
+      return {
+        ...item,
+        tamanho: item.tamanho || tamanhos[String(produtoId)],
+        produto: {
+          ...(item.produto || {}),
+          ...(produtoCompleto || {})
+        }
+      };
+    });
+  }
+
   private carregarCarrinho$(): Observable<any> {
     return this.api.getCarrinho().pipe(
-      tap((carrinho: any) => this.atualizarCarrinho(carrinho))
+      switchMap((carrinho: any) => {
+        const itens = carrinho?.itemcarrinho || [];
+
+        return this.api.getProdutos().pipe(
+          catchError(() => of([])),
+          map((produtos: any) => {
+            const itensEnriquecidos = this.enriquecerItensCarrinho(
+              itens,
+              Array.isArray(produtos) ? produtos : []
+            );
+
+            return this.atualizarCarrinhoComItens(carrinho, itensEnriquecidos);
+          })
+        );
+      })
     );
   }
 
@@ -130,6 +200,8 @@ export class CarrinhoService {
         return throwError(() => new Error('Carrinho nao encontrado.'));
       }
 
+      this.salvarTamanhoLogado(produtoId, tamanho);
+
       return this.api.addItemCarrinho({
 
         carrinhoId: this.carrinhoId,
@@ -168,6 +240,8 @@ export class CarrinhoService {
   }
 
   removerItem(itemId: number): void {
+    const itemRemovido = this.itensSnapshot.find((item: any) => item.id === itemId);
+
     if (!this.temTokenApi()) {
       const itens = this.carregarCarrinhoLocal().filter(
         (item: any) => item.id !== itemId
@@ -179,7 +253,10 @@ export class CarrinhoService {
 
     this.api.deleteItemCarrinho(itemId).subscribe({
 
-      next: () => this.carregarCarrinho(),
+      next: () => {
+        this.removerTamanhoLogado(this.produtoIdItem(itemRemovido));
+        this.carregarCarrinho();
+      },
 
       error: (err) =>
 
