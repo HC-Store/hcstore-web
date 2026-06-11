@@ -33,6 +33,8 @@ export class TopbarComponent {
   showAdminMenu = false;
 
   constructor(private router: Router) {
+    this.updatePage();
+
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe(() => this.updatePage());
@@ -82,6 +84,8 @@ export class TopbarComponent {
     else if (url.includes('/admin/pedidos')) this.currentPage = 'PEDIDOS';
     else if (url.includes('/admin/usuarios')) this.currentPage = 'USUÁRIOS';
     else if (url.includes('/admin/adicionar-produto')) this.currentPage = 'ADICIONAR PRODUTO';
+    else if (url.includes('/admin/config-home')) this.currentPage = 'CONFIG HOME';
+    else if (url.includes('/admin/config-colecoes')) this.currentPage = 'CONFIG COLEÇÕES';
     else this.currentPage = 'DASHBOARD';
   }
 
