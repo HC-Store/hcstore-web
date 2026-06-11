@@ -244,6 +244,10 @@ constructor(
       },
       error: (err) => {
         this.carregandoRecuperacao = false;
+        if (this.rotaRecuperacaoIndisponivel(err)) {
+          this.erroRecuperacao = 'Recuperação de senha ainda não configurada no servidor.';
+          return;
+        }
         if (err.status === 404) {
           this.emailNaoCadastrado = true;
           this.erroRecuperacao = 'E-mail não cadastrado.';
@@ -549,6 +553,11 @@ constructor(
     return resposta?.usuario || resposta?.user || resposta;
   }
 
+  private rotaRecuperacaoIndisponivel(err: any): boolean {
+    const erro = typeof err?.error === 'string' ? err.error : '';
+    return err?.status === 404 && erro.includes('Cannot POST /api/auth/forgot-password');
+  }
+
   private normalizarLista(resposta: any): any[] {
     if (Array.isArray(resposta)) return resposta;
     if (Array.isArray(resposta?.data)) return resposta.data;
@@ -635,7 +644,7 @@ constructor(
 
   calcularTotal(): void {
     this.totalCart = this.itensCarrinho.reduce((acc, item) => {
-      return acc + Number(item.produto?.preco || 0) * Number(item.quantidade || 1);
+      return acc + this.precoProdutoCarrinho(item) * Number(item.quantidade || 1);
     }, 0);
   }
 
@@ -645,11 +654,21 @@ constructor(
     return (
       produto.imagens?.[0]?.url ||
       produto.imagens?.[0] ||
+      produto.produtoImagem?.[0]?.url ||
+      produto.produtoImagem?.[0] ||
       produto.imagem ||
       produto.imagem2 ||
       produto.imagem3 ||
-      'https://placehold.co/170x140/1a1a1a/ffffff?text=PRODUTO'
+      'assets/img/sem-imagem.png'
     );
+  }
+
+  nomeProdutoCarrinho(item: any): string {
+    return item?.produto?.nome || item?.nome || 'Produto';
+  }
+
+  precoProdutoCarrinho(item: any): number {
+    return Number(item?.produto?.preco || item?.preco || 0);
   }
 
   categoriaProdutoCarrinho(item: any): string {
@@ -667,7 +686,44 @@ constructor(
   }
 
   tamanhoProdutoCarrinho(item: any): string {
-    return item?.tamanho || item?.produto?.tamanhoSelecionado || item?.produto?.selectedSize || 'Único';
+    return item?.tamanho || item?.produto?.tamanhoSelecionado || item?.produto?.selectedSize || this.tamanhoUnicoProduto(item);
+  }
+
+  private tamanhoUnicoProduto(item: any): string {
+    const tamanho = item?.produto?.tamanho;
+
+    if (Array.isArray(tamanho) && tamanho.length === 1) {
+      return String(tamanho[0]);
+    }
+
+    if (typeof tamanho === 'string') {
+      const tamanhos = tamanho.split(',').map(itemTamanho => itemTamanho.trim()).filter(Boolean);
+      if (tamanhos.length === 1) {
+        return tamanhos[0];
+      }
+    }
+
+    const quantidadePorTamanho = item?.produto?.quantidadePorTamanho;
+
+    if (quantidadePorTamanho && typeof quantidadePorTamanho === 'object') {
+      const tamanhos = Object.keys(quantidadePorTamanho);
+      if (tamanhos.length === 1) {
+        return tamanhos[0];
+      }
+    }
+
+    if (typeof quantidadePorTamanho === 'string') {
+      try {
+        const tamanhos = Object.keys(JSON.parse(quantidadePorTamanho));
+        if (tamanhos.length === 1) {
+          return tamanhos[0];
+        }
+      } catch {
+        return 'Único';
+      }
+    }
+
+    return 'Único';
   }
 
   formatPrice(valor: number): string {

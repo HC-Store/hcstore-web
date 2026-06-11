@@ -113,6 +113,7 @@ export class ProductDetailComponent implements OnInit {
             this.thumbnails = imagens.slice(1);
 
             this.tamanhos = this.obterTamanhosProduto();
+            this.selectedSize = this.tamanhos.length === 1 ? this.tamanhos[0] : '';
           } else {
             this.erro = 'Produto nao encontrado.';
           }
@@ -312,7 +313,12 @@ export class ProductDetailComponent implements OnInit {
       return;
     }
 
-    const tamanho = this.selectedSize || 'Unico';
+    const tamanho = this.obterTamanhoParaCarrinho();
+
+    if (!tamanho) {
+      this.erroCarrinho = 'Selecione um tamanho para continuar.';
+      return;
+    }
 
     this.adicionandoCarrinho = true;
 
@@ -331,5 +337,17 @@ export class ProductDetailComponent implements OnInit {
           'Nao foi possivel adicionar o produto ao carrinho.';
       }
     });
+  }
+
+  private obterTamanhoParaCarrinho(): string {
+    if (this.selectedSize) {
+      return this.selectedSize;
+    }
+
+    if (this.tamanhos.length === 1) {
+      return this.tamanhos[0];
+    }
+
+    return '';
   }
 }

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 
 import { HeaderComponent } from '../../layout/header/header.component';
 import { FooterComponent } from '../../layout/footer/footer.component';
@@ -43,7 +43,10 @@ export class ProductListComponent implements OnInit {
   paginaAtual = 1;
   produtosPorPagina = 6;
 
-  constructor(private produtosService: ProdutosService) {}
+  constructor(
+    private produtosService: ProdutosService,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
     this.carregarCategorias();
@@ -71,6 +74,7 @@ export class ProductListComponent implements OnInit {
           'Todos os Produtos',
           ...this.categoriasBanco.map(categoria => categoria.nome)
         ];
+        this.aplicarCategoriaDaUrl();
       },
       error: (err) => console.error('Erro ao carregar categorias:', err)
     });
@@ -217,6 +221,23 @@ export class ProductListComponent implements OnInit {
     return this.categoriasBanco.find(categoria =>
       this.normalizarTexto(categoria.nome) === categoriaNormalizada
     ) || null;
+  }
+
+  private aplicarCategoriaDaUrl(): void {
+    const categoriaUrl = this.route.snapshot.queryParamMap.get('categoria');
+    if (!categoriaUrl) return;
+
+    const categoriaNormalizada = this.normalizarTexto(categoriaUrl);
+    const categoria = this.categoriasBanco.find(item =>
+      this.normalizarTexto(item.nome) === categoriaNormalizada
+    );
+
+    if (!categoria) return;
+
+    this.categoriaSelecionada = categoria.nome;
+    this.tamanhos = this.obterTamanhosPorCategoria(categoria.nome);
+    this.paginaAtual = 1;
+    this.carregarProdutos();
   }
 
   private obterTamanhosProduto(produto: Produto): string[] {
