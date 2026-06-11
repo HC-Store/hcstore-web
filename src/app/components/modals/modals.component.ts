@@ -199,7 +199,12 @@ constructor(
     next: () => {
       this.carregando = false;
       this.sucessoLogin = 'Login realizado com sucesso!';
-      this.carrinho.carregarCarrinho();
+      this.carrinho.sincronizarCarrinhoLocalComApi().subscribe({
+        error: (err) => {
+          console.error('Erro ao sincronizar carrinho apos login:', err);
+          this.carrinho.carregarCarrinho();
+        }
+      });
       this.carregarNomeUsuario();
 
       setTimeout(() => {
