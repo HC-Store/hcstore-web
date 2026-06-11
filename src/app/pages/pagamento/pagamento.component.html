@@ -117,6 +117,16 @@
 
       </div>
 
+      <div class="freight" *ngIf="resumoCheckout.desconto > 0">
+
+        <span>Desconto</span>
+
+        <span class="free">
+          - {{ formatPrice(resumoCheckout.desconto) }}
+        </span>
+
+      </div>
+
       <hr class="linha2">
 
       <div class="total">
