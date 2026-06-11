@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from './api.service';
 import { AuthService } from './auth.service';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, from, of, throwError } from 'rxjs';
+import { catchError, concatMap, map, switchMap, tap, toArray } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -42,13 +42,15 @@ export class CarrinhoService {
   }
 
   private carregarCarrinhoLocal(): any[] {
-    const itens = JSON.parse(
-      localStorage.getItem(this.localStorageKey) || '[]'
-    );
+    const itens = this.obterCarrinhoLocalSalvo();
 
     this.itens$.next(itens);
 
     return itens;
+  }
+
+  private obterCarrinhoLocalSalvo(): any[] {
+    return JSON.parse(localStorage.getItem(this.localStorageKey) || '[]');
   }
 
   private salvarCarrinhoLocal(itens: any[]): any[] {
@@ -164,6 +166,33 @@ export class CarrinhoService {
           err
         )
     });
+  }
+
+  sincronizarCarrinhoLocalComApi(): Observable<any> {
+    if (!this.temTokenApi()) {
+      return of(this.carregarCarrinhoLocal());
+    }
+
+    const itensLocais = this.obterCarrinhoLocalSalvo()
+      .filter((item: any) => this.produtoIdItem(item));
+
+    if (itensLocais.length === 0) {
+      return this.carregarCarrinho$();
+    }
+
+    return from(itensLocais).pipe(
+      concatMap((item: any) => this.adicionarItem(
+        this.produtoIdItem(item),
+        Number(item.quantidade || 1),
+        item.tamanho,
+        item.produto
+      )),
+      toArray(),
+      tap(() => {
+        localStorage.removeItem(this.localStorageKey);
+      }),
+      switchMap(() => this.carregarCarrinho$())
+    );
   }
 
   adicionarItem(

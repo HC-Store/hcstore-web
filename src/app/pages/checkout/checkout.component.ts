@@ -17,6 +17,19 @@ type ModalTipo =
   | 'profileEdit'
   | null;
 
+type CampoCheckout =
+  | 'email'
+  | 'telefone'
+  | 'nome'
+  | 'sobrenome'
+  | 'cep'
+  | 'endereco'
+  | 'bairro'
+  | 'cidade'
+  | 'estado'
+  | 'casaApartamento'
+  | 'numeroBloco';
+
 @Component({
   selector: 'app-checkout',
   standalone: true,
@@ -210,34 +223,6 @@ export class CheckoutComponent implements OnInit {
   }
 
   finalizarCompra(): void {
-    const {
-      email,
-      telefone,
-      nome,
-      sobrenome,
-      cep,
-      endereco,
-      bairro,
-      cidade,
-      estado,
-      numeroBloco
-    } = this.formData;
-
-    if (
-      !email.trim() ||
-      !telefone.trim() ||
-      !nome.trim() ||
-      !sobrenome.trim() ||
-      !cep.trim() ||
-      !endereco.trim() ||
-      !cidade.trim() ||
-      !estado.trim() ||
-      !numeroBloco.trim()
-    ) {
-      this.erro = 'Preencha todos os campos obrigatórios.';
-      return;
-    }
-
     if (this.itensCarrinho.length === 0) {
       this.erro = 'Seu carrinho está vazio.';
       return;
@@ -245,10 +230,28 @@ export class CheckoutComponent implements OnInit {
 
     const user = this.obterUsuarioLocal();
 
-    if (!user?.id) {
-      this.erro = 'Faça login para finalizar a compra.';
+    if (!user?.id || !localStorage.getItem('token')) {
+      this.erro = 'Entre na sua conta ou cadastre-se para finalizar a compra.';
+      this.modalAberto = 'login';
       return;
     }
+
+    const campoFaltando = this.obterCampoObrigatorioFaltando();
+
+    if (campoFaltando) {
+      this.erro = `Preencha o campo: ${campoFaltando.label}.`;
+      this.direcionarParaCampo(campoFaltando.id);
+      return;
+    }
+
+    const {
+      cep,
+      endereco,
+      bairro,
+      cidade,
+      estado,
+      numeroBloco
+    } = this.formData;
 
     this.carregando = true;
     this.erro = '';
@@ -291,6 +294,39 @@ export class CheckoutComponent implements OnInit {
         this.carregando = false;
         this.erro = err.error?.error || 'Erro ao salvar endereço.';
       }
+    });
+  }
+
+  private obterCampoObrigatorioFaltando(): { campo: CampoCheckout; label: string; id: string } | null {
+    const campos: { campo: CampoCheckout; label: string; id: string }[] = [
+      { campo: 'email', label: 'E-mail', id: 'email' },
+      { campo: 'telefone', label: 'Telefone', id: 'telefone' },
+      { campo: 'nome', label: 'Nome', id: 'nome' },
+      { campo: 'sobrenome', label: 'Sobrenome', id: 'sobrenome' },
+      { campo: 'cep', label: 'CEP', id: 'cep' },
+      { campo: 'endereco', label: 'Endereço', id: 'endereco' },
+      { campo: 'bairro', label: 'Bairro', id: 'bairro' },
+      { campo: 'cidade', label: 'Cidade', id: 'cidade' },
+      { campo: 'estado', label: 'Estado', id: 'estado' },
+      { campo: 'numeroBloco', label: 'Número ou bloco', id: 'numero-bloco' },
+      { campo: 'casaApartamento', label: 'Casa ou apartamento', id: 'casa' }
+    ];
+
+    return campos.find(item => !String(this.formData[item.campo] || '').trim()) || null;
+  }
+
+  private direcionarParaCampo(id: string): void {
+    setTimeout(() => {
+      const campo = document.getElementById(id) as HTMLElement | null;
+
+      if (!campo) return;
+
+      campo.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+
+      campo.focus();
     });
   }
 }
