@@ -67,12 +67,34 @@
       </div>
       <a routerLink="/product-list" class="text_conferir text_conferir_dark">CONFERIR →</a>
     </div>
-    <div class="grid2">
-      <div class="item3" *ngFor="let l of config.lancamentos">
-        <a [routerLink]="['/product-detail', l.id]">
-          <img [src]="l.imagem" [alt]="l.titulo" />
-        </a>
+    <div class="carousel-lancamentos" *ngIf="config.lancamentos.length > 0">
+      <button
+        class="carousel-btn carousel-btn-left"
+        type="button"
+        aria-label="Camisas anteriores"
+        [disabled]="config.lancamentos.length <= 2"
+        (click)="anteriorLancamento()"
+      >
+        ‹
+      </button>
+
+      <div class="grid2">
+        <div class="item3" *ngFor="let l of lancamentosVisiveis">
+          <a [routerLink]="['/product-detail', l.id]">
+            <img [src]="l.imagem" [alt]="l.titulo" />
+          </a>
+        </div>
       </div>
+
+      <button
+        class="carousel-btn carousel-btn-right"
+        type="button"
+        aria-label="Próximas camisas"
+        [disabled]="config.lancamentos.length <= 2"
+        (click)="proximoLancamento()"
+      >
+        ›
+      </button>
     </div>
   </section>
 </main>
