@@ -27,6 +27,18 @@ export class ApiService {
     return this.http.post(`${this.base}/auth/login`, body);
   }
 
+  enviarCodigoRecuperacao(body: any): Observable<any> {
+    return this.http.post(`${this.base}/auth/forgot-password`, body);
+  }
+
+  confirmarCodigoRecuperacao(body: any): Observable<any> {
+    return this.http.post(`${this.base}/auth/verify-reset-code`, body);
+  }
+
+  redefinirSenha(body: any): Observable<any> {
+    return this.http.post(`${this.base}/auth/reset-password`, body);
+  }
+
   // USUÁRIOS
   getUsuarios(): Observable<any> {
     return this.http.get(`${this.base}/usuarios`, {
