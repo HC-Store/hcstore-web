@@ -37,7 +37,7 @@
       </div>
 
       <div class="forgot-wrap">
-        <a href="#">Esqueceu sua senha?</a>
+        <a href="#" (click)="$event.preventDefault(); abrirEsqueciSenha()">Esqueceu sua senha?</a>
       </div>
       <p class="sucesso-msg" *ngIf="sucessoLogin">{{ sucessoLogin }}</p>
 
@@ -52,6 +52,91 @@
       <p>Não tem uma conta?</p>
       <button class="switch-modal-btn" type="button" (click)="abrirRegister()">
         Cadastre-se agora
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- RECUPERAR SENHA: EMAIL -->
+<div
+  class="global-modal forgot-modal"
+  [class.active]="modalAberto === 'forgotPassword'"
+  *ngIf="modalAberto === 'forgotPassword'"
+>
+  <button class="global-modal-close" (click)="fechar()">&times;</button>
+
+  <div class="modal-card">
+    <h1>Recuperar senha</h1>
+    <p class="modal-subtitle">Digite o e-mail usado para entrar na sua conta.</p>
+
+    <form class="modal-form" (ngSubmit)="enviarCodigoRecuperacao()">
+      <div class="input-group">
+        <input
+          type="email"
+          name="forgotEmail"
+          [(ngModel)]="forgotData.email"
+          placeholder="ENDERECO DE E-MAIL"
+        />
+      </div>
+
+      <p class="sucesso-msg" *ngIf="sucessoRecuperacao">{{ sucessoRecuperacao }}</p>
+      <p class="erro-msg" *ngIf="erroRecuperacao">{{ erroRecuperacao }}</p>
+      <button
+        class="switch-modal-btn"
+        type="button"
+        *ngIf="emailNaoCadastrado"
+        (click)="abrirCadastroRecuperacao()"
+      >
+        Cadastre-se aqui
+      </button>
+
+      <button type="submit" class="btn-primary" [disabled]="carregandoRecuperacao">
+        {{ carregandoRecuperacao ? 'Enviando...' : 'Enviar codigo' }}
+      </button>
+    </form>
+
+    <div class="modal-bottom-text">
+      <button class="switch-modal-btn" type="button" (click)="abrirLogin()">
+        Voltar ao login
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- RECUPERAR SENHA: CODIGO -->
+<div
+  class="global-modal forgot-modal"
+  [class.active]="modalAberto === 'forgotCode'"
+  *ngIf="modalAberto === 'forgotCode'"
+>
+  <button class="global-modal-close" (click)="fechar()">&times;</button>
+
+  <div class="modal-card">
+    <h1>Confirmar codigo</h1>
+    <p class="modal-subtitle">Digite o codigo recebido para redefinir sua senha.</p>
+
+    <form class="modal-form" (ngSubmit)="confirmarCodigoRecuperacao()">
+      <div class="input-group">
+        <input
+          type="text"
+          name="forgotCodigo"
+          [(ngModel)]="forgotData.codigo"
+          placeholder="CODIGO DE 6 DIGITOS"
+          maxlength="6"
+        />
+      </div>
+
+      <p class="sucesso-msg" *ngIf="sucessoRecuperacao">{{ sucessoRecuperacao }}</p>
+      <p class="erro-msg" *ngIf="erroRecuperacao">{{ erroRecuperacao }}</p>
+
+      <button type="submit" class="btn-primary">
+        Confirmar
+      </button>
+    </form>
+
+    <div class="modal-bottom-text">
+      <button class="switch-modal-btn" type="button" (click)="enviarCodigoRecuperacao()">
+        Reenviar codigo
       </button>
     </div>
   </div>
