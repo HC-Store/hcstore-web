@@ -261,7 +261,7 @@
         <input type="email" name="perfilEmail" [(ngModel)]="profileData.email" placeholder="Endereço de e-mail" />
       </div>
 
-      <div class="profile-field-group profile-password-field">
+      <div class="profile-field-group profile-password-field" *ngIf="resetandoSenha">
         <input type="password" name="perfilSenha" [(ngModel)]="profileData.senha" placeholder="Nova senha" />
       </div>
 
