@@ -84,75 +84,89 @@
         <br />
 
         <div class="address">
-          <label for="endereco">Endereço</label>
-          <br />
-          <input
-            type="text"
-            id="endereco"
-            name="endereco"
-            [(ngModel)]="formData.endereco"
-            required
-          />
+          <div class="field full">
+            <label for="endereco">Endereço</label>
+            <input
+              type="text"
+              id="endereco"
+              name="endereco"
+              [(ngModel)]="formData.endereco"
+              required
+            />
+          </div>
 
-          <br /><br />
+          <div class="field">
+            <label for="bairro">Bairro</label>
+            <input
+              type="text"
+              id="bairro"
+              name="bairro"
+              [(ngModel)]="formData.bairro"
+              required
+            />
+          </div>
 
-          <label for="bairro">Bairro</label>
-          <br />
-          <input
-            type="text"
-            id="bairro"
-            name="bairro"
-            [(ngModel)]="formData.bairro"
-            required
-          />
+          <div class="field">
+            <label for="cidade">Cidade</label>
+            <input
+              type="text"
+              id="cidade"
+              name="cidade"
+              [(ngModel)]="formData.cidade"
+              required
+            />
+          </div>
 
-          <br /><br />
+          <div class="field">
+            <label for="estado">Estado</label>
+            <input
+              type="text"
+              id="estado"
+              name="estado"
+              [(ngModel)]="formData.estado"
+              required
+            />
+          </div>
 
-          <label for="cidade">Cidade</label>
-          <br />
-          <input
-            type="text"
-            id="cidade"
-            name="cidade"
-            [(ngModel)]="formData.cidade"
-            required
-          />
+          <div class="field">
+            <label for="numero-bloco">Número ou bloco</label>
+            <input
+              type="text"
+              id="numero-bloco"
+              name="numeroBloco"
+              [(ngModel)]="formData.numeroBloco"
+              required
+            />
+          </div>
 
-          <br /><br />
+          <div class="field full">
+            <span class="field-label">Casa ou apartamento</span>
+            <div class="tipo-moradia">
+              <label>
+                <input
+                  id="casa"
+                  type="radio"
+                  name="casaApartamento"
+                  value="Casa"
+                  [(ngModel)]="formData.casaApartamento"
+                  required
+                />
+                Casa
+              </label>
 
-          <label for="estado">Estado</label>
-          <br />
-          <input
-            type="text"
-            id="estado"
-            name="estado"
-            [(ngModel)]="formData.estado"
-            required
-          />
-
-          <br /><br />
-
-          <label for="casa-apartamento">Casa ou apartamento</label>
-          <br />
-          <input
-            type="text"
-            id="casa-apartamento"
-            name="casaApartamento"
-            [(ngModel)]="formData.casaApartamento"
-            required
-          />
-
-          <br /><br />
-
-          <label for="numero-bloco">Número ou bloco</label>
-          <br />
-          <input
-            type="text"
-            id="numero-bloco"
-            name="numeroBloco"
-            [(ngModel)]="formData.numeroBloco"
-            required
-          />
+              <label>
+                <input
+                  id="apartamento"
+                  type="radio"
+                  name="casaApartamento"
+                  value="Apartamento"
+                  [(ngModel)]="formData.casaApartamento"
+                  required
+                />
+                Apartamento
+              </label>
+            </div>
+          </div>
         </div>
 
         <br />
