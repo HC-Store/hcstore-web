@@ -307,7 +307,6 @@ export class CheckoutComponent implements OnInit {
     itens: this.itensCarrinho
   };
 
-<<<<<<< Updated upstream
             localStorage.setItem(
               'checkoutData',
               JSON.stringify({
@@ -320,9 +319,7 @@ export class CheckoutComponent implements OnInit {
             );
 
             this.carrinho.carregarCarrinho();
-=======
   localStorage.setItem('checkoutData', JSON.stringify(checkoutData));
->>>>>>> Stashed changes
 
   this.carregando = false;
   this.sucesso = 'Pedido realizado com sucesso!';

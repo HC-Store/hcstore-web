@@ -28,7 +28,6 @@ export class ApiService {
     return this.http.post(`${this.base}/auth/login`, body);
   }
 
-<<<<<<< Updated upstream
   enviarCodigoRecuperacao(body: any): Observable<any> {
     return this.http.post(`${this.base}/auth/forgot-password`, body);
   }
@@ -42,8 +41,6 @@ export class ApiService {
   }
 
   // USUÁRIOS
-=======
->>>>>>> Stashed changes
   getUsuarios(): Observable<any> {
     return this.http.get(`${this.base}/usuarios`, { headers: this.headers() });
   }

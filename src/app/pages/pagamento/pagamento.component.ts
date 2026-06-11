@@ -23,43 +23,12 @@ export class PagamentoComponent implements OnInit {
   erro = '';
 
   itensCarrinho: any[] = [];
-<<<<<<< Updated upstream
-  resumoCheckout = {
-    subtotal: 0,
-    frete: 0,
-    desconto: 0,
-    total: 0
-  };
-=======
   checkoutData: any = null;
->>>>>>> Stashed changes
 
   constructor(private api: ApiService, private router: Router) {}
 
   ngOnInit(): void {
-<<<<<<< Updated upstream
-    const checkoutData = JSON.parse(localStorage.getItem('checkoutData') || '[]');
-
-    if (Array.isArray(checkoutData)) {
-      this.itensCarrinho = checkoutData;
-      this.resumoCheckout = {
-        subtotal: this.calcularSubtotalItens(checkoutData),
-        frete: this.calcularSubtotalItens(checkoutData) >= 200 ? 0 : 20,
-        desconto: 0,
-        total: this.calcularSubtotalItens(checkoutData) + (this.calcularSubtotalItens(checkoutData) >= 200 ? 0 : 20)
-      };
-    } else {
-      this.itensCarrinho = Array.isArray(checkoutData.itens) ? checkoutData.itens : [];
-      this.resumoCheckout = {
-        subtotal: Number(checkoutData.subtotal || 0),
-        frete: Number(checkoutData.frete || 0),
-        desconto: Number(checkoutData.desconto || 0),
-        total: Number(checkoutData.total || 0)
-      };
-    }
-=======
     const salvo = localStorage.getItem('checkoutData');
->>>>>>> Stashed changes
 
     if (!salvo) {
       this.erro = 'Nenhum pedido encontrado. Volte ao carrinho.';
@@ -71,17 +40,6 @@ export class PagamentoComponent implements OnInit {
   }
 
   get subtotal(): number {
-<<<<<<< Updated upstream
-    return this.resumoCheckout.subtotal || this.calcularSubtotalItens(this.itensCarrinho);
-  }
-
-  get frete(): number {
-    return this.resumoCheckout.frete;
-  }
-
-  get total(): number {
-    return this.resumoCheckout.total || (this.subtotal + this.frete - this.resumoCheckout.desconto);
-=======
     return Number(this.checkoutData?.valores?.subtotal || 0);
   }
 
@@ -95,7 +53,6 @@ export class PagamentoComponent implements OnInit {
 
   get total(): number {
     return Number(this.checkoutData?.valores?.total || 0);
->>>>>>> Stashed changes
   }
 
   formatPrice(value: number): string {
@@ -117,19 +74,6 @@ export class PagamentoComponent implements OnInit {
     this.carregando = true;
     this.erro = '';
 
-<<<<<<< Updated upstream
-    const body = {
-      items: this.itensCarrinho.map((item) => ({
-        id: item.produto?.id,
-        nome: item.produto?.nome,
-        preco: Number(item.produto?.preco),
-        quantidade: Number(item.quantidade)
-      })),
-      subtotal: this.subtotal,
-      frete: this.frete,
-      desconto: this.resumoCheckout.desconto,
-      total: this.total
-=======
     const items = this.itensCarrinho
       .map(item => ({
         id: item.produto?.id || item.id,
@@ -158,7 +102,6 @@ export class PagamentoComponent implements OnInit {
     const body = {
       pedidoId: this.checkoutData?.pedido?.id,
       items
->>>>>>> Stashed changes
     };
 
     this.api.criarCheckoutPagBank(body).subscribe({
@@ -188,17 +131,6 @@ export class PagamentoComponent implements OnInit {
     this.modalAberto = (token || user) ? 'profileWelcome' : 'login';
   }
 
-<<<<<<< Updated upstream
-  abrirCart(): void {
-    this.modalAberto = 'cart';
-  }
-
-  fecharModal(): void {
-    this.modalAberto = null;
-  }
-}
-=======
   abrirCart(): void { this.modalAberto = 'cart'; }
   fecharModal(): void { this.modalAberto = null; }
 }
->>>>>>> Stashed changes
