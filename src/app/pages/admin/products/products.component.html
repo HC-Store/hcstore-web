@@ -53,8 +53,33 @@
 
     <input [(ngModel)]="form.nome" placeholder="Nome" />
     <input [(ngModel)]="form.preco" placeholder="Preço" type="number" />
-    <input [(ngModel)]="form.tamanho" placeholder="Tamanhos (ex: P,M,G)" />
-    <input [(ngModel)]="form.estoque" placeholder="Estoque" type="number" />
+    <label>Tamanhos e estoque por tamanho</label>
+
+<div class="sizes">
+  <span
+    *ngFor="let s of sizes"
+    (click)="toggleSize(s)"
+    [class.active]="sizeSelecionado(s)"
+  >
+    {{ s }}
+  </span>
+</div>
+
+<div class="size-quantity-grid">
+  <div class="size-quantity" *ngFor="let s of sizes">
+    <div *ngIf="sizeSelecionado(s)">
+      <label>Quantidade tamanho {{ s }}</label>
+      <input
+        type="number"
+        min="0"
+        [(ngModel)]="form.quantidadePorTamanho[s]"
+        (ngModelChange)="atualizarEstoqueTotal()"
+      />
+    </div>
+  </div>
+</div>
+
+<input [(ngModel)]="form.estoque" placeholder="Estoque total" type="number" readonly />
     <input [(ngModel)]="form.marca" placeholder="Marca" />
     <textarea [(ngModel)]="form.composicaoMaterial" placeholder="Composicao do material"></textarea>
     <textarea [(ngModel)]="form.instrucaoLavagem" placeholder="Instrucoes de lavagem"></textarea>
