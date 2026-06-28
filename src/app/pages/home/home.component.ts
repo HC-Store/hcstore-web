@@ -47,16 +47,31 @@ export class HomeComponent implements OnInit {
   constructor(private api: ApiService) {}
 
   ngOnInit(): void {
-    const salvo = localStorage.getItem('configHome');
-    if (salvo) {
-      this.config = { ...this.config, ...JSON.parse(salvo) };
-    }
+    this.carregarConfigHome();
+  }
 
-    this.carregarProdutosHome();
+  private carregarConfigHome(): void {
+    this.api.getSiteConfig().subscribe({
+      next: (res) => {
+        if (res?.home) {
+          this.config = {
+            ...this.config,
+            ...res.home,
+            destaques: Array.isArray(res.home.destaques) ? res.home.destaques : [],
+            lancamentos: Array.isArray(res.home.lancamentos) ? res.home.lancamentos : []
+          };
+        }
+
+        this.indiceLancamento = 0;
+      },
+      error: (err) => {
+        console.error('Erro ao carregar configurações da Home:', err);
+      }
+    });
   }
 
   get lancamentosVisiveis(): DestaqueProduto[] {
-    const lancamentos = this.config.lancamentos;
+    const lancamentos = this.config.lancamentos || [];
 
     if (lancamentos.length <= 2) {
       return lancamentos;
@@ -82,58 +97,10 @@ export class HomeComponent implements OnInit {
     this.indiceLancamento = (this.indiceLancamento + 1) % total;
   }
 
-  private carregarProdutosHome(): void {
-    this.api.getProdutos().subscribe({
-      next: (res) => {
-        const produtos = Array.isArray(res) ? res : [];
-        const produtosValidos = produtos.filter((produto: any) => produto?.id && produto?.nome);
-
-        this.config.destaques = produtosValidos
-          .slice(0, 3)
-          .map((produto: any) => this.mapearProdutoHome(produto));
-
-        this.config.lancamentos = produtosValidos
-          .filter((produto: any) => this.produtoEhCamisaDeTime(produto))
-          .map((produto: any) => this.mapearProdutoHome(produto));
-
-        this.indiceLancamento = 0;
-      },
-      error: (err) => console.error('Erro ao carregar produtos da home:', err)
-    });
-  }
-
-  private mapearProdutoHome(produto: any): DestaqueProduto {
-    return {
-      id: produto.id,
-      titulo: produto.nome,
-      imagem: produto.imagens?.[0]?.url || produto.imagem || 'assets/img/sem-imagem.png'
-    };
-  }
-
-  private produtoEhCamisaDeTime(produto: any): boolean {
-    const categoria = produto?.categoria?.nome || produto?.categoria || '';
-    const texto = this.normalizarTexto(`${produto?.nome || ''} ${categoria}`);
-
-    return texto.includes('jersey') || (
-      texto.includes('camisa') && (
-        texto.includes('time') ||
-        texto.includes('futebol') ||
-        texto.includes('clube') ||
-        texto.includes('selecao')
-      )
-    );
-  }
-
-  private normalizarTexto(valor: string): string {
-    return valor
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '');
-  }
-
   abrirLogin(): void {
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
+
     if (token || user) {
       this.modalAberto = 'profileWelcome';
     } else {
@@ -141,7 +108,15 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  abrirRegister(): void { this.modalAberto = 'register'; }
-  abrirCart(): void { this.modalAberto = 'cart'; }
-  fecharModal(): void { this.modalAberto = null; }
+  abrirRegister(): void {
+    this.modalAberto = 'register';
+  }
+
+  abrirCart(): void {
+    this.modalAberto = 'cart';
+  }
+
+  fecharModal(): void {
+    this.modalAberto = null;
+  }
 }

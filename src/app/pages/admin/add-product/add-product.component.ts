@@ -12,7 +12,13 @@ import { Router } from '@angular/router';
   styleUrls: ['./add-product.component.css']
 })
 export class AddProductComponent implements OnInit {
-  sizes = ['PP', 'P', 'M', 'G', 'GG', '36', '38', '40', '42', '44'];
+  sizes = [
+  'Único',
+  'PP', 'P', 'M', 'G', 'GG',
+  '36', '38', '40', '42', '44',
+  'Pulseira P', 'Pulseira M', 'Pulseira G',
+  'Corrente 45cm', 'Corrente 50cm', 'Corrente 60cm'
+];
   categorias: any[] = [];
 
   carregando = false;

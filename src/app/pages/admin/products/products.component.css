@@ -215,3 +215,16 @@
   height: 34px;
   padding: 0 14px;
 }
+
+.btn-sale-btn-sm{
+    background:#2563eb;
+    color:#fff;
+    border:none;
+    border-radius:6px;
+    padding:6px 8px;
+    cursor:pointer;
+}
+
+.btn-sale-btn-sm:hover{
+    background:#1d4ed8;
+}

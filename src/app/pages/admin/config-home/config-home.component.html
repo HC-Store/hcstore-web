@@ -4,59 +4,81 @@
   <p class="sucesso-msg" *ngIf="sucesso">✓ {{ sucesso }}</p>
   <p class="erro-msg" *ngIf="erro">{{ erro }}</p>
 
-  <!-- VÍDEO -->
   <div class="section-card">
-    <h3> Vídeo do Banner Principal</h3>
+    <h3>Vídeo do Banner Principal</h3>
     <label>URL do vídeo</label>
     <input [(ngModel)]="config.videoUrl" placeholder="assets/video/banner-home.mp4" />
     <video *ngIf="config.videoUrl" [src]="config.videoUrl" muted autoplay loop class="preview-video"></video>
   </div>
 
-  <!-- BANNERS -->
   <div class="section-card">
-    <h3> Banners das Categorias</h3>
+    <h3>Banners das Categorias</h3>
 
-    <label>Banner 1 (Tênis) — URL da imagem</label>
+    <label>Banner 1 — URL da imagem</label>
     <input [(ngModel)]="config.banner1" placeholder="URL da imagem" />
     <img *ngIf="config.banner1" [src]="config.banner1" class="preview-banner" />
 
-    <label>Banner 2 (Acessórios) — URL da imagem</label>
+    <label>Banner 2 — URL da imagem</label>
     <input [(ngModel)]="config.banner2" placeholder="URL da imagem" />
     <img *ngIf="config.banner2" [src]="config.banner2" class="preview-banner" />
 
-    <label>Banner 3 (Roupas) — URL da imagem</label>
+    <label>Banner 3 — URL da imagem</label>
     <input [(ngModel)]="config.banner3" placeholder="URL da imagem" />
     <img *ngIf="config.banner3" [src]="config.banner3" class="preview-banner" />
   </div>
 
-  <!-- DESTAQUES -->
   <div class="section-card">
-    <h3> Produtos em Destaque</h3>
+    <h3>Produtos em Destaque</h3>
 
     <div class="item-row" *ngFor="let d of config.destaques; let i = index">
       <div class="item-fields">
-        <input [(ngModel)]="d.id" type="number" placeholder="ID do produto" />
-        <input [(ngModel)]="d.titulo" placeholder="Título" />
-        <input [(ngModel)]="d.imagem" placeholder="URL da imagem" />
-        <img *ngIf="d.imagem" [src]="d.imagem" class="preview-thumb" />
+        <label>Selecionar produto</label>
+
+        <select [ngModel]="d.id" (ngModelChange)="selecionarProdutoDestaque(i, $event)">
+          <option [ngValue]="0">Selecione um produto</option>
+          <option *ngFor="let produto of produtos" [ngValue]="produto.id">
+            {{ produto.nome }} — R$ {{ produto.preco }}
+          </option>
+        </select>
+
+        <div class="produto-preview" *ngIf="d.id">
+          <img [src]="d.imagem" class="preview-thumb" />
+          <div>
+            <strong>{{ d.titulo }}</strong>
+            <small>ID: {{ d.id }}</small>
+          </div>
+        </div>
       </div>
+
       <button class="btn-remove" (click)="removerDestaque(i)">✕</button>
     </div>
 
     <button class="btn-add" (click)="adicionarDestaque()">+ Adicionar Destaque</button>
   </div>
 
-  <!-- LANÇAMENTOS -->
   <div class="section-card">
     <h3>Últimos Lançamentos</h3>
 
     <div class="item-row" *ngFor="let l of config.lancamentos; let i = index">
       <div class="item-fields">
-        <input [(ngModel)]="l.id" type="number" placeholder="ID do produto" />
-        <input [(ngModel)]="l.titulo" placeholder="Título" />
-        <input [(ngModel)]="l.imagem" placeholder="URL da imagem" />
-        <img *ngIf="l.imagem" [src]="l.imagem" class="preview-thumb" />
+        <label>Selecionar produto</label>
+
+        <select [ngModel]="l.id" (ngModelChange)="selecionarProdutoLancamento(i, $event)">
+          <option [ngValue]="0">Selecione um produto</option>
+          <option *ngFor="let produto of produtos" [ngValue]="produto.id">
+            {{ produto.nome }} — R$ {{ produto.preco }}
+          </option>
+        </select>
+
+        <div class="produto-preview" *ngIf="l.id">
+          <img [src]="l.imagem" class="preview-thumb" />
+          <div>
+            <strong>{{ l.titulo }}</strong>
+            <small>ID: {{ l.id }}</small>
+          </div>
+        </div>
       </div>
+
       <button class="btn-remove" (click)="removerLancamento(i)">✕</button>
     </div>
 

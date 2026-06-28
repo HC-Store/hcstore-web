@@ -1,30 +1,4 @@
-.page {
-  padding: 24px;
-}
-
-.page h2 {
-  font-size: 1.5rem;
-  font-weight: 800;
-  margin-bottom: 24px;
-}
-
-.section-card {
-  background: #f9f9f9;
-  border-radius: 10px;
-  padding: 20px;
-  margin-bottom: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.section-card h3 {
-  font-size: 1rem;
-  font-weight: 700;
-  margin-bottom: 8px;
-}
-
-.section-card input {
+.section-card select {
   width: 100%;
   padding: 10px;
   border: 1px solid #ddd;
@@ -32,98 +6,22 @@
   font-size: 0.9rem;
 }
 
-.preview-video,
-.preview-banner,
-.preview-thumb {
-  display: block;
-  background: #eee;
+.produto-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f2f2f2;
   border-radius: 8px;
-  object-fit: cover;
-}
-
-.preview-video {
-  width: min(100%, 420px);
-  height: 200px;
+  padding: 10px;
   margin-top: 8px;
 }
 
-.preview-banner {
-  width: min(100%, 360px);
-  height: 120px;
-  margin-top: 4px;
-}
-
-.preview-thumb {
-  width: 90px;
-  height: 70px;
-  border-radius: 4px;
-}
-
-.item-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  background: white;
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid #eee;
-  margin-bottom: 8px;
-}
-
-.item-fields {
-  flex: 1;
+.produto-preview div {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
-.btn-remove {
-  background: #e74c3c;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 6px 10px;
-  cursor: pointer;
-  font-size: 0.9rem;
-}
-
-.btn-add {
-  background: transparent;
-  border: 2px dashed #aaa;
-  border-radius: 6px;
-  padding: 10px;
-  cursor: pointer;
-  color: #666;
-  font-size: 0.9rem;
-  width: 100%;
-}
-
-.btn-add:hover {
-  border-color: #39ff14;
-  color: #333;
-}
-
-.btn-salvar {
-  width: 100%;
-  padding: 16px;
-  background: #39ff14;
-  color: black;
-  font-weight: 800;
-  font-size: 1rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-top: 8px;
-}
-
-.sucesso-msg {
-  color: #27ae60;
-  font-weight: 600;
-  margin-bottom: 16px;
-}
-
-.erro-msg {
-  color: #e74c3c;
-  font-weight: 600;
-  margin-bottom: 16px;
+.produto-preview small {
+  color: #777;
 }

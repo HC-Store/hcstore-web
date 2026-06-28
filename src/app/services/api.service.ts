@@ -163,6 +163,30 @@ export class ApiService {
     return this.http.post(`${this.base}/cupons/validar`, body, { headers: this.headers() });
   }
 
+  getSiteConfig(): Observable<any> {
+  return this.http.get(`${this.base}/site-config`, {
+    headers: this.headers()
+  });
+}
+
+salvarSiteConfig(body: any): Observable<any> {
+  return this.http.put(`${this.base}/site-config`, body, {
+    headers: this.headers()
+  });
+}
+
+registrarVendaPresencial(body: any): Observable<any> {
+  return this.http.post(`${this.base}/venda-presencial`, body, {
+    headers: this.headers()
+  });
+}
+
+deleteCupom(id: number): Observable<any> {
+  return this.http.delete(`${this.base}/cupons/${id}`, {
+    headers: this.headers()
+  });
+}
+
   criarCheckoutPagBank(body: any): Observable<any> {
     console.log('URL PAGBANK:', `${this.base}/pagamentos/checkout`);
     console.log('BODY PAGBANK:', body);

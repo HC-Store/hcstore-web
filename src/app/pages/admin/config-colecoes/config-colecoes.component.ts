@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ConfigColecoes } from '../../colecoes/colecoes.component';
+import { ApiService } from '../../../services/api.service';
 
 @Component({
   selector: 'app-config-colecoes',
@@ -23,20 +24,49 @@ export class ConfigColecoesComponent implements OnInit {
     dataLancamento: ''
   };
 
+  constructor(private api: ApiService) {}
+
   ngOnInit(): void {
-    const salvo = localStorage.getItem('configColecoes');
-    if (salvo) {
-      this.config = { ...this.config, ...JSON.parse(salvo) };
-    }
+    this.carregarConfig();
+  }
+
+  carregarConfig(): void {
+    this.api.getSiteConfig().subscribe({
+      next: (res) => {
+        if (res?.colecoes) {
+          this.config = { ...this.config, ...res.colecoes };
+        }
+      },
+      error: () => {
+        this.erro = 'Erro ao carregar configurações das coleções.';
+      }
+    });
   }
 
   salvar(): void {
-    try {
-      localStorage.setItem('configColecoes', JSON.stringify(this.config));
-      this.sucesso = 'Configurações salvas com sucesso!';
-      setTimeout(() => this.sucesso = '', 3000);
-    } catch {
-      this.erro = 'Erro ao salvar configurações.';
-    }
+    this.erro = '';
+    this.sucesso = '';
+
+    this.api.getSiteConfig().subscribe({
+      next: (siteConfig) => {
+        const body = {
+          ...(siteConfig || {}),
+          colecoes: this.config
+        };
+
+        this.api.salvarSiteConfig(body).subscribe({
+          next: () => {
+            this.sucesso = 'Configurações salvas com sucesso!';
+            setTimeout(() => this.sucesso = '', 3000);
+          },
+          error: () => {
+            this.erro = 'Erro ao salvar configurações.';
+          }
+        });
+      },
+      error: () => {
+        this.erro = 'Erro ao buscar configuração atual.';
+      }
+    });
   }
 }

@@ -1,0 +1,106 @@
+.page {
+  padding: 24px;
+}
+
+.page h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 24px;
+}
+
+.section-card {
+  background: #f9f9f9;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.section-card h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 24px;
+  font-weight: 600;
+}
+
+.btn-salvar {
+  width: 100%;
+  padding: 16px;
+  background: #39ff14;
+  color: black;
+  font-weight: 800;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 18px;
+}
+
+.cupom-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 10px;
+}
+
+.cupom-card div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cupom-card span,
+.cupom-card small {
+  color: #666;
+}
+
+.btn-remove {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.sucesso-msg {
+  color: #27ae60;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.erro-msg {
+  color: #e74c3c;
+  font-weight: 600;
+  margin-bottom: 16px;
+}

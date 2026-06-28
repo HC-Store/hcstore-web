@@ -1,0 +1,63 @@
+<div class="page">
+  <h2>Cupons</h2>
+
+  <p class="sucesso-msg" *ngIf="sucesso">✓ {{ sucesso }}</p>
+  <p class="erro-msg" *ngIf="erro">{{ erro }}</p>
+
+  <div class="section-card">
+    <h3>Novo Cupom</h3>
+
+    <div class="form-grid">
+      <div class="field">
+        <label>Código</label>
+        <input [(ngModel)]="form.codigo" placeholder="Ex: HC10" />
+      </div>
+
+      <div class="field">
+        <label>Tipo</label>
+        <select [(ngModel)]="form.tipo">
+          <option value="PERCENTUAL">Percentual (%)</option>
+          <option value="FIXO">Valor fixo (R$)</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Valor</label>
+        <input type="number" [(ngModel)]="form.valor" placeholder="Ex: 10" />
+      </div>
+
+      <div class="field">
+        <label>Uso máximo</label>
+        <input type="number" [(ngModel)]="form.usoMaximo" placeholder="Opcional" />
+      </div>
+
+      <label class="checkbox">
+        <input type="checkbox" [(ngModel)]="form.ativo" />
+        Cupom ativo
+      </label>
+    </div>
+
+    <button class="btn-salvar" (click)="criarCupom()">CRIAR CUPOM</button>
+  </div>
+
+  <div class="section-card">
+    <h3>Cupons cadastrados</h3>
+
+    <p *ngIf="carregando">Carregando...</p>
+    <p *ngIf="!carregando && cupons.length === 0">Nenhum cupom cadastrado.</p>
+
+    <div class="cupom-card" *ngFor="let cupom of cupons">
+      <div>
+        <strong>{{ cupom.codigo }}</strong>
+        <span>{{ cupom.tipo }} — {{ cupom.valor }}</span>
+        <small>
+          Status: {{ cupom.ativo ? 'Ativo' : 'Inativo' }} |
+          Usado: {{ cupom.usado || 0 }} |
+          Limite: {{ cupom.usoMaximo || 'Ilimitado' }}
+        </small>
+      </div>
+
+      <button class="btn-remove" (click)="excluirCupom(cupom.id)">Excluir</button>
+    </div>
+  </div>
+</div>

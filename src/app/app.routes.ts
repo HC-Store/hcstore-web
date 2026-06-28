@@ -16,6 +16,7 @@ import { AddProductComponent } from './pages/admin/add-product/add-product.compo
 import { ConfigHomeComponent } from './pages/admin/config-home/config-home.component';
 import { AuthGuard } from './guards/auth.guard';
 import { ConfigColecoesComponent } from './pages/admin/config-colecoes/config-colecoes.component';
+import { CuponsComponent } from './pages/admin/cupons/cupons.component';
 export const routes: Routes = [
   {
     path: '',
@@ -97,6 +98,11 @@ export const routes: Routes = [
     {
       path: 'config-home',
       component: ConfigHomeComponent
+    },
+    {
+     path: 'cupons',
+     component: CuponsComponent,
+     title: 'Cupons | HC Store Admin'
     },
     {
       path: 'config-colecoes',

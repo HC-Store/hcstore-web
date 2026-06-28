@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { HeaderComponent } from '../../layout/header/header.component';
 import { FooterComponent } from '../../layout/footer/footer.component';
 import { ModalsComponent } from '../../components/modals/modals.component';
+import { ApiService } from '../../services/api.service';
 
 type ModalTipo = 'login' | 'register' | 'cart' | 'profileWelcome' | 'profileEdit' | null;
 
@@ -44,12 +45,36 @@ export class ColecoesComponent implements OnInit, OnDestroy {
 
   launchDate = new Date();
 
-  ngOnInit(): void {
-    const salvo = localStorage.getItem('configColecoes');
-    if (salvo) {
-      this.config = { ...this.config, ...JSON.parse(salvo) };
-    }
+  constructor(private api: ApiService) {}
 
+  ngOnInit(): void {
+    this.carregarConfigColecoes();
+  }
+
+  ngOnDestroy(): void {
+    if (this.intervalId) clearInterval(this.intervalId);
+  }
+
+  private carregarConfigColecoes(): void {
+    this.api.getSiteConfig().subscribe({
+      next: (res) => {
+        if (res?.colecoes) {
+          this.config = {
+            ...this.config,
+            ...res.colecoes
+          };
+        }
+
+        this.configurarCountdown();
+      },
+      error: (err) => {
+        console.error('Erro ao carregar configurações de Coleções:', err);
+        this.configurarCountdown();
+      }
+    });
+  }
+
+  private configurarCountdown(): void {
     if (this.config.dataLancamento) {
       this.launchDate = new Date(this.config.dataLancamento);
     } else {
@@ -59,16 +84,15 @@ export class ColecoesComponent implements OnInit, OnDestroy {
     }
 
     this.updateCountdown();
-    this.intervalId = setInterval(() => this.updateCountdown(), 1000);
-  }
 
-  ngOnDestroy(): void {
     if (this.intervalId) clearInterval(this.intervalId);
+    this.intervalId = setInterval(() => this.updateCountdown(), 1000);
   }
 
   abrirLogin(): void {
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
+
     if (token || user) {
       this.modalAberto = 'profileWelcome';
     } else {
@@ -76,9 +100,17 @@ export class ColecoesComponent implements OnInit, OnDestroy {
     }
   }
 
-  abrirRegister(): void { this.modalAberto = 'register'; }
-  abrirCart(): void { this.modalAberto = 'cart'; }
-  fecharModal(): void { this.modalAberto = null; }
+  abrirRegister(): void {
+    this.modalAberto = 'register';
+  }
+
+  abrirCart(): void {
+    this.modalAberto = 'cart';
+  }
+
+  fecharModal(): void {
+    this.modalAberto = null;
+  }
 
   private formatNumber(n: number): string {
     return String(n).padStart(2, '0');

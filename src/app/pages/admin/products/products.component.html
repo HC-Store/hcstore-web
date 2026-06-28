@@ -16,8 +16,15 @@
           [alt]="produto.nome"
           style="width:100%; height:100%; object-fit:cover;"
         />
-        <div class="product-actions">
+       <div class="product-actions">
           <button class="btn-edit-btn-sm" (click)="editarProduto(i)">✏️</button>
+          <button
+            class="btn-sale-btn-sm"
+            (click)="abrirVendaPresencial(i)"
+            title="Registrar venda presencial">
+            🏪
+          </button>
+
           <button class="btn-red-btn-sm" (click)="removerProduto(i)">🗑️</button>
         </div>
       </div>
@@ -76,6 +83,56 @@
         (ngModelChange)="atualizarEstoqueTotal()"
       />
     </div>
+  </div>
+</div>
+
+<div class="modal" *ngIf="showVendaModal">
+  <div class="modal-box">
+
+    <h3>Registrar Venda Presencial</h3>
+
+    <p>
+      <strong>{{ produtoVenda?.nome }}</strong>
+    </p>
+
+    <label>Tamanho</label>
+
+    <select [(ngModel)]="vendaForm.tamanho">
+      <option value="">Selecione...</option>
+
+      <option
+        *ngFor="let t of tamanhosDisponiveisVenda()"
+        [value]="t">
+
+        {{ t }}
+        ({{ estoqueTamanhoVenda(t) }} em estoque)
+
+      </option>
+    </select>
+
+    <label>Quantidade</label>
+
+    <input
+      type="number"
+      min="1"
+      [(ngModel)]="vendaForm.quantidade">
+
+    <div class="modal-actions">
+
+      <button (click)="registrarVendaPresencial()">
+        Registrar Venda
+      </button>
+
+      <button
+        style="background:#ccc;color:#000"
+        (click)="showVendaModal=false">
+
+        Cancelar
+
+      </button>
+
+    </div>
+
   </div>
 </div>
 
