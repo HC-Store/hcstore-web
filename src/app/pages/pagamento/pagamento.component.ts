@@ -25,6 +25,10 @@ export class PagamentoComponent implements OnInit {
   itensCarrinho: any[] = [];
   checkoutData: any = null;
 
+  resumoCheckout = {
+    desconto: 0
+  };
+
   constructor(private api: ApiService, private router: Router) {}
 
   ngOnInit(): void {
@@ -37,6 +41,10 @@ export class PagamentoComponent implements OnInit {
 
     this.checkoutData = JSON.parse(salvo);
     this.itensCarrinho = this.checkoutData?.itens || [];
+
+    this.resumoCheckout = {
+      desconto: this.desconto
+    };
   }
 
   get subtotal(): number {
@@ -89,7 +97,6 @@ export class PagamentoComponent implements OnInit {
       return;
     }
 
-    // Adiciona frete como item se houver cobrança
     if (this.frete > 0) {
       items.push({
         id: 0,
@@ -132,5 +139,6 @@ export class PagamentoComponent implements OnInit {
   }
 
   abrirCart(): void { this.modalAberto = 'cart'; }
+
   fecharModal(): void { this.modalAberto = null; }
 }

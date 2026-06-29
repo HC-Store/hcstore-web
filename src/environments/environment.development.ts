@@ -1,4 +1,4 @@
 export const environment = {
-  production: false,
+  production: true,
   apiUrl: 'https://hcstore-service-8os6.onrender.com/api'
 };
