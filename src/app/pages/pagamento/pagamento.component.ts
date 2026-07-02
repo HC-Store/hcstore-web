@@ -67,12 +67,6 @@ export class PagamentoComponent implements OnInit {
     return 'R$ ' + Number(value || 0).toFixed(2).replace('.', ',');
   }
 
-  private calcularSubtotalItens(itens: any[]): number {
-    return itens.reduce((total, item) => {
-      return total + Number(item.produto?.preco || 0) * Number(item.quantidade || 1);
-    }, 0);
-  }
-
   pagarComPagBank(): void {
     if (!this.checkoutData?.itens?.length) {
       this.erro = 'Nenhum item encontrado para pagamento.';
@@ -108,7 +102,8 @@ export class PagamentoComponent implements OnInit {
 
     const body = {
       pedidoId: this.checkoutData?.pedido?.id,
-      items
+      items,
+      desconto: this.desconto
     };
 
     this.api.criarCheckoutPagBank(body).subscribe({
