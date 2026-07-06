@@ -5,6 +5,7 @@
   </div>
 
   <p *ngIf="carregando" style="color:white; padding:20px;">Carregando...</p>
+  <p *ngIf="sucesso" style="color:#27ae60; padding:20px;">{{ sucesso }}</p>
   <p *ngIf="erro" style="color:#e74c3c; padding:20px;">{{ erro }}</p>
   <p *ngIf="!carregando && produtos.length === 0" style="color:#aaa; padding:20px;">Nenhum produto cadastrado.</p>
 
@@ -16,8 +17,10 @@
           [alt]="produto.nome"
           style="width:100%; height:100%; object-fit:cover;"
         />
-       <div class="product-actions">
+
+        <div class="product-actions">
           <button class="btn-edit-btn-sm" (click)="editarProduto(i)">✏️</button>
+
           <button
             class="btn-sale-btn-sm"
             (click)="abrirVendaPresencial(i)"
@@ -25,12 +28,25 @@
             🏪
           </button>
 
+          <button
+            class="btn-eye-btn-sm"
+            (click)="alterarStatusProduto(produto)"
+            [title]="produto.ativo ? 'Ocultar produto' : 'Mostrar produto'">
+            {{ produto.ativo ? '👁️' : '🙈' }}
+          </button>
+
           <button class="btn-red-btn-sm" (click)="removerProduto(i)">🗑️</button>
         </div>
       </div>
 
       <div class="product-body">
-        <div class="product-name">{{ produto.nome }}</div>
+        <div class="product-name">
+          {{ produto.nome }}
+          <span class="status-tag" [class.oculto]="!produto.ativo">
+            {{ produto.ativo ? 'Ativo' : 'Oculto' }}
+          </span>
+        </div>
+
         <div class="product-cat">{{ produto.categoria?.nome || '—' }}</div>
         <div class="product-price">R$ {{ produto.preco }}</div>
 
@@ -54,41 +70,58 @@
   </div>
 </div>
 
+<!-- MODAL EDITAR PRODUTO -->
 <div class="modal" *ngIf="showModal">
   <div class="modal-box">
     <h3>Editar Produto</h3>
 
     <input [(ngModel)]="form.nome" placeholder="Nome" />
     <input [(ngModel)]="form.preco" placeholder="Preço" type="number" />
+
     <label>Tamanhos e estoque por tamanho</label>
 
-<div class="sizes">
-  <span
-    *ngFor="let s of sizes"
-    (click)="toggleSize(s)"
-    [class.active]="sizeSelecionado(s)"
-  >
-    {{ s }}
-  </span>
-</div>
+    <div class="sizes">
+      <span
+        *ngFor="let s of sizes"
+        (click)="toggleSize(s)"
+        [class.active]="sizeSelecionado(s)"
+      >
+        {{ s }}
+      </span>
+    </div>
 
-<div class="size-quantity-grid">
-  <div class="size-quantity" *ngFor="let s of sizes">
-    <div *ngIf="sizeSelecionado(s)">
-      <label>Quantidade tamanho {{ s }}</label>
-      <input
-        type="number"
-        min="0"
-        [(ngModel)]="form.quantidadePorTamanho[s]"
-        (ngModelChange)="atualizarEstoqueTotal()"
-      />
+    <div class="size-quantity-grid">
+      <div class="size-quantity" *ngFor="let s of sizes">
+        <div *ngIf="sizeSelecionado(s)">
+          <label>Quantidade tamanho {{ s }}</label>
+          <input
+            type="number"
+            min="0"
+            [(ngModel)]="form.quantidadePorTamanho[s]"
+            (ngModelChange)="atualizarEstoqueTotal()"
+          />
+        </div>
+      </div>
+    </div>
+
+    <input [(ngModel)]="form.estoque" placeholder="Estoque total" type="number" readonly />
+    <input [(ngModel)]="form.marca" placeholder="Marca" />
+
+    <textarea [(ngModel)]="form.composicaoMaterial" placeholder="Composição do material"></textarea>
+    <textarea [(ngModel)]="form.instrucaoLavagem" placeholder="Instruções de lavagem"></textarea>
+    <textarea [(ngModel)]="form.enviosDevolucoes" placeholder="Envio e devoluções"></textarea>
+    <textarea [(ngModel)]="form.descricao" placeholder="Descrição"></textarea>
+
+    <div class="modal-actions">
+      <button (click)="salvarProduto()">Salvar</button>
+      <button (click)="showModal=false" style="background-color:#ccc;">Cancelar</button>
     </div>
   </div>
 </div>
 
+<!-- MODAL VENDA PRESENCIAL -->
 <div class="modal" *ngIf="showVendaModal">
   <div class="modal-box">
-
     <h3>Registrar Venda Presencial</h3>
 
     <p>
@@ -99,14 +132,10 @@
 
     <select [(ngModel)]="vendaForm.tamanho">
       <option value="">Selecione...</option>
-
       <option
         *ngFor="let t of tamanhosDisponiveisVenda()"
         [value]="t">
-
-        {{ t }}
-        ({{ estoqueTamanhoVenda(t) }} em estoque)
-
+        {{ t }} ({{ estoqueTamanhoVenda(t) }} em estoque)
       </option>
     </select>
 
@@ -118,34 +147,10 @@
       [(ngModel)]="vendaForm.quantidade">
 
     <div class="modal-actions">
-
-      <button (click)="registrarVendaPresencial()">
-        Registrar Venda
-      </button>
-
-      <button
-        style="background:#ccc;color:#000"
-        (click)="showVendaModal=false">
-
+      <button (click)="registrarVendaPresencial()">Registrar Venda</button>
+      <button style="background:#ccc;color:#000" (click)="showVendaModal=false">
         Cancelar
-
       </button>
-
-    </div>
-
-  </div>
-</div>
-
-<input [(ngModel)]="form.estoque" placeholder="Estoque total" type="number" readonly />
-    <input [(ngModel)]="form.marca" placeholder="Marca" />
-    <textarea [(ngModel)]="form.composicaoMaterial" placeholder="Composicao do material"></textarea>
-    <textarea [(ngModel)]="form.instrucaoLavagem" placeholder="Instrucoes de lavagem"></textarea>
-    <textarea [(ngModel)]="form.enviosDevolucoes" placeholder="Envio e devolucoes"></textarea>
-    <textarea [(ngModel)]="form.descricao" placeholder="Descrição"></textarea>
-
-    <div class="modal-actions">
-      <button (click)="salvarProduto()">Salvar</button>
-      <button (click)="showModal=false" style="background-color:#ccc;">Cancelar</button>
     </div>
   </div>
 </div>

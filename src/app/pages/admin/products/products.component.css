@@ -228,3 +228,32 @@
 .btn-sale-btn-sm:hover{
     background:#1d4ed8;
 }
+
+.btn-eye-btn-sm {
+  background: #6b7280;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 8px;
+  cursor: pointer;
+}
+
+.btn-eye-btn-sm:hover {
+  background: #4b5563;
+}
+
+.status-tag {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 3px 7px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+  background: #22c55e;
+  color: #000;
+}
+
+.status-tag.oculto {
+  background: #ef4444;
+  color: #fff;
+}

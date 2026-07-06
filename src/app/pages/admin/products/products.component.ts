@@ -33,12 +33,12 @@ export class ProductsComponent implements OnInit {
   };
 
   sizes = [
-  'Único',
-  'PP', 'P', 'M', 'G', 'GG',
-  '36', '38', '40', '42', '44',
-  'Pulseira P', 'Pulseira M', 'Pulseira G',
-  'Corrente 45cm', 'Corrente 50cm', 'Corrente 60cm'
-];
+    'Único',
+    'PP', 'P', 'M', 'G', 'GG',
+    '36', '38', '40', '42', '44',
+    'Pulseira P', 'Pulseira M', 'Pulseira G',
+    'Corrente 45cm', 'Corrente 50cm', 'Corrente 60cm'
+  ];
 
   form: any = {
     nome: '',
@@ -63,7 +63,7 @@ export class ProductsComponent implements OnInit {
   carregarProdutos(): void {
     this.carregando = true;
 
-    this.api.getProdutos().subscribe({
+    this.api.getProdutosAdmin().subscribe({
       next: (res) => {
         this.produtos = Array.isArray(res) ? res : [];
         this.carregando = false;
@@ -167,6 +167,27 @@ export class ProductsComponent implements OnInit {
     });
   }
 
+  alterarStatusProduto(produto: any): void {
+    const novoStatus = !produto.ativo;
+    const acao = novoStatus ? 'mostrar' : 'ocultar';
+
+    if (!confirm(`Deseja ${acao} "${produto.nome}" na loja?`)) return;
+
+    this.api.alterarStatusProduto(produto.id, novoStatus).subscribe({
+      next: () => {
+        this.sucesso = novoStatus
+          ? 'Produto exibido na loja com sucesso.'
+          : 'Produto ocultado da loja com sucesso.';
+
+        this.carregarProdutos();
+        setTimeout(() => this.sucesso = '', 3000);
+      },
+      error: (err) => {
+        this.erro = err.error?.error || 'Erro ao alterar status do produto.';
+      }
+    });
+  }
+
   abrirVendaPresencial(index: number): void {
     const produto = this.produtos[index];
 
@@ -185,7 +206,6 @@ export class ProductsComponent implements OnInit {
 
     try {
       const estoque = JSON.parse(this.produtoVenda.quantidadePorTamanho);
-
       return Object.keys(estoque).filter((tamanho) => Number(estoque[tamanho]) > 0);
     } catch {
       return [];
@@ -248,7 +268,11 @@ export class ProductsComponent implements OnInit {
 
     this.api.deleteProduto(produto.id).subscribe({
       next: () => this.carregarProdutos(),
-      error: () => this.erro = 'Erro ao excluir produto.'
+      error: (err) => {
+        this.erro =
+          err.error?.error ||
+          'Erro ao excluir produto. Se ele já foi usado, use Ocultar.';
+      }
     });
   }
 }

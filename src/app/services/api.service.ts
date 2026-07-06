@@ -187,6 +187,18 @@ deleteCupom(id: number): Observable<any> {
   });
 }
 
+alterarStatusProduto(id: number, ativo: boolean): Observable<any> {
+  return this.http.patch(`${this.base}/produtos/${id}/status`, { ativo }, {
+    headers: this.headers()
+  });
+}
+
+getProdutosAdmin(): Observable<any> {
+  return this.http.get(`${this.base}/produtos?admin=true`, {
+    headers: this.headers()
+  });
+}
+
   criarCheckoutPagBank(body: any): Observable<any> {
     console.log('URL PAGBANK:', `${this.base}/pagamentos/checkout`);
     console.log('BODY PAGBANK:', body);
