@@ -40,7 +40,7 @@
       <br />
 
       <div class="shipping-address">
-        <h1>Endereço de envio</h1>
+       <h1>{{ tipoEntrega === 'RETIRADA' ? 'Dados para retirada' : 'Endereço de envio' }}</h1>
 
         <div class="name-conteiner">
           <label for="nome"></label>
@@ -139,34 +139,47 @@
             />
           </div>
 
-          <div class="field full">
-            <span class="field-label">Casa ou apartamento</span>
+          <div class="field full" *ngIf="tipoEntrega !== 'RETIRADA'">
+             <span class="field-label">Tipo de endereço</span>
+
             <div class="tipo-moradia">
-              <label>
-                <input
-                  id="casa"
-                  type="radio"
-                  name="casaApartamento"
-                  value="Casa"
-                  [(ngModel)]="formData.casaApartamento"
-                  required
-                />
-                Casa
+             <label>
+               <input
+                id="casa"
+                type="radio"
+                name="casaApartamento"
+                value="Casa"
+                [(ngModel)]="formData.casaApartamento"
+                required
+               />
+               Casa
               </label>
 
-              <label>
+             <label>
                 <input
-                  id="apartamento"
-                  type="radio"
-                  name="casaApartamento"
-                  value="Apartamento"
-                  [(ngModel)]="formData.casaApartamento"
-                  required
-                />
+                id="apartamento"
+                type="radio"
+                name="casaApartamento"
+                value="Apartamento"
+                [(ngModel)]="formData.casaApartamento"
+                required
+               />
                 Apartamento
               </label>
-            </div>
-          </div>
+
+               <label>
+                  <input
+                  id="trabalho"
+                  type="radio"
+                  name="casaApartamento"
+                  value="Trabalho"
+                  [(ngModel)]="formData.casaApartamento"
+                  required
+                  />
+                  Trabalho
+                </label>
+             </div>
+           </div>
         </div>
 
         <br />
@@ -197,12 +210,17 @@
 
   <label>
     <input type="radio" name="entrega" value="SEDEX" [(ngModel)]="tipoEntrega" />
-    Sedex - {{ subtotal >= 200 ? 'Grátis' : formatPrice(25) }}
+    Sedex - {{ subtotal >= 300 ? 'Grátis' : formatPrice(25) }}
   </label>
 
   <label>
     <input type="radio" name="entrega" value="MOTOBOY" [(ngModel)]="tipoEntrega" />
-    Motoboy - {{ subtotal >= 200 ? 'Grátis' : formatPrice(15) }}
+    Motoboy - {{ subtotal >= 300 ? 'Grátis' : formatPrice(15) }}
+  </label>
+
+  <label>
+    <input type="radio" name="entrega" value="RETIRADA" [(ngModel)]="tipoEntrega" />
+    Retirada na loja - R$ 0,00
   </label>
 
   <small *ngIf="tipoEntrega === 'MOTOBOY'">
@@ -221,7 +239,7 @@
 <div class="frete">
   <span>Frete</span>
   <span [class.gratis]="frete === 0">
-    {{ frete === 0 ? 'GRÁTIS' : formatPrice(frete) }}
+    {{ formatPrice(frete) }}
   </span>
 </div>
 

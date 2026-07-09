@@ -51,7 +51,7 @@ export class CheckoutComponent implements OnInit {
   erro = '';
   sucesso = '';
 
-  tipoEntrega: 'SEDEX' | 'MOTOBOY' = 'SEDEX';
+  tipoEntrega: 'SEDEX' | 'MOTOBOY' | 'RETIRADA' = 'SEDEX';
   cupom = '';
   desconto = 0;
 
@@ -157,40 +157,50 @@ export class CheckoutComponent implements OnInit {
     }, 0);
   }
 
-  get frete(): number {
-    if (this.subtotal >= 200) return 0;
-    return this.tipoEntrega === 'MOTOBOY' ? 15 : 25;
-  }
+ get frete(): number {
+  if (this.tipoEntrega === 'RETIRADA') return 0;
+  if (this.subtotal >= 300) return 0;
+  return this.tipoEntrega === 'MOTOBOY' ? 20 : 35;
+}
 
   get total(): number {
     return this.subtotal + this.frete - this.desconto;
   }
 
   aplicarCupom(): void {
-    const codigo = this.cupom.trim().toUpperCase();
+  const codigo = this.cupom.trim().toUpperCase();
 
-    if (!codigo) {
-      this.erro = 'Digite um cupom.';
-      return;
-    }
-
-    this.api.validarCupom({
-      codigo,
-      subtotal: this.subtotal
-    }).subscribe({
-      next: (res: any) => {
-        this.desconto = Number(res.desconto || 0);
-        this.cupom = res.codigo || codigo;
-        this.sucesso = 'Cupom aplicado com sucesso!';
-        this.erro = '';
-      },
-      error: (err) => {
-        this.desconto = 0;
-        this.sucesso = '';
-        this.erro = err.error?.error || 'Cupom inválido.';
-      }
-    });
+  if (!codigo) {
+    this.erro = 'Digite um cupom.';
+    return;
   }
+
+  const user = this.obterUsuarioLocal();
+
+  if (!user?.id || !localStorage.getItem('token')) {
+    this.erro = 'Entre na sua conta para aplicar o cupom.';
+    this.modalAberto = 'login';
+    return;
+  }
+
+  this.api.validarCupom({
+    codigo,
+    subtotal: this.subtotal,
+    usuarioId: user.id
+  }).subscribe({
+    next: (res: any) => {
+      this.desconto = Number(res.desconto || 0);
+      this.cupom = res.codigo || codigo;
+      this.sucesso = 'Cupom aplicado com sucesso!';
+      this.erro = '';
+    },
+    error: (err) => {
+      this.desconto = 0;
+      this.sucesso = '';
+      this.erro = err.error?.error || 'Cupom inválido.';
+    }
+  });
+}
 
   formatPrice(value: number): string {
     return 'R$' + Number(value || 0).toFixed(2).replace('.', ',');
@@ -341,7 +351,18 @@ export class CheckoutComponent implements OnInit {
     });
   }
 
-  private obterCampoObrigatorioFaltando(): { campo: CampoCheckout; label: string; id: string } | null {
+  private obterCampoObrigatorioFaltando(): 
+  { campo: CampoCheckout; label: string; id: string } | null {
+    if (this.tipoEntrega === 'RETIRADA') {
+  const camposRetirada = [
+    { campo: 'email' as CampoCheckout, label: 'E-mail', id: 'email' },
+    { campo: 'telefone' as CampoCheckout, label: 'Telefone', id: 'telefone' },
+    { campo: 'nome' as CampoCheckout, label: 'Nome', id: 'nome' },
+    { campo: 'sobrenome' as CampoCheckout, label: 'Sobrenome', id: 'sobrenome' }
+  ];
+
+  return camposRetirada.find(item => !String(this.formData[item.campo] || '').trim()) || null;
+}
     const campos: { campo: CampoCheckout; label: string; id: string }[] = [
       { campo: 'email', label: 'E-mail', id: 'email' },
       { campo: 'telefone', label: 'Telefone', id: 'telefone' },
