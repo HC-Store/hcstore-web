@@ -35,7 +35,7 @@ export class ProductsComponent implements OnInit {
   sizes = [
     'Único',
     'PP', 'P', 'M', 'G', 'GG',
-    '36', '38', '40', '42', '44',
+    '36', '38', '40', '42', '44','46',
     'Pulseira P', 'Pulseira M', 'Pulseira G',
     'Corrente 45cm', 'Corrente 50cm', 'Corrente 60cm'
   ];
