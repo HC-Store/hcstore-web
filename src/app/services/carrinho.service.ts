@@ -41,6 +41,18 @@ export class CarrinhoService {
     return !!this.auth.getToken();
   }
 
+  private sessaoExpirada(err: any): boolean {
+    return err?.status === 401;
+  }
+
+  private limparSessaoExpirada(): void {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.removeItem('role');
+    localStorage.removeItem('usuarioLogado');
+    this.carrinhoId = null;
+  }
+
   private carregarCarrinhoLocal(): any[] {
     const itens = this.obterCarrinhoLocalSalvo();
 
@@ -62,6 +74,33 @@ export class CarrinhoService {
     this.itens$.next([...itens]);
 
     return itens;
+  }
+
+  private adicionarItemLocal(
+    produtoId: number,
+    quantidade: number,
+    tamanho?: string,
+    produto?: any
+  ): any[] {
+    const itens = this.carregarCarrinhoLocal();
+    const itemExistente = itens.find(
+      (item: any) =>
+        item.produto?.id === produtoId &&
+        item.tamanho === tamanho
+    );
+
+    if (itemExistente) {
+      itemExistente.quantidade += quantidade;
+    } else {
+      itens.push({
+        id: Date.now(),
+        produto: produto || { id: produtoId },
+        quantidade,
+        tamanho
+      });
+    }
+
+    return this.salvarCarrinhoLocal(itens);
   }
 
   private atualizarCarrinho(carrinho: any): any {
@@ -159,12 +198,18 @@ export class CarrinhoService {
 
     this.carregarCarrinho$().subscribe({
 
-      error: (err) =>
+      error: (err) => {
+        if (this.sessaoExpirada(err)) {
+          this.limparSessaoExpirada();
+          this.carregarCarrinhoLocal();
+          return;
+        }
 
         console.error(
           'Erro ao carregar carrinho:',
           err
-        )
+        );
+      }
     });
   }
 
@@ -203,25 +248,7 @@ export class CarrinhoService {
   ): Observable<any> {
 
     if (!this.temTokenApi()) {
-      const itens = this.carregarCarrinhoLocal();
-      const itemExistente = itens.find(
-        (item: any) =>
-          item.produto?.id === produtoId &&
-          item.tamanho === tamanho
-      );
-
-      if (itemExistente) {
-        itemExistente.quantidade += quantidade;
-      } else {
-        itens.push({
-          id: Date.now(),
-          produto: produto || { id: produtoId },
-          quantidade,
-          tamanho
-        });
-      }
-
-      return of(this.salvarCarrinhoLocal(itens));
+      return of(this.adicionarItemLocal(produtoId, quantidade, tamanho, produto));
     }
 
     const adicionar = () => {
@@ -239,7 +266,15 @@ export class CarrinhoService {
         tamanho
 
       }).pipe(
-        switchMap(() => this.carregarCarrinho$())
+        switchMap(() => this.carregarCarrinho$()),
+        catchError((err) => {
+          if (this.sessaoExpirada(err)) {
+            this.limparSessaoExpirada();
+            return of(this.adicionarItemLocal(produtoId, quantidade, tamanho, produto));
+          }
+
+          return throwError(() => err);
+        })
       );
     };
 
@@ -248,8 +283,19 @@ export class CarrinhoService {
     }
 
     return this.carregarCarrinho$().pipe(
-      catchError(() => of(null)),
+      catchError((err) => {
+        if (this.sessaoExpirada(err)) {
+          this.limparSessaoExpirada();
+          return of(this.adicionarItemLocal(produtoId, quantidade, tamanho, produto));
+        }
+
+        return of(null);
+      }),
       switchMap((carrinho: any) => {
+        if (Array.isArray(carrinho)) {
+          return of(carrinho);
+        }
+
         if (carrinho?.id) {
           return adicionar();
         }
