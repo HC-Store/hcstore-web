@@ -1,11 +1,16 @@
-<div class="page">
-  <h2>Cupons</h2>
+<div class="page narrow">
+  <div class="page-head">
+    <div>
+      <h1>Cupons</h1>
+      <p>Crie e gerencie os descontos da loja</p>
+    </div>
+  </div>
 
-  <p class="sucesso-msg" *ngIf="sucesso">✓ {{ sucesso }}</p>
-  <p class="erro-msg" *ngIf="erro">{{ erro }}</p>
+  <p class="alert success" *ngIf="sucesso">✓ {{ sucesso }}</p>
+  <p class="alert error" *ngIf="erro">{{ erro }}</p>
 
-  <div class="section-card">
-    <h3>Novo Cupom</h3>
+  <div class="card stack">
+    <h3 class="card-title">Novo cupom</h3>
 
     <div class="form-grid">
       <div class="field">
@@ -31,33 +36,38 @@
         <input type="number" [(ngModel)]="form.usoMaximo" placeholder="Opcional" />
       </div>
 
-      <label class="checkbox">
+      <label class="checkbox full">
         <input type="checkbox" [(ngModel)]="form.ativo" />
         Cupom ativo
       </label>
     </div>
 
-    <button class="btn-salvar" (click)="criarCupom()">CRIAR CUPOM</button>
+    <button class="btn btn-primary btn-block" (click)="criarCupom()">Criar cupom</button>
   </div>
 
-  <div class="section-card">
-    <h3>Cupons cadastrados</h3>
+  <div class="card">
+    <h3 class="card-title">Cupons cadastrados</h3>
 
-    <p *ngIf="carregando">Carregando...</p>
-    <p *ngIf="!carregando && cupons.length === 0">Nenhum cupom cadastrado.</p>
+    <p class="empty" *ngIf="carregando">Carregando...</p>
+    <p class="empty" *ngIf="!carregando && cupons.length === 0">Nenhum cupom cadastrado.</p>
 
-    <div class="cupom-card" *ngFor="let cupom of cupons">
-      <div>
-        <strong>{{ cupom.codigo }}</strong>
-        <span>{{ cupom.tipo }} — {{ cupom.valor }}</span>
-        <small>
-          Status: {{ cupom.ativo ? 'Ativo' : 'Inativo' }} |
-          Usado: {{ cupom.usado || 0 }} |
-          Limite: {{ cupom.usoMaximo || 'Ilimitado' }}
-        </small>
+    <div class="cupom-list">
+      <div class="cupom" *ngFor="let cupom of cupons">
+        <div class="cupom-info">
+          <div class="cupom-head">
+            <strong>{{ cupom.codigo }}</strong>
+            <span class="status" [attr.data-status]="cupom.ativo ? 'ATIVO' : 'INATIVO'">
+              {{ cupom.ativo ? 'Ativo' : 'Inativo' }}
+            </span>
+          </div>
+          <span>{{ cupom.tipo }} — {{ cupom.valor }}</span>
+          <small>
+            Usado: {{ cupom.usado || 0 }} · Limite: {{ cupom.usoMaximo || 'Ilimitado' }}
+          </small>
+        </div>
+
+        <button class="btn btn-danger btn-sm" (click)="excluirCupom(cupom.id)">Excluir</button>
       </div>
-
-      <button class="btn-remove" (click)="excluirCupom(cupom.id)">Excluir</button>
     </div>
   </div>
 </div>

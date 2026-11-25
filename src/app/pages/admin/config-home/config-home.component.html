@@ -1,38 +1,43 @@
-<div class="page">
-  <h2>Configurar Home</h2>
+<div class="page narrow">
+  <div class="page-head">
+    <div>
+      <h1>Configurar Home</h1>
+      <p>Banners, vídeo e produtos exibidos na página inicial</p>
+    </div>
+  </div>
 
-  <p class="sucesso-msg" *ngIf="sucesso">✓ {{ sucesso }}</p>
-  <p class="erro-msg" *ngIf="erro">{{ erro }}</p>
+  <p class="alert success" *ngIf="sucesso">✓ {{ sucesso }}</p>
+  <p class="alert error" *ngIf="erro">{{ erro }}</p>
 
-  <div class="section-card">
-    <h3>Vídeo do Banner Principal</h3>
-    <label>URL do vídeo</label>
+  <div class="card stack">
+    <h3 class="card-title">Vídeo do Banner Principal</h3>
+    <label class="label">URL do vídeo</label>
     <input [(ngModel)]="config.videoUrl" placeholder="assets/video/banner-home.mp4" />
-    <video *ngIf="config.videoUrl" [src]="config.videoUrl" muted autoplay loop class="preview-video"></video>
+    <video *ngIf="config.videoUrl" [src]="config.videoUrl" muted autoplay loop class="preview-media"></video>
   </div>
 
-  <div class="section-card">
-    <h3>Banners das Categorias</h3>
+  <div class="card stack">
+    <h3 class="card-title">Banners das Categorias</h3>
 
-    <label>Banner 1 — URL da imagem</label>
+    <label class="label">Banner 1 — URL da imagem</label>
     <input [(ngModel)]="config.banner1" placeholder="URL da imagem" />
-    <img *ngIf="config.banner1" [src]="config.banner1" class="preview-banner" />
+    <img *ngIf="config.banner1" [src]="config.banner1" class="preview-media" />
 
-    <label>Banner 2 — URL da imagem</label>
+    <label class="label">Banner 2 — URL da imagem</label>
     <input [(ngModel)]="config.banner2" placeholder="URL da imagem" />
-    <img *ngIf="config.banner2" [src]="config.banner2" class="preview-banner" />
+    <img *ngIf="config.banner2" [src]="config.banner2" class="preview-media" />
 
-    <label>Banner 3 — URL da imagem</label>
+    <label class="label">Banner 3 — URL da imagem</label>
     <input [(ngModel)]="config.banner3" placeholder="URL da imagem" />
-    <img *ngIf="config.banner3" [src]="config.banner3" class="preview-banner" />
+    <img *ngIf="config.banner3" [src]="config.banner3" class="preview-media" />
   </div>
 
-  <div class="section-card">
-    <h3>Produtos em Destaque</h3>
+  <div class="card stack">
+    <h3 class="card-title">Produtos em Destaque</h3>
 
     <div class="item-row" *ngFor="let d of config.destaques; let i = index">
       <div class="item-fields">
-        <label>Selecionar produto</label>
+        <label class="label">Selecionar produto</label>
 
         <select [ngModel]="d.id" (ngModelChange)="selecionarProdutoDestaque(i, $event)">
           <option [ngValue]="0">Selecione um produto</option>
@@ -50,18 +55,18 @@
         </div>
       </div>
 
-      <button class="btn-remove" (click)="removerDestaque(i)">✕</button>
+      <button class="icon-btn danger" (click)="removerDestaque(i)" aria-label="Remover">✕</button>
     </div>
 
-    <button class="btn-add" (click)="adicionarDestaque()">+ Adicionar Destaque</button>
+    <button class="btn btn-add" (click)="adicionarDestaque()">+ Adicionar Destaque</button>
   </div>
 
-  <div class="section-card">
-    <h3>Últimos Lançamentos</h3>
+  <div class="card stack">
+    <h3 class="card-title">Últimos Lançamentos</h3>
 
     <div class="item-row" *ngFor="let l of config.lancamentos; let i = index">
       <div class="item-fields">
-        <label>Selecionar produto</label>
+        <label class="label">Selecionar produto</label>
 
         <select [ngModel]="l.id" (ngModelChange)="selecionarProdutoLancamento(i, $event)">
           <option [ngValue]="0">Selecione um produto</option>
@@ -79,11 +84,11 @@
         </div>
       </div>
 
-      <button class="btn-remove" (click)="removerLancamento(i)">✕</button>
+      <button class="icon-btn danger" (click)="removerLancamento(i)" aria-label="Remover">✕</button>
     </div>
 
-    <button class="btn-add" (click)="adicionarLancamento()">+ Adicionar Lançamento</button>
+    <button class="btn btn-add" (click)="adicionarLancamento()">+ Adicionar Lançamento</button>
   </div>
 
-  <button class="btn-salvar" (click)="salvar()">SALVAR CONFIGURAÇÕES</button>
+  <button class="btn btn-primary btn-block" (click)="salvar()">Salvar configurações</button>
 </div>

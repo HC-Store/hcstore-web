@@ -1,89 +1,95 @@
 <div class="page">
 
-  <div class="header">
-    <h2>Usuários</h2>
+  <div class="page-head">
+    <div>
+      <h1>Usuários</h1>
+      <p>Clientes cadastrados na loja</p>
+    </div>
   </div>
 
-  <p *ngIf="carregando" style="color:white; padding:20px;">Carregando...</p>
-  <p *ngIf="erro" style="color:#e74c3c; padding:20px;">{{ erro }}</p>
+  <p class="alert info" *ngIf="carregando">Carregando...</p>
+  <p class="alert error" *ngIf="erro">{{ erro }}</p>
 
-  <div class="table-card">
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Nome</th>
-          <th>E-mail</th>
-          <th>Telefone</th>
-          <th>CPF</th>
-          <th>Cadastro</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
+  <div class="card flush">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>E-mail</th>
+            <th>Telefone</th>
+            <th>CPF</th>
+            <th>Cadastro</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
 
-      <tbody>
-        <tr *ngFor="let usuario of usuarios">
-          <td>#{{ usuario.id }}</td>
+        <tbody>
+          <tr *ngFor="let usuario of usuarios">
+            <td class="id">#{{ usuario.id }}</td>
+            <td>
+              <div class="person">
+                <div class="avatar">{{ usuario.nome.charAt(0) }}</div>
+                <span [title]="usuario.nome + ' ' + usuario.sobrenome">
+                  {{ usuario.nome }} {{ usuario.sobrenome }}
+                </span>
+              </div>
+            </td>
+            <td><div class="email" [title]="usuario.email">{{ usuario.email }}</div></td>
+            <td class="nowrap">{{ usuario.telefone }}</td>
+            <td class="nowrap">{{ usuario.cpf }}</td>
+            <td class="nowrap">{{ usuario.createdAt | date:'dd/MM/yyyy' }}</td>
+            <td>
+              <div class="actions">
+                <button class="icon-btn" (click)="editUser(usuario)" title="Editar" aria-label="Editar">
+                  <svg class="icn" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4ZM13.5 6.5l4 4"/></svg>
+                </button>
+                <button class="icon-btn danger" (click)="deleteUser(usuario.id)" title="Excluir" aria-label="Excluir">
+                  <svg class="icn" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v5M14 11v5"/></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-          <td>
-            <div class="user">
-              <div class="avatar">{{ usuario.nome.charAt(0) }}</div>
-              <span [title]="usuario.nome + ' ' + usuario.sobrenome">
-                {{ usuario.nome }} {{ usuario.sobrenome }}
-              </span>
-            </div>
-          </td>
-
-          <td>
-            <span class="text-cell" [title]="usuario.email">{{ usuario.email }}</span>
-          </td>
-          <td>
-            <span class="text-cell">{{ usuario.telefone }}</span>
-          </td>
-          <td>
-            <span class="text-cell">{{ usuario.cpf }}</span>
-          </td>
-          <td>{{ usuario.createdAt | date:'dd/MM/yyyy' }}</td>
-
-          <td>
-            <div class="actions">
-              <button class="edit" (click)="editUser(usuario)">Editar</button>
-              <button class="delete" (click)="deleteUser(usuario.id)">Excluir</button>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <p class="empty" *ngIf="!carregando && usuarios.length === 0">Nenhum usuário encontrado.</p>
   </div>
 
   <!-- MODAL -->
   <div class="modal" *ngIf="showForm">
-    <div class="modal-content">
-      <h3 class="title">Editar Usuário</h3>
-
-      <div class="form-group">
-        <label>Nome</label>
-        <input [(ngModel)]="form.nome" placeholder="Nome" />
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3>Editar Usuário</h3>
       </div>
 
-      <div class="form-group">
-        <label>Sobrenome</label>
-        <input [(ngModel)]="form.sobrenome" placeholder="Sobrenome" />
+      <div class="modal-body">
+        <div class="field">
+          <label>Nome</label>
+          <input [(ngModel)]="form.nome" placeholder="Nome" />
+        </div>
+
+        <div class="field">
+          <label>Sobrenome</label>
+          <input [(ngModel)]="form.sobrenome" placeholder="Sobrenome" />
+        </div>
+
+        <div class="field">
+          <label>E-mail</label>
+          <input [(ngModel)]="form.email" placeholder="E-mail" />
+        </div>
+
+        <div class="field">
+          <label>Telefone</label>
+          <input [(ngModel)]="form.telefone" placeholder="Telefone" />
+        </div>
       </div>
 
-      <div class="form-group">
-        <label>E-mail</label>
-        <input [(ngModel)]="form.email" placeholder="E-mail" />
-      </div>
-
-      <div class="form-group">
-        <label>Telefone</label>
-        <input [(ngModel)]="form.telefone" placeholder="Telefone" />
-      </div>
-
-      <div class="modal-actions">
-        <button class="save" (click)="saveUser()">Salvar</button>
-        <button class="cancel" (click)="closeForm()">Cancelar</button>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" (click)="closeForm()">Cancelar</button>
+        <button class="btn btn-primary" (click)="saveUser()">Salvar</button>
       </div>
     </div>
   </div>

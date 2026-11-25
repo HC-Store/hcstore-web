@@ -1,38 +1,43 @@
-<div class="page">
-  <h2>Configurar Coleções</h2>
+<div class="page narrow">
+  <div class="page-head">
+    <div>
+      <h1>Configurar Coleções</h1>
+      <p>Banner, contagem regressiva e textos do drop</p>
+    </div>
+  </div>
 
-  <p class="sucesso-msg" *ngIf="sucesso">✓ {{ sucesso }}</p>
-  <p class="erro-msg" *ngIf="erro">{{ erro }}</p>
+  <p class="alert success" *ngIf="sucesso">✓ {{ sucesso }}</p>
+  <p class="alert error" *ngIf="erro">{{ erro }}</p>
 
   <!-- BANNER -->
-  <div class="section-card">
-    <h3> Banner da Página</h3>
-    <label>URL da imagem</label>
+  <div class="card stack">
+    <h3 class="card-title">Banner da Página</h3>
+    <label class="label">URL da imagem</label>
     <input [(ngModel)]="config.bannerImagem" placeholder="assets/img/banner-colecoes.png" />
-    <img *ngIf="config.bannerImagem" [src]="config.bannerImagem" class="preview-banner" />
+    <img *ngIf="config.bannerImagem" [src]="config.bannerImagem" class="preview-media" />
   </div>
 
   <!-- TIMER -->
-  <div class="section-card">
-    <h3> Countdown — Data de Lançamento</h3>
-    <label>Data e hora do lançamento</label>
+  <div class="card stack">
+    <h3 class="card-title">Countdown — Data de Lançamento</h3>
+    <label class="label">Data e hora do lançamento</label>
     <input type="datetime-local" [(ngModel)]="config.dataLancamento" />
   </div>
 
   <!-- TEXTOS -->
-  <div class="section-card">
-    <h3>Textos do Drop</h3>
+  <div class="card stack">
+    <h3 class="card-title">Textos do Drop</h3>
 
-    <label>Título (ex: DROP 01:)</label>
+    <label class="label">Título (ex: DROP 01:)</label>
     <input [(ngModel)]="config.dropTitulo" placeholder="DROP 01:" />
 
-    <label>Subtítulo (ex: OFF-GRID)</label>
+    <label class="label">Subtítulo (ex: OFF-GRID)</label>
     <input [(ngModel)]="config.dropSubtitulo" placeholder="OFF-GRID" />
 
-    <label>Descrição</label>
+    <label class="label">Descrição</label>
     <textarea [(ngModel)]="config.dropDescricao" rows="4"
       placeholder="Descrição do drop..."></textarea>
   </div>
 
-  <button class="btn-salvar" (click)="salvar()">SALVAR CONFIGURAÇÕES</button>
+  <button class="btn btn-primary btn-block" (click)="salvar()">Salvar configurações</button>
 </div>

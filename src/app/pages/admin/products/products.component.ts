@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../../services/api.service';
 
 @Component({
@@ -14,6 +14,7 @@ import { ApiService } from '../../../services/api.service';
 export class ProductsComponent implements OnInit {
 
   produtos: any[] = [];
+  termoBusca = '';
   carregando = false;
   erro = '';
   sucesso = '';
@@ -21,7 +22,6 @@ export class ProductsComponent implements OnInit {
   showModal = false;
   showVendaModal = false;
 
-  editIndex: number | null = null;
   editId: number | null = null;
 
   produtoVenda: any = null;
@@ -54,9 +54,39 @@ export class ProductsComponent implements OnInit {
     quantidadePorTamanho: {}
   };
 
-  constructor(private router: Router, private api: ApiService) {}
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private api: ApiService
+  ) {}
+
+  get produtosFiltrados(): any[] {
+    const termo = this.normalizarTexto(this.termoBusca);
+    if (!termo) return this.produtos;
+
+    return this.produtos.filter((p) =>
+      [p.nome, p.categoria?.nome, p.marca]
+        .some((campo) => this.normalizarTexto(campo).includes(termo))
+    );
+  }
+
+  limparBusca(): void {
+    this.router.navigate([], { relativeTo: this.route, queryParams: {} });
+  }
+
+  private normalizarTexto(valor: unknown): string {
+    return String(valor ?? '')
+      .normalize('NFD')
+      .replace(/\p{Diacritic}/gu, '')
+      .toLowerCase()
+      .trim();
+  }
 
   ngOnInit(): void {
+    this.route.queryParamMap.subscribe((params) => {
+      this.termoBusca = params.get('q') || '';
+    });
+
     this.carregarProdutos();
   }
 
@@ -79,9 +109,7 @@ export class ProductsComponent implements OnInit {
     this.router.navigate(['/admin/adicionar-produto']);
   }
 
-  editarProduto(index: number): void {
-    this.editIndex = index;
-    const p = this.produtos[index];
+  editarProduto(p: any): void {
     this.editId = p.id;
 
     let quantidadePorTamanho = {};
@@ -188,9 +216,7 @@ export class ProductsComponent implements OnInit {
     });
   }
 
-  abrirVendaPresencial(index: number): void {
-    const produto = this.produtos[index];
-
+  abrirVendaPresencial(produto: any): void {
     this.produtoVenda = produto;
     this.vendaForm = {
       produtoId: produto.id,
@@ -262,8 +288,7 @@ export class ProductsComponent implements OnInit {
     });
   }
 
-  removerProduto(index: number): void {
-    const produto = this.produtos[index];
+  removerProduto(produto: any): void {
     if (!confirm(`Deseja excluir "${produto.nome}"?`)) return;
 
     this.api.deleteProduto(produto.id).subscribe({

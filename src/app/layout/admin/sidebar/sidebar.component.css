@@ -1,72 +1,100 @@
 .sidebar {
-  width: 260px;
-  min-width: 260px;
-  height: 100vh;
-  background: #000;
-  color: #fff;
-
   display: flex;
   flex-direction: column;
-  padding: 40px 25px;
+  width: 100%;
+  height: 100%;
+  padding: 28px 16px;
   box-sizing: border-box;
+  overflow-y: auto;
+  color: #fff;
+  background:
+    radial-gradient(420px 220px at 0% 0%, rgba(37, 223, 20, .13), transparent 70%),
+    #070908;
 }
 
 /* LOGO */
 .logo {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  align-items: center;
-  gap: 6px;
-
+  align-items: baseline;
+  column-gap: 8px;
+  padding-bottom: 22px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, .08);
   font-size: 28px;
-  font-weight: bold;
+  font-weight: 800;
+}
 
-  margin-bottom: 60px;
+.store { color: #25df14; }
+
+.logo small {
+  width: 100%;
+  margin-top: 4px;
+  color: #7d877f;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .28em;
   text-align: center;
-}
-
-.hc {
-  color: white;
-}
-
-.store {
-  color: #25df14;
-  margin-left: 5px;
+  text-transform: uppercase;
 }
 
 /* MENU */
 nav {
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: 4px;
 }
 
-/* LINKS */
+.group {
+  padding: 18px 12px 8px;
+  color: #68736a;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
 nav a {
   display: flex;
   align-items: center;
-  justify-content: center;
-
-  color: white;
-  text-decoration: none;
-
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 1px;
-
-  padding: 12px 15px;
+  gap: 12px;
+  padding: 11px 12px;
   border-radius: 10px;
-
-  transition: all 0.2s ease;
+  color: #c3cbc5;
+  font-size: 13.5px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background .18s, color .18s;
 }
 
-/* HOVER */
 nav a:hover {
-  background: #1a1a1a;
+  background: rgba(255, 255, 255, .06);
+  color: #fff;
 }
 
-/* ATIVO */
 nav a.active {
   background: #25df14;
-  color: black;
+  color: #050805;
+  font-weight: 700;
+  box-shadow: 0 10px 24px -12px rgba(37, 223, 20, .9);
+}
+
+/* Em telas pequenas o menu vira uma barra horizontal */
+@media (max-width: 900px) {
+  .sidebar { padding: 12px; overflow: visible; }
+
+  .logo {
+    justify-content: flex-start;
+    padding: 0;
+    margin: 0 0 10px;
+    border: 0;
+    font-size: 20px;
+  }
+
+  .logo small,
+  .group { display: none; }
+
+  nav { flex-direction: row; padding-bottom: 2px; overflow-x: auto; }
 }

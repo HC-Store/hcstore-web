@@ -1,53 +1,38 @@
-<div class="screen active" id="screen-produtos">
-  <div class="page-header">
-    <div class="page-title">Todos os Produtos</div>
-    <button class="btn-novo" (click)="novoProduto()">+ Novo Produto</button>
+<div class="page" id="screen-produtos">
+  <div class="page-head">
+    <div>
+      <h1>Todos os Produtos</h1>
+      <p>Gerencie o catálogo, o estoque e as vendas presenciais</p>
+    </div>
+    <button class="btn btn-dark" (click)="novoProduto()">+ Novo Produto</button>
   </div>
 
-  <p *ngIf="carregando" style="color:white; padding:20px;">Carregando...</p>
-  <p *ngIf="sucesso" style="color:#27ae60; padding:20px;">{{ sucesso }}</p>
-  <p *ngIf="erro" style="color:#e74c3c; padding:20px;">{{ erro }}</p>
-  <p *ngIf="!carregando && produtos.length === 0" style="color:#aaa; padding:20px;">Nenhum produto cadastrado.</p>
+  <p class="alert info" *ngIf="carregando">Carregando...</p>
+  <p class="alert success" *ngIf="sucesso">{{ sucesso }}</p>
+  <p class="alert error" *ngIf="erro">{{ erro }}</p>
+  <p class="card empty" *ngIf="!carregando && produtos.length === 0">Nenhum produto cadastrado.</p>
+
+  <div class="alert info search-info" *ngIf="termoBusca && !carregando">
+    <span>{{ produtosFiltrados.length }} resultado(s) para "{{ termoBusca }}"</span>
+    <button class="btn btn-ghost btn-sm" (click)="limparBusca()">Limpar busca</button>
+  </div>
 
   <div class="products-grid">
-    <div class="product-card" *ngFor="let produto of produtos; let i = index">
+    <div class="product-card" *ngFor="let produto of produtosFiltrados" [class.hidden-product]="!produto.ativo">
       <div class="product-img">
         <img
           [src]="produto.imagens?.[0]?.url || 'assets/img/sem-imagem.png'"
           [alt]="produto.nome"
-          style="width:100%; height:100%; object-fit:cover;"
         />
 
-        <div class="product-actions">
-          <button class="btn-edit-btn-sm" (click)="editarProduto(i)">✏️</button>
-
-          <button
-            class="btn-sale-btn-sm"
-            (click)="abrirVendaPresencial(i)"
-            title="Registrar venda presencial">
-            🏪
-          </button>
-
-          <button
-            class="btn-eye-btn-sm"
-            (click)="alterarStatusProduto(produto)"
-            [title]="produto.ativo ? 'Ocultar produto' : 'Mostrar produto'">
-            {{ produto.ativo ? '👁️' : '🙈' }}
-          </button>
-
-          <button class="btn-red-btn-sm" (click)="removerProduto(i)">🗑️</button>
-        </div>
+        <span class="status" [attr.data-status]="produto.ativo ? 'ATIVO' : 'OCULTO'">
+          {{ produto.ativo ? 'Ativo' : 'Oculto' }}
+        </span>
       </div>
 
       <div class="product-body">
-        <div class="product-name">
-          {{ produto.nome }}
-          <span class="status-tag" [class.oculto]="!produto.ativo">
-            {{ produto.ativo ? 'Ativo' : 'Oculto' }}
-          </span>
-        </div>
-
         <div class="product-cat">{{ produto.categoria?.nome || '—' }}</div>
+        <div class="product-name">{{ produto.nome }}</div>
         <div class="product-price">R$ {{ produto.preco }}</div>
 
         <div class="size-grid">
@@ -58,99 +43,157 @@
 
         <div class="product-desc">{{ produto.descricao }}</div>
 
-        <div class="stat-row">
+        <div class="stat-row" [class.low]="produto.estoque <= 3">
           <span class="stat-label">Estoque</span>
           <div class="stat-bar">
-            <div class="stat-fill" [style.width.%]="(produto.estoque/1500)*100"></div>
+            <div class="stat-fill" [style.width.%]="produto.estoque"></div>
           </div>
           <span class="stat-val">{{ produto.estoque }}</span>
         </div>
-      </div>
-    </div>
-  </div>
-</div>
 
-<!-- MODAL EDITAR PRODUTO -->
-<div class="modal" *ngIf="showModal">
-  <div class="modal-box">
-    <h3>Editar Produto</h3>
+        <div class="product-actions">
+          <button class="icon-btn" (click)="editarProduto(produto)" title="Editar" aria-label="Editar">
+            <svg class="icn" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4ZM13.5 6.500l4 4"/></svg>
+          </button>
 
-    <input [(ngModel)]="form.nome" placeholder="Nome" />
-    <input [(ngModel)]="form.preco" placeholder="Preço" type="number" />
+          <button class="icon-btn" (click)="abrirVendaPresencial(produto)" title="Registrar venda presencial" aria-label="Registrar venda presencial">
+            <svg class="icn" viewBox="0 0 24 24"><path d="M3 9l2-5h14l2 5M3 9h18M5 9v11h14V9M10 20v-6h4v6"/></svg>
+          </button>
 
-    <label>Tamanhos e estoque por tamanho</label>
+          <button
+            class="icon-btn"
+            (click)="alterarStatusProduto(produto)"
+            [title]="produto.ativo ? 'Ocultar produto' : 'Mostrar produto'"
+            [attr.aria-label]="produto.ativo ? 'Ocultar produto' : 'Mostrar produto'">
+            <svg class="icn" viewBox="0 0 24 24" *ngIf="produto.ativo"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg class="icn" viewBox="0 0 24 24" *ngIf="!produto.ativo"><path d="M3 3l18 18M10 5.200A10 10 0 0 1 22 12a18 18 0 0 1-3 3.800M6.500 6.700C3.600 8.600 2 12 2 12s3.500 7 10 7a10 10 0 0 0 4-.8"/></svg>
+          </button>
 
-    <div class="sizes">
-      <span
-        *ngFor="let s of sizes"
-        (click)="toggleSize(s)"
-        [class.active]="sizeSelecionado(s)"
-      >
-        {{ s }}
-      </span>
-    </div>
-
-    <div class="size-quantity-grid">
-      <div class="size-quantity" *ngFor="let s of sizes">
-        <div *ngIf="sizeSelecionado(s)">
-          <label>Quantidade tamanho {{ s }}</label>
-          <input
-            type="number"
-            min="0"
-            [(ngModel)]="form.quantidadePorTamanho[s]"
-            (ngModelChange)="atualizarEstoqueTotal()"
-          />
+          <button class="icon-btn danger" (click)="removerProduto(produto)" title="Excluir" aria-label="Excluir">
+            <svg class="icn" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v5M14 11v5"/></svg>
+          </button>
         </div>
       </div>
     </div>
+  </div>
 
-    <input [(ngModel)]="form.estoque" placeholder="Estoque total" type="number" readonly />
-    <input [(ngModel)]="form.marca" placeholder="Marca" />
+  <!-- MODAL EDITAR PRODUTO -->
+  <div class="modal" *ngIf="showModal">
+    <div class="modal-box wide">
+      <div class="modal-head">
+        <h3>Editar Produto</h3>
+      </div>
 
-    <textarea [(ngModel)]="form.composicaoMaterial" placeholder="Composição do material"></textarea>
-    <textarea [(ngModel)]="form.instrucaoLavagem" placeholder="Instruções de lavagem"></textarea>
-    <textarea [(ngModel)]="form.enviosDevolucoes" placeholder="Envio e devoluções"></textarea>
-    <textarea [(ngModel)]="form.descricao" placeholder="Descrição"></textarea>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="field full">
+            <label>Nome</label>
+            <input [(ngModel)]="form.nome" placeholder="Nome" />
+          </div>
 
-    <div class="modal-actions">
-      <button (click)="salvarProduto()">Salvar</button>
-      <button (click)="showModal=false" style="background-color:#ccc;">Cancelar</button>
+          <div class="field">
+            <label>Preço</label>
+            <input [(ngModel)]="form.preco" placeholder="Preço" type="number" />
+          </div>
+
+          <div class="field">
+            <label>Marca</label>
+            <input [(ngModel)]="form.marca" placeholder="Marca" />
+          </div>
+        </div>
+
+        <span class="label">Tamanhos e estoque por tamanho</span>
+
+        <div class="sizes">
+          <span
+            *ngFor="let s of sizes"
+            (click)="toggleSize(s)"
+            [class.active]="sizeSelecionado(s)"
+          >
+            {{ s }}
+          </span>
+        </div>
+
+        <div class="size-quantity-grid">
+          <div class="size-quantity" *ngFor="let s of sizes">
+            <div *ngIf="sizeSelecionado(s)">
+              <label>Quantidade tamanho {{ s }}</label>
+              <input
+                type="number"
+                min="0"
+                [(ngModel)]="form.quantidadePorTamanho[s]"
+                (ngModelChange)="atualizarEstoqueTotal()"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Estoque total</label>
+          <input [(ngModel)]="form.estoque" placeholder="Estoque total" type="number" readonly />
+        </div>
+
+        <div class="field">
+          <label>Composição do material</label>
+          <textarea [(ngModel)]="form.composicaoMaterial" placeholder="Composição do material"></textarea>
+        </div>
+
+        <div class="field">
+          <label>Instruções de lavagem</label>
+          <textarea [(ngModel)]="form.instrucaoLavagem" placeholder="Instruções de lavagem"></textarea>
+        </div>
+
+        <div class="field">
+          <label>Envio e devoluções</label>
+          <textarea [(ngModel)]="form.enviosDevolucoes" placeholder="Envio e devoluções"></textarea>
+        </div>
+
+        <div class="field">
+          <label>Descrição</label>
+          <textarea [(ngModel)]="form.descricao" placeholder="Descrição"></textarea>
+        </div>
+      </div>
+
+      <div class="modal-foot">
+        <button class="btn btn-ghost" (click)="showModal=false">Cancelar</button>
+        <button class="btn btn-primary" (click)="salvarProduto()">Salvar</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- MODAL VENDA PRESENCIAL -->
-<div class="modal" *ngIf="showVendaModal">
-  <div class="modal-box">
-    <h3>Registrar Venda Presencial</h3>
+  <!-- MODAL VENDA PRESENCIAL -->
+  <div class="modal" *ngIf="showVendaModal">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3>Registrar Venda Presencial</h3>
+      </div>
 
-    <p>
-      <strong>{{ produtoVenda?.nome }}</strong>
-    </p>
+      <div class="modal-body">
+        <p class="alert error" *ngIf="erro">{{ erro }}</p>
+        <p class="sale-product">{{ produtoVenda?.nome }}</p>
 
-    <label>Tamanho</label>
+        <div class="field">
+          <label>Tamanho</label>
+          <select [(ngModel)]="vendaForm.tamanho">
+            <option value="">Selecione...</option>
+            <option
+              *ngFor="let t of tamanhosDisponiveisVenda()"
+              [value]="t">
+              {{ t }} ({{ estoqueTamanhoVenda(t) }} em estoque)
+            </option>
+          </select>
+        </div>
 
-    <select [(ngModel)]="vendaForm.tamanho">
-      <option value="">Selecione...</option>
-      <option
-        *ngFor="let t of tamanhosDisponiveisVenda()"
-        [value]="t">
-        {{ t }} ({{ estoqueTamanhoVenda(t) }} em estoque)
-      </option>
-    </select>
+        <div class="field">
+          <label>Quantidade</label>
+          <input type="number" min="1" [(ngModel)]="vendaForm.quantidade">
+        </div>
+      </div>
 
-    <label>Quantidade</label>
-
-    <input
-      type="number"
-      min="1"
-      [(ngModel)]="vendaForm.quantidade">
-
-    <div class="modal-actions">
-      <button (click)="registrarVendaPresencial()">Registrar Venda</button>
-      <button style="background:#ccc;color:#000" (click)="showVendaModal=false">
-        Cancelar
-      </button>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" (click)="showVendaModal=false">Cancelar</button>
+        <button class="btn btn-primary" (click)="registrarVendaPresencial()">Registrar Venda</button>
+      </div>
     </div>
   </div>
 </div>

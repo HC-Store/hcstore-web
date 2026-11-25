@@ -1,101 +1,107 @@
-<div class="dashboard">
+<div class="page">
 
-  <div class="header-row">
-    <h2>DASHBOARD</h2>
-    <button class="refresh" type="button" (click)="loadDashboard()" [disabled]="loading">
+  <div class="page-head">
+    <div>
+      <h1>Dashboard</h1>
+      <p>Visão geral da sua loja</p>
+    </div>
+    <button class="btn btn-primary" type="button" (click)="loadDashboard()" [disabled]="loading">
       {{ loading ? 'Atualizando...' : 'Atualizar' }}
     </button>
   </div>
 
-  <p class="message loading" *ngIf="loading">Carregando dados do dashboard...</p>
-  <p class="message error" *ngIf="error">{{ error }}</p>
+  <p class="alert info" *ngIf="loading">Carregando dados do dashboard...</p>
+  <p class="alert error" *ngIf="error">{{ error }}</p>
 
   <div class="summary">
-    <div class="summary-item">
+    <div class="stat featured">
       <small>Faturamento</small>
       <strong>{{ formatCurrency(totals.revenue) }}</strong>
     </div>
-    <div class="summary-item">
+    <div class="stat">
       <small>Pedidos</small>
       <strong>{{ totals.orders }}</strong>
     </div>
-    <div class="summary-item">
+    <div class="stat">
       <small>Produtos</small>
       <strong>{{ totals.products }}</strong>
     </div>
-    <div class="summary-item">
-      <small>Usuarios</small>
+    <div class="stat">
+      <small>Usuários</small>
       <strong>{{ totals.users }}</strong>
     </div>
-    <div class="summary-item warning">
+    <div class="stat warning">
       <small>Estoque baixo</small>
       <strong>{{ totals.lowStock }}</strong>
     </div>
   </div>
 
   <div class="top">
-    <div class="card charts">
-      <div class="chart" *ngFor="let metric of metrics">
-        <div class="circle" [style.background]="metricBackground(metric)">
-          <span class="percent">{{ metric.value }}</span>
+    <div class="card performance">
+      <h3 class="card-title">Desempenho dos pedidos</h3>
+
+      <div class="charts">
+        <div class="chart" *ngFor="let metric of metrics">
+          <div class="circle" [style.background]="metricBackground(metric)">
+            <span class="percent">{{ metric.value }}</span>
+          </div>
+          <small>{{ metric.label }}</small>
         </div>
-        <small>{{ metric.label }}</small>
       </div>
     </div>
 
     <div class="card best">
-      <h3>Mais Vendidos</h3>
+      <h3 class="card-title">Mais vendidos</h3>
 
       <div class="product" *ngFor="let p of products">
         <img [src]="p.image" [alt]="p.name" />
-        <div>
-          <strong>{{ p.name }}</strong>
+        <div class="info">
+          <strong [title]="p.name">{{ p.name }}</strong>
           <small>{{ p.sales }} vendas</small>
         </div>
-        <span>{{ formatCurrency(p.price) }}</span>
+        <span class="price">{{ formatCurrency(p.price) }}</span>
       </div>
 
       <p class="empty" *ngIf="!products.length && !loading">Nenhum produto vendido ainda.</p>
 
-      <button class="report" type="button" (click)="openReport()" [disabled]="!products.length">
-        RELATORIO
+      <button class="btn btn-ghost report" type="button" (click)="openReport()" [disabled]="!products.length">
+        Ver relatório
       </button>
     </div>
   </div>
 
   <div class="modal" *ngIf="showReport">
-    <div class="modal-content">
-      <h3 class="title">Relatorio de Vendas</h3>
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3>Relatório de vendas</h3>
+      </div>
 
-      <div class="report-list">
-        <div class="report-item" *ngFor="let p of products">
-          <div class="left">
-            <img [src]="p.image" [alt]="p.name" />
-            <div class="info">
-              <span class="name">{{ p.name }}</span>
-              <span class="sales">{{ p.sales }} vendas</span>
-            </div>
+      <div class="modal-body">
+        <div class="product" *ngFor="let p of products">
+          <img [src]="p.image" [alt]="p.name" />
+          <div class="info">
+            <strong [title]="p.name">{{ p.name }}</strong>
+            <small>{{ p.sales }} vendas</small>
           </div>
-
-          <div class="price">
-            {{ formatCurrency(p.price) }}
-          </div>
+          <span class="price">{{ formatCurrency(p.price) }}</span>
         </div>
       </div>
 
-      <div class="modal-actions">
-        <button class="close-btn" type="button" (click)="closeReport()">Fechar</button>
+      <div class="modal-foot">
+        <button class="btn btn-primary" type="button" (click)="closeReport()">Fechar</button>
       </div>
     </div>
   </div>
 
   <div class="card">
-    <h3>Faturamento ao Mes</h3>
-    <canvas id="salesChart"></canvas>
+    <h3 class="card-title">Faturamento ao mês</h3>
+    <div class="chart-box">
+      <canvas id="salesChart"></canvas>
+    </div>
   </div>
 
-  <div class="card table">
-    <h3>Pedidos Recentes</h3>
+  <div class="card flush">
+    <h3 class="card-title">Pedidos recentes</h3>
 
     <div class="table-wrap">
       <table>
@@ -112,26 +118,19 @@
 
         <tbody>
           <tr *ngFor="let order of orders">
-            <td>{{ order.product }}</td>
-            <td>#{{ order.id }}</td>
-            <td>{{ order.date }}</td>
-
-            <td class="user">
-              <div class="avatar" [title]="order.name">{{ order.name.charAt(0) }}</div>
-              <span [title]="order.name">{{ order.name }}</span>
-            </td>
-
+            <td><div class="product-cell" [title]="order.product">{{ order.product }}</div></td>
+            <td class="id">#{{ order.id }}</td>
+            <td class="nowrap">{{ order.date }}</td>
             <td>
-              <span class="status"
-                    [class.delivered]="statusClass(order.status) === 'delivered'"
-                    [class.canceled]="statusClass(order.status) === 'canceled'"
-                    [class.pending]="statusClass(order.status) === 'pending'">
-                <span class="dot"></span>
-                {{ order.status }}
-              </span>
+              <div class="person">
+                <div class="avatar" [title]="order.name">{{ order.name.charAt(0) }}</div>
+                <span [title]="order.name">{{ order.name }}</span>
+              </div>
             </td>
-
-            <td>{{ formatCurrency(order.price) }}</td>
+            <td>
+              <span class="status" [attr.data-status]="order.status">{{ order.status }}</span>
+            </td>
+            <td class="money">{{ formatCurrency(order.price) }}</td>
           </tr>
         </tbody>
       </table>

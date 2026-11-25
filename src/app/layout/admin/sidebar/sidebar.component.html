@@ -3,39 +3,55 @@
   <div class="logo">
     <span class="hc">HC</span>
     <span class="store">STORE</span>
+    <small>Painel Admin</small>
   </div>
 
   <nav>
+    <span class="group">Visão geral</span>
 
     <a routerLink="/admin/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-      DASHBOARD
+      <svg class="icn" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+      Dashboard
     </a>
 
+    <span class="group">Loja</span>
+
     <a routerLink="/admin/produtos" routerLinkActive="active">
-      TODOS OS PRODUTOS
+      <svg class="icn" viewBox="0 0 24 24"><path d="M21 8 12 3 3 8v8l9 5 9-5V8Z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg>
+      Todos os produtos
     </a>
 
     <a routerLink="/admin/pedidos" routerLinkActive="active">
-      LISTA DE PEDIDOS
+      <svg class="icn" viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3Z"/><path d="M9 8h6M9 12h6"/></svg>
+      Lista de pedidos
     </a>
 
     <a routerLink="/admin/usuarios" routerLinkActive="active">
-      USUÁRIOS
+      <svg class="icn" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6M16 4a4 4 0 0 1 0 8M18 15c2.5.5 4 2.5 4 6"/></svg>
+      Usuários
     </a>
 
     <a routerLink="/admin/adicionar-produto" routerLinkActive="active">
-      ADICIONAR PRODUTO
-    </a>
-    <a routerLink="/admin/config-home" routerLinkActive="active">
-      CONFIG. HOME
-    </a>
-    <a routerLink="/admin/config-colecoes" routerLinkActive="active">
-      CONFIG. COLEÇÕES
-    </a>
-    <a routerLink="/admin/cupons" routerLinkActive="active">
-      CUPONS
+      <svg class="icn" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
+      Adicionar produto
     </a>
 
+    <a routerLink="/admin/cupons" routerLinkActive="active">
+      <svg class="icn" viewBox="0 0 24 24"><path d="M3 6h18v4a2 2 0 0 0 0 4v4H3v-4a2 2 0 0 0 0-4V6Z"/><path d="M15 7v2M15 11v2M15 15v2"/></svg>
+      Cupons
+    </a>
+
+    <span class="group">Aparência</span>
+
+    <a routerLink="/admin/config-home" routerLinkActive="active">
+      <svg class="icn" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8M5 10v11h14V10M10 21v-6h4v6"/></svg>
+      Config. Home
+    </a>
+
+    <a routerLink="/admin/config-colecoes" routerLinkActive="active">
+      <svg class="icn" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/></svg>
+      Config. Coleções
+    </a>
   </nav>
 
 </div>

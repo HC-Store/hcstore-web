@@ -48,9 +48,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   products: DashboardProduct[] = [];
   orders: DashboardOrder[] = [];
   metrics: DashboardMetric[] = [
-    { label: 'Pedidos pagos', value: '0%', percent: 0, color: '#ff6b6b' },
-    { label: 'Entregues', value: '0%', percent: 0, color: '#25df14' },
-    { label: 'Cancelados', value: '0%', percent: 0, color: '#3b82f6' }
+    { label: 'Pedidos pagos', value: '0%', percent: 0, color: '#25df14' },
+    { label: 'Entregues', value: '0%', percent: 0, color: '#3b82f6' },
+    { label: 'Cancelados', value: '0%', percent: 0, color: '#ef4444' }
   ];
   totals = {
     revenue: 0,
@@ -130,23 +130,31 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.chart = new Chart(canvas, {
       type: 'bar',
       data: {
-        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
         datasets: [{
           label: 'Faturamento',
-          data: this.monthlySales.slice(0, 6),
+          data: this.monthlySales,
           backgroundColor: '#25df14',
-          borderRadius: 6
+          borderRadius: 8,
+          hoverBackgroundColor: '#12790a',
+          maxBarThickness: 48
         }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: { display: false }
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#070908',
+            padding: 12,
+            displayColors: false,
+            callbacks: { label: (item) => this.formatCurrency(Number(item.raw)) }
+          }
         },
         scales: {
-          x: { grid: { display: false } },
-          y: { grid: { color: '#eee' } }
+          x: { grid: { display: false }, border: { display: false }, ticks: { color: '#6b746d' } },
+          y: { beginAtZero: true, grid: { color: '#eef0ee' }, border: { display: false }, ticks: { color: '#6b746d' } }
         }
       }
     });
@@ -160,7 +168,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    this.chart.data.datasets[0].data = this.monthlySales.slice(0, 6);
+    this.chart.data.datasets[0].data = this.monthlySales;
     this.chart.update();
   }
 
@@ -172,21 +180,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   metricBackground(metric: DashboardMetric): string {
-    return `conic-gradient(${metric.color} ${metric.percent}%, #eee 0)`;
-  }
-
-  statusClass(status: string): string {
-    const normalized = this.normalizeStatus(status);
-
-    if (normalized === 'ENTREGUE' || normalized === 'PAGO' || normalized === 'ENVIADO') {
-      return 'delivered';
-    }
-
-    if (normalized === 'CANCELADO') {
-      return 'canceled';
-    }
-
-    return 'pending';
+    return `conic-gradient(${metric.color} ${metric.percent}%, #eef0ee 0)`;
   }
 
   private normalizeList(value: any): any[] {
@@ -250,9 +244,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       orders.filter((order) => this.normalizeStatus(order.status) === status).length;
 
     return [
-      this.createMetric('Pedidos pagos', countByStatus('PAGO'), total, '#ff6b6b'),
-      this.createMetric('Entregues', countByStatus('ENTREGUE'), total, '#25df14'),
-      this.createMetric('Cancelados', countByStatus('CANCELADO'), total, '#3b82f6')
+      this.createMetric('Pedidos pagos', countByStatus('PAGO'), total, '#25df14'),
+      this.createMetric('Entregues', countByStatus('ENTREGUE'), total, '#3b82f6'),
+      this.createMetric('Cancelados', countByStatus('CANCELADO'), total, '#ef4444')
     ];
   }
 

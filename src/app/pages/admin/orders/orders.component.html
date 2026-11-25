@@ -1,14 +1,17 @@
-<div class="screen active" id="screen-pedidos">
-  <div class="page-header">
-    <div class="page-title">Lista de Pedidos</div>
+<div class="page" id="screen-pedidos">
+  <div class="page-head">
+    <div>
+      <h1>Lista de Pedidos</h1>
+      <p>Acompanhe os pedidos e atualize o status de cada um</p>
+    </div>
   </div>
 
-  <p *ngIf="carregando" style="color:white; padding:20px;">Carregando...</p>
-  <p *ngIf="erro" style="color:#e74c3c; padding:20px;">{{ erro }}</p>
-  <p *ngIf="sucesso" style="color:#39ff14; padding:20px; font-weight:600;">✓ {{ sucesso }}</p>
+  <p class="alert info" *ngIf="carregando">Carregando...</p>
+  <p class="alert error" *ngIf="erro">{{ erro }}</p>
+  <p class="alert success toast" *ngIf="sucesso">✓ {{ sucesso }}</p>
 
-  <div class="card">
-    <div class="tbl-wrap">
+  <div class="card flush">
+    <div class="table-wrap">
       <table>
         <thead>
           <tr>
@@ -24,29 +27,18 @@
 
         <tbody>
           <tr *ngFor="let pedido of pedidos">
-            <td>#{{ pedido.id }}</td>
+            <td class="id">#{{ pedido.id }}</td>
             <td>{{ pedido.usuario?.nome }} {{ pedido.usuario?.sobrenome }}</td>
-            <td>{{ pedido.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
-            <td>R$ {{ pedido.totalFinal || pedido.total }}</td>
-
+            <td class="nowrap">{{ pedido.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td class="money">R$ {{ pedido.totalFinal || pedido.total }}</td>
             <td>
-              <span class="status"
-                [class.delivered]="pedido.status === 'ENTREGUE'"
-                [class.canceled]="pedido.status === 'CANCELADO'"
-                [class.pending]="pedido.status === 'PENDENTE'"
-                [class.paid]="pedido.status === 'PAGO'">
-                {{ pedido.status }}
-              </span>
+              <span class="status" [attr.data-status]="pedido.status">{{ pedido.status }}</span>
             </td>
-
             <td>
-              <button class="btn-detalhes" (click)="verDetalhes(pedido)">
-                Ver detalhes
-              </button>
+              <button class="btn btn-ghost btn-sm" (click)="verDetalhes(pedido)">Ver detalhes</button>
             </td>
-
             <td>
-              <select (change)="atualizarStatus(pedido, $any($event.target).value)">
+              <select class="status-select" aria-label="Alterar status" (change)="atualizarStatus(pedido, $any($event.target).value)">
                 <option value="">Alterar</option>
                 <option value="PENDENTE">Pendente</option>
                 <option value="PAGO">Pago</option>
@@ -59,73 +51,81 @@
         </tbody>
       </table>
     </div>
+
+    <p class="empty" *ngIf="!carregando && pedidos.length === 0">Nenhum pedido encontrado.</p>
   </div>
-</div>
 
-<div class="modal" *ngIf="pedidoSelecionado">
-  <div class="modal-box">
-    <div class="modal-header">
-      <h2>Pedido #{{ pedidoSelecionado.id }}</h2>
-      <button class="btn-fechar" (click)="fecharDetalhes()">×</button>
-    </div>
-
-    <div class="detail-section">
-      <h3>Cliente</h3>
-
-      <p>
-        <strong>Nome:</strong>
-        {{ pedidoSelecionado.usuario?.nome }} {{ pedidoSelecionado.usuario?.sobrenome }}
-      </p>
-
-      <p>
-        <strong>E-mail:</strong>
-        {{ pedidoSelecionado.usuario?.email }}
-        <button class="btn-copy" (click)="copiarTexto(pedidoSelecionado.usuario?.email)">Copiar</button>
-      </p>
-
-      <p>
-        <strong>Telefone:</strong>
-        {{ pedidoSelecionado.usuario?.telefone }}
-        <button class="btn-copy" (click)="copiarTexto(pedidoSelecionado.usuario?.telefone)">Copiar</button>
-      </p>
-
-      <button class="btn-whatsapp" (click)="abrirWhatsApp(pedidoSelecionado)">
-        Chamar no WhatsApp
-      </button>
-    </div>
-
-    <div class="detail-section">
-      <h3>Entrega</h3>
-
-      <p><strong>Tipo:</strong> {{ pedidoSelecionado.tipoEntrega || 'Não informado' }}</p>
-
-      <p>
-        <strong>Endereço:</strong>
-        {{ enderecoCompleto(pedidoSelecionado) }}
-        <button class="btn-copy" (click)="copiarTexto(enderecoCompleto(pedidoSelecionado))">
-          Copiar
+  <div class="modal" *ngIf="pedidoSelecionado">
+    <div class="modal-box wide">
+      <div class="modal-head">
+        <h3>Pedido #{{ pedidoSelecionado.id }}</h3>
+        <button class="icon-btn danger" (click)="fecharDetalhes()" aria-label="Fechar">
+          <svg class="icn" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>
         </button>
-      </p>
-    </div>
-
-    <div class="detail-section">
-      <h3>Produtos</h3>
-
-      <div class="produto-item" *ngFor="let item of pedidoSelecionado.itempedido">
-        <p><strong>{{ item.produto?.nome }}</strong></p>
-        <p>Quantidade: {{ item.quantidade }}</p>
-        <p>Preço: R$ {{ item.preco }}</p>
       </div>
-    </div>
 
-    <div class="detail-section">
-      <h3>Valores</h3>
+      <div class="modal-body">
+        <div class="detail-grid">
+          <div class="detail-section">
+            <h4>Cliente</h4>
 
-      <p><strong>Subtotal:</strong> R$ {{ pedidoSelecionado.total }}</p>
-      <p><strong>Frete:</strong> R$ {{ pedidoSelecionado.frete || 0 }}</p>
-      <p><strong>Desconto:</strong> R$ {{ pedidoSelecionado.desconto || 0 }}</p>
-      <p><strong>Cupom:</strong> {{ pedidoSelecionado.cupomCodigo || 'Nenhum' }}</p>
-      <p><strong>Total final:</strong> R$ {{ pedidoSelecionado.totalFinal || pedidoSelecionado.total }}</p>
+            <p>
+              <strong>Nome:</strong>
+              {{ pedidoSelecionado.usuario?.nome }} {{ pedidoSelecionado.usuario?.sobrenome }}
+            </p>
+
+            <p>
+              <strong>E-mail:</strong>
+              {{ pedidoSelecionado.usuario?.email }}
+              <button class="btn btn-ghost btn-sm copy" (click)="copiarTexto(pedidoSelecionado.usuario?.email)">Copiar</button>
+            </p>
+
+            <p>
+              <strong>Telefone:</strong>
+              {{ pedidoSelecionado.usuario?.telefone }}
+              <button class="btn btn-ghost btn-sm copy" (click)="copiarTexto(pedidoSelecionado.usuario?.telefone)">Copiar</button>
+            </p>
+
+            <button class="btn btn-whatsapp" (click)="abrirWhatsApp(pedidoSelecionado)">
+              Chamar no WhatsApp
+            </button>
+          </div>
+
+          <div class="detail-section">
+            <h4>Entrega</h4>
+
+            <p><strong>Tipo:</strong> {{ pedidoSelecionado.tipoEntrega || 'Não informado' }}</p>
+
+            <p>
+              <strong>Endereço:</strong>
+              {{ enderecoCompleto(pedidoSelecionado) }}
+              <button class="btn btn-ghost btn-sm copy" (click)="copiarTexto(enderecoCompleto(pedidoSelecionado))">
+                Copiar
+              </button>
+            </p>
+          </div>
+
+          <div class="detail-section">
+            <h4>Produtos</h4>
+
+            <div class="produto-item" *ngFor="let item of pedidoSelecionado.itempedido">
+              <strong>{{ item.produto?.nome }}</strong>
+              <span>Quantidade: {{ item.quantidade }}</span>
+              <span>Preço: R$ {{ item.preco }}</span>
+            </div>
+          </div>
+
+          <div class="detail-section values">
+            <h4>Valores</h4>
+
+            <p><span>Subtotal</span> <span>R$ {{ pedidoSelecionado.total }}</span></p>
+            <p><span>Frete</span> <span>R$ {{ pedidoSelecionado.frete || 0 }}</span></p>
+            <p><span>Desconto</span> <span>R$ {{ pedidoSelecionado.desconto || 0 }}</span></p>
+            <p><span>Cupom</span> <span>{{ pedidoSelecionado.cupomCodigo || 'Nenhum' }}</span></p>
+            <p class="total"><span>Total final</span> <span>R$ {{ pedidoSelecionado.totalFinal || pedidoSelecionado.total }}</span></p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
